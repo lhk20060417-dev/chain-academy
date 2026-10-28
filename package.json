@@ -1,0 +1,9 @@
+{
+  "name": "chain-academy",
+  "version": "0.1.0",
+  "private": true,
+  "description": "区块链通识自学站 · 仅用于理论知识学习、章节自测与学习进度管理",
+  "scripts": {
+    "dev": "node server.js"
+  }
+}
