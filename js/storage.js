@@ -115,7 +115,7 @@ function renderFooter(){
         <div class="footer-grid">
           <div>
             <div class="flex items-center gap-2">
-              <span class="w-7 h-7 rounded-md flex items-center justify-center text-white font-extrabold text-sm" style="background:linear-gradient(135deg,#0f6f83,#155e97)">C</span>
+              <span class="w-7 h-7 rounded-md flex items-center justify-center text-white font-extrabold text-sm" style="background:linear-gradient(135deg,#0C4A6E,#38BDF8)">C</span>
               <span class="font-bold text-sm">Chain<span style="color:var(--brand)">Academy</span></span>
             </div>
             <p class="footer-p mt-4">${t('riskSummary')}</p>
@@ -137,7 +137,7 @@ function renderFooter(){
             </p>
           </div>
         </div>
-        <div class="copyright">© 2026 Chain Academy · 仅用于区块链技术理论学习 · v2.0 Multi-Page</div>
+        <div class="copyright">© 2026 Chain Academy · 仅用于区块链技术理论学习 · v3.0 ReDesign</div>
       </div>
     </footer>`;
     slot.querySelectorAll('[data-lang]').forEach(b => b.addEventListener('click', () => {

@@ -13,13 +13,13 @@
 .hero-min{min-height:100vh;}
 .orb{position:absolute; border-radius:50%; filter:blur(90px); opacity:.5; animation:drift 16s ease-in-out infinite alternate;}
 .orb.a{width:520px;height:520px; background:radial-gradient(circle,rgba(56,182,255,.18),transparent 70%); top:-140px; right:-80px;}
-.orb.b{width:420px;height:420px; background:radial-gradient(circle,rgba(77,208,225,.14),transparent 70%); bottom:-120px; left:-60px; animation-delay:-6s;}
-.ring-line{position:absolute; border:1px solid rgba(148,180,255,.07); border-radius:50%;}
+.orb.b{width:420px;height:420px; background:radial-gradient(circle,rgba(56,189,248,.14),transparent 70%); bottom:-120px; left:-60px; animation-delay:-6s;}
+.ring-line{position:absolute; border:1px solid rgba(148,163,184,.07); border-radius:50%;}
 @keyframes drift{from{transform:translate(0,0) scale(1);}to{transform:translate(-40px,30px) scale(1.08);}}
 .scroll-hint{position:absolute; left:50%; bottom:28px; transform:translateX(-50%); display:flex; flex-direction:column; align-items:center; gap:8px; color:var(--faint); font-size:10px; letter-spacing:.42em;}
 .scroll-hint .chev{width:12px;height:12px; border-right:1.5px solid var(--faint); border-bottom:1.5px solid var(--faint); transform:rotate(45deg); animation:hint 2.2s ease-in-out infinite;}
 @keyframes hint{0%,100%{opacity:.4; transform:rotate(45deg) translate(0,0);}50%{opacity:1; transform:rotate(45deg) translate(4px,4px);}}
-.risk-strip{position:fixed; top:0; left:0; right:0; z-index:60; height:32px; background:#f4f6fa; color:#26324a; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:500; letter-spacing:.03em; padding:0 16px;}
+.risk-strip{position:fixed; top:0; left:0; right:0; z-index:60; height:32px; background:#f4f6fa; color:#1E293B; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:500; letter-spacing:.03em; padding:0 16px;}
 .risk-fab{position:fixed; right:24px; bottom:24px; z-index:70;}
 @media (prefers-reduced-motion:reduce){.orb,.scroll-hint .chev{animation:none;}}
 </style>
@@ -35,7 +35,7 @@
 <nav class="site-nav" style="top:32px;">
   <div class="nav-inner">
     <a href="index.html" class="flex items-center gap-2 shrink-0">
-      <span class="w-7 h-7 rounded-md flex items-center justify-center text-white font-extrabold text-sm" style="background:linear-gradient(135deg,#0f6f83,#155e97)">C</span>
+      <span class="w-7 h-7 rounded-md flex items-center justify-center text-white font-extrabold text-sm" style="background:linear-gradient(135deg,#0C4A6E,#38BDF8)">C</span>
       <span class="font-bold tracking-wide text-sm">Chain<span style="color:var(--brand)">Academy</span></span>
     </a>
     <div class="nav-links-slot hidden lg:flex items-center gap-6 flex-1 justify-center"></div>
@@ -59,7 +59,7 @@
     <div class="reveal"><p class="sec-tag">CHAIN ACADEMY · BLOCKCHAIN LITERACY</p></div>
     <h1 class="reveal d1 mt-5 font-extrabold leading-[1.06] tracking-tight" style="font-size:clamp(2.6rem,7vw,5rem);">
       区块链通识学院<br>
-      <span class="text-transparent bg-clip-text" style="background-image:linear-gradient(90deg,#4dd0e1,#38b6ff,#7ea8ff);">从底层逻辑理解世界</span>
+      <span class="text-transparent bg-clip-text" style="background-image:linear-gradient(90deg,#38BDF8,#7DD3FC,#A5F3FC);">从底层逻辑理解世界</span>
     </h1>
     <p class="reveal d2 mt-7 font-semibold text-base md:text-lg" style="color:var(--dim);">系统化区块链通识自学体系｜循序渐进 · 自测校验 · 本地留存</p>
     <p class="reveal d2 mt-3 text-xs md:text-sm" style="color:var(--faint);">仅用于区块链技术科普学习，不构成投资建议；全部学习数据只保存在你自己的浏览器中。</p>
@@ -68,10 +68,10 @@
       <a href="roadmap.html" class="btn-ghost">View Roadmap</a>
     </div>
     <div class="reveal d4 mt-16 grid grid-cols-2 md:grid-cols-4 gap-px max-w-3xl overflow-hidden rounded-md border" style="border-color:var(--line);background:var(--line);">
-      <div class="p-5" style="background:rgba(10,16,29,.9);"><div class="text-2xl font-extrabold" id="statChapters">—</div><div class="text-[11px] tracking-[.2em] mt-1" style="color:var(--faint);">章节</div></div>
-      <div class="p-5" style="background:rgba(10,16,29,.9);"><div class="text-2xl font-extrabold" id="statQuestions">—</div><div class="text-[11px] tracking-[.2em] mt-1" style="color:var(--faint);">自测题</div></div>
-      <div class="p-5" style="background:rgba(10,16,29,.9);"><div class="text-2xl font-extrabold" id="statStages">—</div><div class="text-[11px] tracking-[.2em] mt-1" style="color:var(--faint);">学习阶段</div></div>
-      <div class="p-5" style="background:rgba(10,16,29,.9);"><div class="text-2xl font-extrabold">100%</div><div class="text-[11px] tracking-[.2em] mt-1" style="color:var(--faint);">本地存储</div></div>
+      <div class="p-5" style="background:rgba(21,28,39,.9);"><div class="text-2xl font-extrabold" id="statChapters">—</div><div class="text-[11px] tracking-[.2em] mt-1" style="color:var(--faint);">章节</div></div>
+      <div class="p-5" style="background:rgba(21,28,39,.9);"><div class="text-2xl font-extrabold" id="statQuestions">—</div><div class="text-[11px] tracking-[.2em] mt-1" style="color:var(--faint);">自测题</div></div>
+      <div class="p-5" style="background:rgba(21,28,39,.9);"><div class="text-2xl font-extrabold" id="statStages">—</div><div class="text-[11px] tracking-[.2em] mt-1" style="color:var(--faint);">学习阶段</div></div>
+      <div class="p-5" style="background:rgba(21,28,39,.9);"><div class="text-2xl font-extrabold">100%</div><div class="text-[11px] tracking-[.2em] mt-1" style="color:var(--faint);">本地存储</div></div>
     </div>
   </div>
   <div class="scroll-hint"><span>SCROLL</span><span class="chev"></span></div>
@@ -83,17 +83,17 @@
     <div class="reveal"><p class="sec-tag">PHILOSOPHY</p><h2 class="sec-title">三个朴素的学习信条</h2></div>
     <div class="mt-10 grid md:grid-cols-3 gap-4">
       <div class="reveal card card-hover p-8">
-        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#4dd0e1" stroke-width="1.6"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#38BDF8" stroke-width="1.6"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
         <h3 class="font-bold mt-5">顺序解锁</h3>
         <p class="text-sm mt-2 leading-relaxed" style="color:var(--dim);">一章通过，下一章才开放。基础不牢，地动山摇。</p>
       </div>
       <div class="reveal d1 card card-hover p-8">
-        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#4dd0e1" stroke-width="1.6"><path d="M9 11l3 3 8-8"/><circle cx="12" cy="12" r="10"/></svg>
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#38BDF8" stroke-width="1.6"><path d="M9 11l3 3 8-8"/><circle cx="12" cy="12" r="10"/></svg>
         <h3 class="font-bold mt-5">自测校验</h3>
         <p class="text-sm mt-2 leading-relaxed" style="color:var(--dim);">每章配自测题，即时判分。看懂 ≠ 掌握，测过才算。</p>
       </div>
       <div class="reveal d2 card card-hover p-8">
-        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#4dd0e1" stroke-width="1.6"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#38BDF8" stroke-width="1.6"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>
         <h3 class="font-bold mt-5">复盘沉淀</h3>
         <p class="text-sm mt-2 leading-relaxed" style="color:var(--dim);">错题自动归档，隔段时间回来重练，记忆才真正属于你。</p>
       </div>
@@ -140,19 +140,61 @@
   </div>
 </section>
 
+<!-- Trade-Lab 入口：默认折叠收起，点击标题展开；直达 #lab 时自动展开 -->
+<section class="py-24" id="lab">
+  <div class="container-x">
+    <div class="reveal card overflow-hidden" style="border-radius:var(--r-lg);">
+      <button class="w-full flex items-center gap-4 p-7 text-left" onclick="toggleLabTeaser()">
+        <span class="w-10 h-10 flex items-center justify-center shrink-0" style="background:rgba(56,189,248,.1);color:var(--brand);font-size:18px;border-radius:var(--r);">⬡</span>
+        <span class="flex-1 min-w-0">
+          <span class="tag-brand block">TRADE LAB · 独立隔离模块</span>
+          <span class="font-bold mt-1 block">实操复盘实验室</span>
+          <span class="text-xs block mt-1 truncate" style="color:var(--dim);">历史操作记录的个人复盘工具 · 仅用于复盘练习，不作为任何投资参考</span>
+        </span>
+        <span class="chip shrink-0" id="labTeaserChip">展开 ▾</span>
+      </button>
+      <div id="labTeaserBody" style="max-height:0;overflow:hidden;opacity:0;transition:max-height .45s cubic-bezier(.2,.8,.3,1),opacity .35s;">
+        <div class="px-7 pb-6 grid md:grid-cols-3 gap-4">
+          <div class="p-5" style="background:var(--bg-2);border-radius:var(--r);">
+            <div class="tag-brand">01 · MARKET</div>
+            <h4 class="font-bold mt-2 text-sm">行情预览</h4>
+            <p class="text-xs mt-1.5 leading-relaxed" style="color:var(--dim);">默认折叠的市场数据面板，主动点开才加载，不打扰复盘节奏。</p>
+          </div>
+          <div class="p-5" style="background:var(--bg-2);border-radius:var(--r);">
+            <div class="tag-brand">02 · JOURNAL</div>
+            <h4 class="font-bold mt-2 text-sm">记录录入与心理标签</h4>
+            <p class="text-xs mt-1.5 leading-relaxed" style="color:var(--dim);">手动单条录入或 CSV 批量导入，附带开仓想法、情绪与复盘标签。</p>
+          </div>
+          <div class="p-5" style="background:var(--bg-2);border-radius:var(--r);">
+            <div class="tag-brand">03 · AI REVIEW</div>
+            <h4 class="font-bold mt-2 text-sm">AI 四段复盘</h4>
+            <p class="text-xs mt-1.5 leading-relaxed" style="color:var(--dim);">优点、缺点与心理模式、客观统计、可落地建议，结构化输出。</p>
+          </div>
+        </div>
+        <div class="px-7 pb-7 flex flex-wrap items-center gap-4">
+          <a href="lab.html" class="btn-primary !text-sm">进入实操复盘实验室 →</a>
+          <span class="text-[11px]" style="color:var(--warn);">⚠ 本板块不引导任何交易行为，行情与复盘结果不构成投资建议。</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="hr-fade container-x"></div>
+
 <!-- ④ 独立风险警示区块 -->
 <section class="py-24">
   <div class="container-x">
-    <div class="reveal relative overflow-hidden rounded-md p-10 md:p-14" style="border:1px solid rgba(255,150,80,.28); background:linear-gradient(150deg,rgba(60,30,10,.35),rgba(8,13,24,.7));">
+    <div class="reveal relative overflow-hidden p-10 md:p-14" style="border-radius:var(--r-lg);border:1px solid rgba(251,146,60,.28); background:linear-gradient(150deg,rgba(67,32,8,.35),rgba(15,20,28,.7));">
       <div class="flex items-center gap-2 text-xs font-semibold tracking-[.3em]" style="color:var(--warn);">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 9v4m0 4h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z" stroke="#ffb066" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 9v4m0 4h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z" stroke="#FB923C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
         RISK NOTICE
       </div>
       <h3 class="text-xl md:text-2xl font-bold mt-4">先认识风险，再谈区块链</h3>
       <p class="text-sm mt-4 leading-[1.9] max-w-2xl" style="color:#cdb9a8;">虚拟货币不具有法偿性，相关业务活动在国内属于非法金融活动，不受法律保护；价格波动、合约漏洞、传销诈骗等风险真实存在。本站全部内容仅作技术理论学习之用。</p>
       <button class="btn-ghost !text-xs mt-7" onclick="openModal(fullRiskHtml())">查看完整监管说明 →</button>
       <div class="risk-fab">
-        <button class="chip !py-2.5 !px-4 shadow-lg" style="border-color:rgba(255,150,80,.5);color:var(--warn);background:rgba(7,11,20,.9);" onclick="openModal(fullRiskHtml())">⚠ 风险须知</button>
+        <button class="chip !py-2.5 !px-4 shadow-lg" style="border-color:rgba(251,146,60,.5);color:var(--warn);background:rgba(15,20,28,.9);" onclick="openModal(fullRiskHtml())">⚠ 风险须知</button>
       </div>
     </div>
   </div>
@@ -171,9 +213,9 @@ function fullRiskHtml(){
   return `
   <h3 style="color:var(--txt);font-weight:700;font-size:1.1rem;margin-bottom:14px;">虚拟货币的风险与国内监管规定</h3>
   <div class="article" style="font-size:.88rem;">
-    <p><strong style="color:#ffd9b3;">监管定性。</strong>2021 年，中国人民银行等十部门联合发布通知，明确虚拟货币不具有法偿性，相关业务活动属于非法金融活动；境外交易所向境内居民提供服务也属非法。</p>
-    <p><strong style="color:#ffd9b3;">不受法律保护。</strong>投资交易虚拟货币引发的损失自行承担，相关民事法律行为无效，不受法律保护。</p>
-    <p><strong style="color:#ffd9b3;">典型风险。</strong>价格剧烈波动、传销与非法集资、钓鱼诈骗、私钥丢失无法找回。任何声称「稳赚不赔」「保本高收益」的项目都应视为诈骗信号。</p>
+    <p><strong style="color:#FED7AA;">监管定性。</strong>2021 年，中国人民银行等十部门联合发布通知，明确虚拟货币不具有法偿性，相关业务活动属于非法金融活动；境外交易所向境内居民提供服务也属非法。</p>
+    <p><strong style="color:#FED7AA;">不受法律保护。</strong>投资交易虚拟货币引发的损失自行承担，相关民事法律行为无效，不受法律保护。</p>
+    <p><strong style="color:#FED7AA;">典型风险。</strong>价格剧烈波动、传销与非法集资、钓鱼诈骗、私钥丢失无法找回。任何声称「稳赚不赔」「保本高收益」的项目都应视为诈骗信号。</p>
     <p style="color:var(--faint);font-size:.8rem;">本站不提供行情、交易、钱包充提等任何功能，不链接任何交易所，仅用于区块链技术理论的学习与自测。</p>
   </div>`;
 }
@@ -196,6 +238,17 @@ document.getElementById('stageGrid').innerHTML = STAGES.map((s,i)=>{
 document.getElementById('statChapters').textContent = ORDER.length;
 document.getElementById('statQuestions').textContent = ORDER.reduce((s,o)=>s+o.ch.quiz.length,0);
 document.getElementById('statStages').textContent = STAGES.length;
+
+/* Trade-Lab 折叠面板：默认收起，#lab 直达时自动展开 */
+let labOpen = false;
+function toggleLabTeaser(force){
+  labOpen = force != null ? force : !labOpen;
+  const body = document.getElementById('labTeaserBody');
+  body.style.maxHeight = labOpen ? body.scrollHeight + 'px' : '0px';
+  body.style.opacity = labOpen ? '1' : '0';
+  document.getElementById('labTeaserChip').textContent = labOpen ? '收起 ▴' : '展开 ▾';
+}
+if(location.hash === '#lab') setTimeout(() => toggleLabTeaser(true), 400);
 watchReveals();
 </script>
 </body>

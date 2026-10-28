@@ -7,18 +7,37 @@
 <script src="https://cdn.tailwindcss.com"></script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/vars.css">
+<style>
+/* 标签 chip：可点选的心理行为标签 */
+.tag-chip{border:1px solid var(--line-strong); border-radius:var(--r-full); font-size:11px; padding:4px 12px; color:var(--dim); transition:all .2s; user-select:none; cursor:pointer; background:transparent;}
+.tag-chip:hover{border-color:rgba(56,189,248,.6); color:var(--txt);}
+.tag-chip.on-neg{border-color:rgba(251,146,60,.65); color:var(--warn); background:rgba(251,146,60,.1);}
+.tag-chip.on-pos{border-color:rgba(52,211,153,.65); color:var(--ok); background:rgba(52,211,153,.1);}
+.tag-chip.on-pos,.tag-chip.on-neg{box-shadow:0 0 10px rgba(56,189,248,.06);}
+/* 记录行折叠展开 */
+.trx-body{overflow:hidden; transition:max-height .4s cubic-bezier(.2,.8,.3,1), opacity .3s; max-height:0; opacity:0;}
+.trx-open .trx-body{max-height:640px; opacity:1;}
+.trx-head{cursor:pointer;}
+.trx-head:hover{background:var(--card-hi);}
+/* 折叠面板通用（行情） */
+.fold-body{overflow:hidden; transition:max-height .45s cubic-bezier(.2,.8,.3,1), opacity .35s; max-height:0; opacity:0;}
+.fold-open .fold-body{max-height:1200px; opacity:1;}
+/* 录入方式切换 */
+.tab-btn{border:1px solid var(--line-strong); border-radius:var(--r-btn); font-size:12px; padding:8px 18px; color:var(--dim); transition:all .25s;}
+.tab-btn.on{border-color:var(--brand); color:var(--brand); background:rgba(56,189,248,.08); box-shadow:0 0 14px rgba(56,189,248,.12);}
+</style>
 </head>
 <body>
 
 <!-- 置顶强风险横幅（本页专属，不可关闭） -->
-<div class="fixed top-0 left-0 right-0 z-[60] px-4 py-2 text-center" style="background:linear-gradient(90deg,#4a2c10,#3a2410);border-bottom:1px solid rgba(255,150,80,.4);">
-  <span class="text-[11px] font-semibold tracking-wide" style="color:#ffcf9e;">⚠ 本板块仅用于历史记录复盘练习，不作为任何投资参考。虚拟货币相关业务活动在国内属于非法金融活动，请远离炒作。</span>
+<div class="fixed top-0 left-0 right-0 z-[60] px-4 py-2 text-center" style="background:linear-gradient(90deg,#432008,#33190a);border-bottom:1px solid rgba(251,146,60,.4);">
+  <span class="text-[11px] font-semibold tracking-wide" style="color:#FDBA74;">⚠ 本板块仅用于历史记录复盘练习，不作为任何投资参考。虚拟货币相关业务活动在国内属于非法金融活动，请远离炒作。</span>
 </div>
 
 <nav class="site-nav solid" style="top:33px;">
   <div class="nav-inner">
     <a href="index.html" class="flex items-center gap-2 shrink-0">
-      <span class="w-7 h-7 rounded-md flex items-center justify-center text-white font-extrabold text-sm" style="background:linear-gradient(135deg,#0f6f83,#155e97)">C</span>
+      <span class="w-7 h-7 rounded-md flex items-center justify-center text-white font-extrabold text-sm" style="background:linear-gradient(135deg,#0C4A6E,#38BDF8)">C</span>
       <span class="font-bold tracking-wide text-sm">Chain<span style="color:var(--brand)">Academy</span></span>
     </a>
     <div class="nav-links-slot hidden lg:flex items-center gap-6 flex-1 justify-center"></div>
@@ -31,49 +50,118 @@
 </nav>
 
 <div class="container-x pt-32 pb-10">
-  <p class="sec-tag" style="color:var(--warn);">TRADE LAB · 市场认知模块</p>
+  <p class="sec-tag" style="color:var(--warn);">TRADE LAB · 隔离模块 · 仅历史复盘</p>
   <h1 class="sec-title">实操复盘实验室</h1>
-  <p class="sec-desc">上传你的历史操作记录，本地即时统计胜率、盈亏比与回撤，并累积出属于你的交易画像。所有数据只保存在你的浏览器里，不上传任何服务器。</p>
+  <p class="sec-desc">记录历史操作、回看当时的主观想法与情绪、打上心理行为标签，让 TradeBrain 累积出属于你的复盘画像。所有数据只保存在你的浏览器里，不上传任何服务器。</p>
 
-  <!-- 01 实时行情 -->
+  <!-- 01 行情预览：默认折叠，主动点击才加载 -->
+  <div class="mt-14 reveal card overflow-hidden" id="mktPanel" style="border-radius:var(--r-lg);">
+    <button class="w-full flex items-center gap-4 p-6 text-left" onclick="toggleMarket()">
+      <span class="w-9 h-9 flex items-center justify-center shrink-0" style="background:rgba(56,189,248,.1);color:var(--brand);border-radius:var(--r);">◷</span>
+      <span class="flex-1 min-w-0">
+        <span class="tag-brand block">01 · MARKET WATCH</span>
+        <span class="font-bold mt-0.5 block">实时行情预览</span>
+        <span class="text-xs block mt-0.5" style="color:var(--faint);">默认收起 —— 点开才连接数据源，不自动刷新打扰复盘</span>
+      </span>
+      <span class="chip shrink-0" id="mktChip">展开 ▾</span>
+    </button>
+    <div class="fold-body px-6 pb-6">
+      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3" id="labTicks"></div>
+      <div class="flex flex-wrap items-center gap-3 mt-4">
+        <span id="labTickSrc" class="text-[11px] tracking-[.14em]" style="color:var(--faint);">尚未连接行情源。</span>
+        <button class="btn-ghost !text-xs !py-1.5 !px-3 ml-auto" id="mktRefresh">手动刷新</button>
+      </div>
+      <p class="text-[11px] mt-3" style="color:var(--faint);">行情数据仅作信息展示，不构成投资建议；本页不提供、不引导任何买卖行为。</p>
+    </div>
+  </div>
+
+  <!-- 02 录入交易记录 -->
   <div class="mt-14 reveal">
-    <div class="flex items-baseline gap-3 mb-5"><span class="text-[#2c4266] text-xs tracking-[.3em] font-semibold">01</span><h3 class="font-bold text-lg tracking-wide">实时行情</h3><span class="text-[#3f5d85] text-[10px] tracking-[.3em]">LIVE PRICES</span></div>
-    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3" id="labTicks"></div>
-    <div id="labTickSrc" class="text-[11px] text-[#3f5d85] tracking-[.14em] mt-3">正在连接行情源…</div>
-    <p class="text-[11px] mt-2" style="color:var(--faint);">行情数据仅作信息展示，不构成投资建议；本页不提供、不引导任何买卖行为。</p>
+    <div class="flex items-baseline gap-3 mb-5"><span class="text-[#334155] text-xs tracking-[.3em] font-semibold">02</span><h3 class="font-bold text-lg tracking-wide">录入交易记录</h3><span class="text-[#475569] text-[10px] tracking-[.3em]">JOURNAL</span></div>
+
+    <div class="flex gap-2 mb-5">
+      <button class="tab-btn on" id="tabManual" onclick="switchTab('manual')">✎ 单条手动录入</button>
+      <button class="tab-btn" id="tabCsv" onclick="switchTab('csv')">⇪ CSV 批量导入</button>
+    </div>
+
+    <!-- 手动录入：客观数据 + 主观记录 -->
+    <div class="card p-7" id="paneManual">
+      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        <div><label class="f-label">日期</label><input type="date" id="fDate" class="field"></div>
+        <div><label class="f-label">币种</label><input id="fSymbol" class="field" placeholder="BTC / ETH …"></div>
+        <div><label class="f-label">方向</label><select id="fSide" class="field"><option>多</option><option>空</option></select></div>
+        <div><label class="f-label">价格</label><input id="fPrice" type="number" step="any" class="field" placeholder="0.00"></div>
+        <div><label class="f-label">数量</label><input id="fAmount" type="number" step="any" class="field" placeholder="0.00"></div>
+        <div><label class="f-label">盈亏（USDT）</label><input id="fPnl" type="number" step="any" class="field" placeholder="如 -120 / +260"></div>
+        <div class="sm:col-span-2 lg:col-span-3"><label class="f-label">开仓时想法</label><textarea id="fPlan" class="field" rows="2" placeholder="当时为什么开这单？依据是什么？"></textarea></div>
+        <div><label class="f-label">开仓情绪</label><select id="fMood" class="field"><option>平静</option><option>兴奋</option><option>焦虑</option><option>恐惧</option><option>贪婪</option><option>犹豫</option><option>懊悔</option></select></div>
+        <div class="sm:col-span-2"><label class="f-label">出场理由</label><input id="fExit" class="field" placeholder="止盈 / 止损 / 移动止盈 / 被动离场…"></div>
+        <div class="sm:col-span-2 lg:col-span-3"><label class="f-label">事后反思笔记</label><textarea id="fReflect" class="field" rows="2" placeholder="复盘：这单做对/做错了什么？下次怎么改？"></textarea></div>
+      </div>
+      <div class="mt-6">
+        <label class="f-label">心理行为标签（可多选）</label>
+        <div class="flex flex-wrap gap-2" id="fTags"></div>
+      </div>
+      <div class="flex flex-wrap gap-3 mt-7 items-center">
+        <button class="btn-primary !text-sm" id="btnSaveTrade">保存这笔记录</button>
+        <span class="text-[11px]" style="color:var(--faint);">保存后立即计入统计与交易画像</span>
+        <span id="manualMsg" class="text-xs" style="color:var(--danger);"></span>
+      </div>
+    </div>
+
+    <!-- CSV 批量 -->
+    <div class="card p-7 hidden" id="paneCsv">
+      <div id="labDrop" class="border-[1.5px] border-dashed cursor-pointer px-6 py-10 text-center transition-colors" style="border-color:rgba(56,189,248,.3);border-radius:var(--r-lg);background:var(--bg-2);">
+        <div class="text-sm" style="color:var(--dim);">把 CSV / JSON 文件拖到这里，或点击选择文件</div>
+        <div class="text-xs mt-2" style="color:var(--faint);">支持列：日期, 币种, 方向, 价格, 数量, 盈亏, 备注（中英文表头均可）</div>
+        <input type="file" id="labFile" accept=".csv,.json,.txt" class="hidden">
+      </div>
+      <div class="text-[#475569] text-[10px] tracking-[.3em] text-center my-4">—— 或直接粘贴 ——</div>
+      <textarea id="labPaste" class="field font-mono text-xs" rows="4" placeholder="日期,币种,方向,价格,数量,盈亏,备注&#10;2026-09-30,BTC,买,62000,0.01,120,突破回踩买入&#10;2026-10-02,ETH,卖,2450,0.5,-80,止损离场"></textarea>
+      <div class="flex flex-wrap gap-3 mt-4">
+        <button class="btn-primary !text-sm" id="labAnalyze">导入并分析</button>
+        <button class="btn-ghost !text-sm" id="labSample">填入示例数据</button>
+        <button class="btn-ghost !text-sm" id="labClear">清空</button>
+      </div>
+      <div id="labMsg" class="text-xs mt-4 min-h-[1rem]" style="color:var(--danger);"></div>
+    </div>
   </div>
 
-  <!-- 02 上传复盘 -->
+  <!-- 03 交易记录列表：每条可折叠展开查看主观笔记 -->
   <div class="mt-16 reveal">
-    <div class="flex items-baseline gap-3 mb-5"><span class="text-[#2c4266] text-xs tracking-[.3em] font-semibold">02</span><h3 class="font-bold text-lg tracking-wide">上传操作记录</h3><span class="text-[#3f5d85] text-[10px] tracking-[.3em]">UPLOAD & ANALYZE</span></div>
-    <div id="labDrop" class="rounded-md border-[1.5px] border-dashed cursor-pointer px-6 py-10 text-center transition-colors" style="border-color:rgba(120,180,255,.35);background:rgba(10,16,28,.4);">
-      <div class="text-sm" style="color:#9db8de;">把 CSV / JSON 文件拖到这里，或点击选择文件</div>
-      <div class="text-xs mt-2" style="color:#4a648c;">支持列：日期, 币种, 方向, 价格, 数量, 盈亏, 备注（中英文表头均可）</div>
-      <input type="file" id="labFile" accept=".csv,.json,.txt" class="hidden">
+    <div class="flex items-baseline gap-3 mb-5 flex-wrap">
+      <span class="text-[#334155] text-xs tracking-[.3em] font-semibold">03</span><h3 class="font-bold text-lg tracking-wide">交易记录</h3><span class="text-[#475569] text-[10px] tracking-[.3em]">RECORDS</span>
+      <span class="chip ml-auto" id="trCount">0 笔</span>
+      <button class="btn-ghost !text-xs !py-1.5 !px-3" id="btnClearTrades">清空全部记录</button>
     </div>
-    <div class="text-[#3f5d85] text-[10px] tracking-[.3em] text-center my-4">—— 或直接粘贴 ——</div>
-    <textarea id="labPaste" class="field font-mono text-xs" rows="4" placeholder="日期,币种,方向,价格,数量,盈亏,备注&#10;2026-09-30,BTC,买,62000,0.01,120,突破回踩买入&#10;2026-10-02,ETH,卖,2450,0.5,-80,止损离场"></textarea>
-    <div class="flex flex-wrap gap-3 mt-4">
-      <button class="btn-primary !text-sm" id="labAnalyze">分析本次记录</button>
-      <button class="btn-ghost !text-sm" id="labSample">填入示例数据</button>
-      <button class="btn-ghost !text-sm" id="labClear">清空</button>
-    </div>
-    <div id="labMsg" class="text-xs mt-4 min-h-[1rem]" style="color:var(--danger);"></div>
-    <div id="labKpi" class="hidden mt-2 grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3"></div>
-    <div id="labTable" class="mt-5 overflow-x-auto"></div>
+    <div id="trList" class="space-y-2"></div>
+    <div id="trEmpty"></div>
   </div>
 
-  <!-- 03 TradeBrain -->
+  <!-- 04 心理行为标签统计 -->
   <div class="mt-16 reveal">
-    <div class="flex items-baseline gap-3 mb-5"><span class="text-[#2c4266] text-xs tracking-[.3em] font-semibold">03</span><h3 class="font-bold text-lg tracking-wide">我的交易画像</h3><span class="text-[#3f5d85] text-[10px] tracking-[.3em]">TRADEBRAIN</span></div>
-    <div id="labBrain" class="card p-7" style="background:linear-gradient(150deg,rgba(14,24,42,.85),rgba(8,13,24,.7));"></div>
+    <div class="flex items-baseline gap-3 mb-5"><span class="text-[#334155] text-xs tracking-[.3em] font-semibold">04</span><h3 class="font-bold text-lg tracking-wide">高频行为模式</h3><span class="text-[#475569] text-[10px] tracking-[.3em]">BEHAVIOR PATTERNS</span></div>
+    <div class="card p-7" id="tagStats"></div>
+  </div>
+
+  <!-- 05 复盘统计面板 -->
+  <div class="mt-16 reveal">
+    <div class="flex items-baseline gap-3 mb-5"><span class="text-[#334155] text-xs tracking-[.3em] font-semibold">05</span><h3 class="font-bold text-lg tracking-wide">复盘统计</h3><span class="text-[#475569] text-[10px] tracking-[.3em]">STATISTICS</span></div>
+    <div id="labKpi" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3"></div>
+    <div id="labKpiEmpty"></div>
+  </div>
+
+  <!-- 06 TradeBrain 画像 + AI 四段复盘 -->
+  <div class="mt-16 reveal">
+    <div class="flex items-baseline gap-3 mb-5"><span class="text-[#334155] text-xs tracking-[.3em] font-semibold">06</span><h3 class="font-bold text-lg tracking-wide">我的交易画像 · AI 复盘</h3><span class="text-[#475569] text-[10px] tracking-[.3em]">TRADEBRAIN</span></div>
+    <div id="labBrain" class="card p-7" style="background:linear-gradient(150deg,rgba(24,31,43,.92),rgba(15,20,28,.8));"></div>
     <div class="flex flex-wrap gap-3 mt-5">
-      <button class="btn-primary !text-sm" id="labAi" disabled>🧠 AI 深度分析（DeepSeek）</button>
+      <button class="btn-primary !text-sm" id="labAi" disabled>🧠 AI 深度复盘（DeepSeek）</button>
       <button class="btn-ghost !text-sm" id="labReset">清空画像</button>
     </div>
     <div id="labOk" class="text-xs mt-4 min-h-[1rem]" style="color:var(--ok);"></div>
-    <p class="text-xs leading-[1.9] pl-4 mt-6" style="color:#4a648c;border-left:2px solid rgba(90,140,220,.3);">
-      画像只保存在你自己的浏览器里（localStorage），不会上传到任何地方；只有你点击「AI 深度分析」时，画像摘要和本次记录才会通过 GitHub Issue 发给 DeepSeek 分析，点评以评论形式出现在 Issue 里。画像随每次上传累积进化，分析会带上全部历史，越用越懂你。AI 分析仅供学习参考，不构成投资建议。
+    <p class="text-xs leading-[1.9] pl-4 mt-6" style="color:var(--faint);border-left:2px solid rgba(56,189,248,.3);">
+      画像与记录只保存在你自己的浏览器里（localStorage），不会上传到任何地方；只有你点击「AI 深度复盘」时，画像摘要、客观统计与带情绪标签的主观笔记才会通过 GitHub Issue 发给 DeepSeek，点评以评论形式出现在 Issue 里。AI 分析按 ① 交易优点 ② 缺点与心理模式 ③ 客观数据统计 ④ 可落地建议 四段结构化输出，仅供学习参考，不构成投资建议。
     </p>
   </div>
 </div>
@@ -86,21 +174,39 @@
 <script>
 renderNav('navLab');
 
-/* ---------- 01 实时行情：多源容错（国内网络优先 Gate.io / Binance 数据镜像） ---------- */
+/* ================= 心理行为标签体系（neg=负面模式 / pos=正面模式） ================= */
+const TAGS=[
+  {k:'chase',    n:'追高',       neg:1},{k:'panic',   n:'恐慌割肉',   neg:1},
+  {k:'hold',     n:'扛单',       neg:1},{k:'overtrade',n:'频繁交易',  neg:1},
+  {k:'leverage', n:'过度杠杆',   neg:1},{k:'revenge', n:'报复性交易', neg:1},
+  {k:'earlyExit',n:'止盈过急',   neg:1},
+  {k:'plan',     n:'按计划执行', neg:0},{k:'stoploss',n:'止损执行',   neg:0},
+  {k:'calm',     n:'情绪稳定',   neg:0},{k:'patient', n:'耐心持有',   neg:0},
+  {k:'sizing',   n:'仓位合理',   neg:0},
+];
+const tagByK=k=>TAGS.find(x=>x.k===k);
+const MOODS=['平静','兴奋','焦虑','恐惧','贪婪','犹豫','懊悔'];
+
+/* ================= 记录持久层：ca_trades ================= */
+const loadTrades=()=>store.get('trades',[]);
+const saveTrades=l=>store.set('trades',l);
+let openRows=new Set();
+
+/* ================= 01 行情：默认折叠，展开才连接 ================= */
 const COINS=[{sym:'BTC',okx:'BTC-USDT',bin:'BTCUSDT'},{sym:'ETH',okx:'ETH-USDT',bin:'ETHUSDT'},{sym:'SOL',okx:'SOL-USDT',bin:'SOLUSDT'},{sym:'BNB',okx:'BNB-USDT',bin:'BNBUSDT'},{sym:'XRP',okx:'XRP-USDT',bin:'XRPUSDT'},{sym:'DOGE',okx:'DOGE-USDT',bin:'DOGEUSDT'}];
-document.getElementById('labTicks').innerHTML = COINS.map(c=>`
+document.getElementById('labTicks').innerHTML=COINS.map(c=>`
   <div class="card p-4">
-    <div class="flex justify-between text-[10px] tracking-[.18em]" style="color:#9db8de;"><span>${c.sym}/USDT</span><span id="labSrc${c.sym}" style="color:#2c4266;"></span></div>
+    <div class="flex justify-between text-[10px] tracking-[.18em]" style="color:var(--dim);"><span>${c.sym}/USDT</span><span id="labSrc${c.sym}" style="color:var(--faint);"></span></div>
     <div id="labP${c.sym}" class="text-lg font-bold mt-2 tabular-nums transition-colors duration-500">—</div>
     <div id="labC${c.sym}" class="text-[11px] mt-1 tabular-nums"></div>
   </div>`).join('');
 function setPrice(sym,price,chg,src){
   const e=document.getElementById('labP'+sym), old=parseFloat(e.dataset.v||'0');
   e.textContent='$'+fmtN(price,price<1?4:2); e.dataset.v=price;
-  e.style.color = old ? (price>old?'#3ddc97':price<old?'#ff6b81':'#e8eefc') : '#e8eefc';
-  setTimeout(()=>e.style.color='#e8eefc',600);
+  e.style.color=old?(price>old?'#34D399':price<old?'#F87171':'var(--txt)'):'var(--txt)';
+  setTimeout(()=>e.style.color='var(--txt)',600);
   const c=document.getElementById('labC'+sym);
-  if(chg!=null){ c.textContent=(chg>=0?'▲ +':'▼ ')+fmtN(chg,2)+'%'; c.style.color=chg>=0?'#3ddc97':'#ff6b81'; }
+  if(chg!=null){ c.textContent=(chg>=0?'▲ +':'▼ ')+fmtN(chg,2)+'%'; c.style.color=chg>=0?'#34D399':'#F87171'; }
   const s=document.getElementById('labSrc'+sym); if(s)s.textContent=src;
 }
 const srcLine=document.getElementById('labTickSrc');
@@ -110,12 +216,60 @@ const srcs=[
   ()=>fetch('https://www.okx.com/api/v5/market/tickers?instType=SPOT').then(r=>{if(!r.ok)throw 0;return r.json();}).then(d=>{d.data.forEach(x=>{const c=COINS.find(y=>y.okx===x.instId);if(c)setPrice(c.sym,+x.last,+x.open24h?((+x.last/x.open24h-1)*100):null,'OKX');});srcLine.textContent='数据源：OKX · 每 30 秒自动刷新 · 数据仅作信息展示';}),
   ()=>fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,solana,binancecoin,ripple,dogecoin&vs_currencies=usd&include_24hr_change=true').then(r=>{if(!r.ok)throw 0;return r.json();}).then(d=>{const m={BTC:'bitcoin',ETH:'ethereum',SOL:'solana',BNB:'binancecoin',XRP:'ripple',DOGE:'dogecoin'};COINS.forEach(c=>{if(d[m[c.sym]])setPrice(c.sym,d[m[c.sym]].usd,d[m[c.sym]].usd_24h_change,'CoinGecko');});srcLine.textContent='数据源：CoinGecko · 每 30 秒自动刷新 · 数据仅作信息展示';}),
 ];
-function refresh(){ let p=Promise.reject(); srcs.forEach(fn=>{ p=p.catch(fn); }); p.catch(()=>{ srcLine.textContent='行情源暂时无法连接（可能被网络环境拦截），会自动重试。'; }); }
-refresh(); setInterval(refresh,30000);
+let mktTimer=null, mktOn=false;
+function refreshMarket(){ let p=Promise.reject(); srcs.forEach(fn=>{p=p.catch(fn);}); p.catch(()=>{srcLine.textContent='行情源暂时无法连接（可能被网络环境拦截），点「手动刷新」重试。';}); }
+function toggleMarket(force){
+  mktOn = force!=null ? force : !mktOn;
+  document.getElementById('mktPanel').classList.toggle('fold-open', mktOn);
+  document.getElementById('mktChip').textContent = mktOn ? '收起 ▴' : '展开 ▾';
+  if(mktOn && !mktTimer){ refreshMarket(); mktTimer=setInterval(refreshMarket,30000); }
+  if(!mktOn && mktTimer){ clearInterval(mktTimer); mktTimer=null; }
+}
+document.getElementById('mktRefresh').onclick=refreshMarket;
 
-/* ---------- 02 解析与统计 ---------- */
+/* ================= 02 录入：手动 / CSV 切换 ================= */
+function switchTab(tab){
+  document.getElementById('tabManual').classList.toggle('on',tab==='manual');
+  document.getElementById('tabCsv').classList.toggle('on',tab==='csv');
+  document.getElementById('paneManual').classList.toggle('hidden',tab!=='manual');
+  document.getElementById('paneCsv').classList.toggle('hidden',tab!=='csv');
+}
+/* 标签 chip 渲染（录入表单） */
+let pickedTags=new Set();
+document.getElementById('fTags').innerHTML=TAGS.map(x=>`<button type="button" class="tag-chip" data-k="${x.k}" onclick="pickTag('${x.k}',this)">${x.n}</button>`).join('');
+function pickTag(k,btn){
+  pickedTags.has(k)?pickedTags.delete(k):pickedTags.add(k);
+  const t=tagByK(k);
+  btn.classList.toggle(t.neg?'on-neg':'on-pos',pickedTags.has(k));
+}
+document.getElementById('fDate').value=new Date().toISOString().slice(0,10);
+
+/* 保存手动记录 */
+document.getElementById('btnSaveTrade').onclick=()=>{
+  const g=id=>document.getElementById(id).value.trim();
+  const symbol=g('fSymbol').toUpperCase(), pnl=parseFloat(g('fPnl'));
+  const msg=document.getElementById('manualMsg');
+  if(!symbol){ msg.textContent='请填写币种。'; return; }
+  if(isNaN(pnl)){ msg.textContent='请填写数值型盈亏。'; return; }
+  const rec={
+    id:Date.now().toString(36)+Math.random().toString(36).slice(2,5),
+    date:g('fDate')||new Date().toISOString().slice(0,10),
+    symbol, side:g('fSide'),
+    price:parseFloat(g('fPrice'))||null, amount:parseFloat(g('fAmount'))||null, pnl,
+    plan:g('fPlan'), mood:g('fMood'), exitReason:g('fExit'), reflect:g('fReflect'),
+    tags:[...pickedTags], src:'manual',
+  };
+  const list=loadTrades(); list.push(rec); saveTrades(list);
+  trainBrain(calcStats([rec]));                 /* 计入画像 */
+  renderAll();
+  msg.textContent=''; toast('已保存这笔记录');
+  ['fSymbol','fPrice','fAmount','fPnl','fPlan','fExit','fReflect'].forEach(id=>document.getElementById(id).value='');
+  pickedTags.clear();
+  document.querySelectorAll('#fTags .tag-chip').forEach(b=>b.classList.remove('on-neg','on-pos'));
+};
+
+/* ================= CSV 解析（保留原有逻辑，同时落库为记录） ================= */
 const COLMAP={date:/日期|时间|date|time/i,symbol:/币种|交易对|代码|symbol|pair|coin/i,side:/方向|买卖|类型|side|direction|type/i,price:/价格|price/i,amount:/数量|仓位|amount|qty|quantity|vol/i,pnl:/盈亏|收益|pnl|profit|roe/i,note:/备注|理由|原因|想法|note|reason/i};
-let lastBatch=null, lastParsed=[];
 function parseText(text){
   text=text.trim(); if(!text)return null;
   if(text[0]==='['||text[0]==='{'){ try{ const j=JSON.parse(text); return normalize(Array.isArray(j)?j:(j.trades||j.records||[])); }catch(e){ return null; } }
@@ -147,36 +301,146 @@ function calcStats(trades){
   const n=wp.length;
   return { n, total:wp.reduce((s,t)=>s+t.pnl,0), winRate:n?wins.length/n*100:null,
     payoff:(wins.length&&losses.length)?(gw/wins.length)/(gl/losses.length):null,
-    pf:gl>0?gw/gl:(gw>0?99:null), maxDD:dd, gw, gl, avg:n?wp.reduce((s,t)=>s+t.pnl,0)/n:null, notes:trades.filter(t=>t.note).length };
+    pf:gl>0?gw/gl:(gw>0?99:null), maxDD:dd, gw, gl, avg:n?wp.reduce((s,t)=>s+t.pnl,0)/n:null,
+    notes:trades.filter(t=>t.note||t.plan||t.reflect).length };
 }
-function renderBatch(st,trades){
-  const k=(label,val,color)=>`<div class="card px-4 py-3"><div class="text-[10px] tracking-[.2em]" style="color:#54719e;">${label}</div><div class="text-lg font-bold mt-1 tabular-nums" style="color:${color||'var(--txt)'};">${val}</div></div>`;
-  document.getElementById('labKpi').classList.remove('hidden');
-  document.getElementById('labKpi').innerHTML = k('笔数',st.n) + k('总盈亏',(st.total>=0?'+':'')+fmtN(st.total),st.total>=0?'#3ddc97':'#ff6b81')
-    + k('胜率',st.winRate==null?'—':fmtN(st.winRate,1)+'%') + k('盈亏比',st.payoff==null?'—':fmtN(st.payoff,2))
-    + k('利润因子',st.pf==null?'—':(st.pf>=99?'∞':fmtN(st.pf,2))) + k('最大回撤',fmtN(st.maxDD)) + k('单笔期望',st.avg==null?'—':fmtN(st.avg));
-  document.getElementById('labTable').innerHTML = trades.length ? `<table class="w-full text-xs" style="border-collapse:collapse">
-    <thead><tr>${['日期','币种','方向','价格','数量','盈亏','备注'].map(h=>`<th style="text-align:left;padding:.5rem .7rem;border-bottom:1px solid rgba(90,140,220,.25);color:#54719e;letter-spacing:.12em;">${h}</th>`).join('')}</tr></thead>
-    <tbody>${trades.slice(0,12).map(x=>`<tr>
-      <td style="padding:.45rem .7rem;border-bottom:1px solid rgba(90,140,220,.08);color:#b9d2f2;white-space:nowrap;">${x.date}</td>
-      <td style="padding:.45rem .7rem;border-bottom:1px solid rgba(90,140,220,.08);">${x.symbol}</td>
-      <td style="padding:.45rem .7rem;border-bottom:1px solid rgba(90,140,220,.08);">${x.side}</td>
-      <td style="padding:.45rem .7rem;border-bottom:1px solid rgba(90,140,220,.08);" class="tabular-nums">${fmtN(x.price,x.price<1?4:2)}</td>
-      <td style="padding:.45rem .7rem;border-bottom:1px solid rgba(90,140,220,.08);">${x.amount==null?'—':x.amount}</td>
-      <td style="padding:.45rem .7rem;border-bottom:1px solid rgba(90,140,220,.08);color:${x.pnl>0?'#3ddc97':x.pnl<0?'#ff6b81':'#b9d2f2'};" class="tabular-nums">${x.pnl==null||isNaN(x.pnl)?'—':(x.pnl>0?'+':'')+fmtN(x.pnl)}</td>
-      <td style="padding:.45rem .7rem;border-bottom:1px solid rgba(90,140,220,.08);color:#54719e;">${x.note||''}</td></tr>`).join('')}</tbody></table>`
-    + (trades.length>12?'<div class="text-center text-[10px] tracking-[.3em] my-3" style="color:#3f5d85;">仅预览前 12 行，分析使用全部数据</div>':'') : '';
-}
-function analyze(){
+function importCsv(){
   const trades=parseText(document.getElementById('labPaste').value);
   if(!trades||!trades.length){ document.getElementById('labMsg').textContent='没有解析到有效记录。请检查格式，或点「填入示例数据」查看示例。'; return; }
   const st=calcStats(trades);
-  if(!st.n){ document.getElementById('labMsg').textContent=`解析到 ${trades.length} 行，但缺少可用的「盈亏」列。`; renderBatch(st,trades); return; }
-  lastBatch=st; lastParsed=trades; renderBatch(st,trades); trainBrain(st);
-  document.getElementById('labMsg').textContent=''; document.getElementById('labOk').textContent=`已解析 ${trades.length} 行（${st.n} 笔有盈亏），画像已更新。`;
+  if(!st.n){ document.getElementById('labMsg').textContent=`解析到 ${trades.length} 行，但缺少可用的「盈亏」列。`; return; }
+  const list=loadTrades();
+  trades.forEach((t,i)=>list.push(Object.assign({id:'csv'+Date.now().toString(36)+i,src:'csv',tags:[],mood:'',plan:'',exitReason:t.note||'',reflect:''},t)));
+  saveTrades(list.slice(-500));
+  trainBrain(st);
+  renderAll();
+  document.getElementById('labMsg').textContent='';
+  document.getElementById('labOk').textContent=`已导入 ${trades.length} 行（${st.n} 笔有盈亏），画像已更新。`;
+}
+document.getElementById('labAnalyze').onclick=importCsv;
+document.getElementById('labSample').onclick=()=>{ document.getElementById('labPaste').value='日期,币种,方向,价格,数量,盈亏,备注\n2026-09-22,BTC,买,61200,0.02,260,趋势回踩买入\n2026-09-24,BTC,卖,62800,0.02,180,到达目标止盈\n2026-09-26,ETH,买,2380,1,-120,追涨被套止损\n2026-09-28,SOL,买,148,20,340,突破买入\n2026-09-30,ETH,卖,2460,1,90,反弹减仓\n2026-10-01,BTC,买,63500,0.01,-200,假突破止损\n2026-10-02,SOL,卖,155,20,160,分批止盈\n2026-10-03,BTC,卖,64100,0.01,150,移动止盈'; importCsv(); };
+document.getElementById('labClear').onclick=()=>{ document.getElementById('labPaste').value=''; document.getElementById('labMsg').textContent=''; };
+const drop=document.getElementById('labDrop'), file=document.getElementById('labFile');
+drop.onclick=()=>file.click();
+drop.ondragover=e=>{ e.preventDefault(); drop.style.borderColor='rgba(56,189,248,.8)'; };
+drop.ondragleave=()=>drop.style.borderColor='rgba(56,189,248,.3)';
+drop.ondrop=e=>{ e.preventDefault(); drop.style.borderColor='rgba(56,189,248,.3)'; const f=e.dataTransfer.files[0]; if(f)readF(f); };
+file.onchange=()=>{ if(file.files[0])readF(file.files[0]); };
+function readF(f){ const r=new FileReader(); r.onload=()=>{ document.getElementById('labPaste').value=r.result; importCsv(); }; r.readAsText(f); }
+
+/* ================= 03 记录列表：可折叠展开主观笔记 ================= */
+function renderList(){
+  const list=loadTrades();
+  document.getElementById('trCount').textContent=list.length+' 笔';
+  const box=document.getElementById('trList');
+  if(!list.length){
+    box.innerHTML='';
+    document.getElementById('trEmpty').innerHTML=`<div class="empty mt-4"><span class="empty-icon">✎</span>还没有交易记录。用上方表单录入第一笔，或 CSV 批量导入。</div>`;
+    return;
+  }
+  document.getElementById('trEmpty').innerHTML='';
+  box.innerHTML=list.slice().reverse().map(r=>{
+    const open=openRows.has(r.id);
+    const pnlC=r.pnl>0?'#34D399':r.pnl<0?'#F87171':'var(--dim)';
+    const rows=[
+      r.plan?['开仓时想法',r.plan]:null,
+      r.mood?['开仓情绪',r.mood]:null,
+      r.exitReason?['出场理由',r.exitReason]:null,
+      r.reflect?['事后反思',r.reflect]:null,
+      r.note?['备注',r.note]:null,
+    ].filter(Boolean);
+    return `<div class="card overflow-hidden trx ${open?'trx-open':''}" id="trx-${r.id}">
+      <div class="trx-head flex items-center gap-3 px-5 py-3.5 transition-colors" onclick="toggleRow('${r.id}')">
+        <span class="text-[11px] tabular-nums shrink-0" style="color:var(--faint);min-width:78px;">${r.date}</span>
+        <span class="font-bold text-sm">${r.symbol||'—'}</span>
+        <span class="chip !text-[10px] !py-0.5 !px-2">${r.side||'—'}</span>
+        ${r.tags&&r.tags.length?`<span class="text-[10px]" style="color:var(--faint);">${r.tags.length} 个标签</span>`:''}
+        <span class="ml-auto text-sm font-bold tabular-nums shrink-0" style="color:${pnlC};">${r.pnl==null||isNaN(r.pnl)?'—':(r.pnl>0?'+':'')+fmtN(r.pnl)}</span>
+        <span class="text-[10px] shrink-0 transition-transform duration-300" style="color:var(--faint);transform:rotate(${open?180:0}deg);">▾</span>
+      </div>
+      <div class="trx-body"><div class="px-5 pb-5 pt-1" style="border-top:1px solid var(--line);">
+        <div class="grid sm:grid-cols-3 gap-3 text-xs mt-3">
+          <div><span style="color:var(--faint);">价格</span> <span class="tabular-nums">${fmtN(r.price,r.price<1?4:2)}</span></div>
+          <div><span style="color:var(--faint);">数量</span> ${r.amount==null?'—':r.amount}</div>
+          <div><span style="color:var(--faint);">来源</span> ${r.src==='csv'?'CSV 导入':'手动录入'}</div>
+        </div>
+        ${rows.length?`<div class="mt-3 space-y-1.5 text-xs leading-relaxed">${rows.map(x=>`<div><span class="tag-brand" style="letter-spacing:.15em;">${x[0]}</span> <span style="color:var(--dim);">${esc(x[1])}</span></div>`).join('')}</div>`:''}
+        <div class="flex flex-wrap items-center gap-2 mt-4">
+          <span class="text-[10px] tracking-[.2em]" style="color:var(--faint);">复盘标签</span>
+          ${TAGS.map(x=>`<button class="tag-chip ${r.tags&&r.tags.includes(x.k)?(x.neg?'on-neg':'on-pos'):''}" onclick="toggleRowTag('${r.id}','${x.k}')">${x.n}</button>`).join('')}
+          <button class="text-[11px] ml-auto hover:underline" style="color:var(--danger);" onclick="delTrade('${r.id}')">删除</button>
+        </div>
+      </div></div>
+    </div>`;
+  }).join('');
+}
+function toggleRow(id){
+  openRows.has(id)?openRows.delete(id):openRows.add(id);
+  const el=document.getElementById('trx-'+id);
+  if(el) el.classList.toggle('trx-open');
+}
+function toggleRowTag(rid,k){
+  const list=loadTrades(), r=list.find(x=>x.id===rid);
+  if(!r)return;
+  r.tags=r.tags||[];
+  const i=r.tags.indexOf(k);
+  i>=0?r.tags.splice(i,1):r.tags.push(k);
+  saveTrades(list); renderList(); renderTagStats();
+}
+function delTrade(rid){
+  saveTrades(loadTrades().filter(x=>x.id!==rid));
+  openRows.delete(rid); renderAll(); toast('已删除该记录');
+}
+document.getElementById('btnClearTrades').onclick=()=>{
+  if(!confirm('确定清空全部交易记录？（画像不受影响）'))return;
+  saveTrades([]); openRows.clear(); renderAll(); toast('记录已清空');
+};
+
+/* ================= 04 高频行为模式统计 ================= */
+function renderTagStats(){
+  const list=loadTrades();
+  const cnt={};
+  list.forEach(r=>(r.tags||[]).forEach(k=>cnt[k]=(cnt[k]||0)+1));
+  const entries=Object.keys(cnt).map(k=>({t:tagByK(k),n:cnt[k]})).filter(x=>x.t).sort((a,b)=>b.n-a.n);
+  const box=document.getElementById('tagStats');
+  if(!entries.length){
+    box.innerHTML=`<div class="text-sm leading-[1.9]" style="color:var(--faint);">还没有标签数据。展开任意一条交易记录，为它打上心理行为标签，这里会自动统计你的高频行为模式：负面模式（橙）是需要修炼的，正面模式（绿）是值得保持的。</div>`;
+    return;
+  }
+  const max=entries[0].n;
+  const neg=entries.filter(x=>x.t.neg).reduce((s,x)=>s+x.n,0);
+  const pos=entries.filter(x=>!x.t.neg).reduce((s,x)=>s+x.n,0);
+  box.innerHTML=`
+    <div class="flex flex-wrap gap-3 mb-6 text-[11px]">
+      <span class="chip" style="border-color:rgba(251,146,60,.5);color:var(--warn);">负面模式 ${neg} 次</span>
+      <span class="chip" style="border-color:rgba(52,211,153,.5);color:var(--ok);">正面模式 ${pos} 次</span>
+      <span class="chip">模式比 ${pos}:${neg}</span>
+    </div>
+    <div class="space-y-3">${entries.map(x=>`
+      <div class="grid grid-cols-[96px_1fr_36px] items-center gap-3">
+        <span class="text-xs" style="color:${x.t.neg?'var(--warn)':'var(--ok)'};">${x.t.n}</span>
+        <div class="track" style="height:8px;"><div class="fill" style="width:${x.n/max*100}%;background:linear-gradient(90deg,${x.t.neg?'#9A3412,#FB923C':'#065F46,#34D399'});box-shadow:none;"></div></div>
+        <span class="text-xs font-bold text-right tabular-nums">${x.n}</span>
+      </div>`).join('')}</div>`;
 }
 
-/* ---------- 03 TradeBrain 画像 ---------- */
+/* ================= 05 复盘统计面板 ================= */
+function renderStats(){
+  const st=calcStats(loadTrades());
+  const box=document.getElementById('labKpi');
+  if(!st.n){
+    box.innerHTML='';
+    document.getElementById('labKpiEmpty').innerHTML=`<div class="empty mt-4"><span class="empty-icon">◈</span>暂无可用统计 —— 录入带盈亏的记录后自动展示。</div>`;
+    return;
+  }
+  document.getElementById('labKpiEmpty').innerHTML='';
+  const k=(label,val,color)=>`<div class="card px-4 py-3"><div class="text-[10px] tracking-[.2em]" style="color:var(--faint);">${label}</div><div class="text-lg font-bold mt-1 tabular-nums" style="color:${color||'var(--txt)'};">${val}</div></div>`;
+  box.innerHTML=k('笔数',st.n)+k('总盈亏',(st.total>=0?'+':'')+fmtN(st.total),st.total>=0?'#34D399':'#F87171')
+    +k('胜率',st.winRate==null?'—':fmtN(st.winRate,1)+'%')+k('盈亏比',st.payoff==null?'—':fmtN(st.payoff,2))
+    +k('利润因子',st.pf==null?'—':(st.pf>=99?'∞':fmtN(st.pf,2)))+k('最大回撤',fmtN(st.maxDD))+k('单笔期望',st.avg==null?'—':fmtN(st.avg));
+}
+
+/* ================= 06 TradeBrain 画像（保留原逻辑） ================= */
 const BKEY='tradebrain_v1';
 const loadB=()=>{ try{ return JSON.parse(localStorage.getItem(BKEY))||null; }catch(e){ return null; } };
 function brainCalc(b){
@@ -211,58 +475,65 @@ function trainBrain(st){
 function renderBrain(){
   const b=loadB(), card=document.getElementById('labBrain');
   if(!b||!b.trades){
-    card.innerHTML=`<div class="text-sm leading-[1.9]" style="color:#4a648c;">还没有画像。上传第一批操作记录，TradeBrain 会开始为你累积交易画像：<br>· 每次上传都会进化等级与称号<br>· 五个维度：经验 / 盈利 / 风控 / 纪律 / 一致性<br>· 标签系统识别你的决策风格与弱点<br>· 画像会喂给 DeepSeek，AI 分析一次比一次懂你</div>`;
+    card.innerHTML=`<div class="text-sm leading-[1.9]" style="color:var(--faint);">还没有画像。录入第一批操作记录，TradeBrain 会开始为你累积交易画像：<br>· 每次录入都会进化等级与称号<br>· 五个维度：经验 / 盈利 / 风控 / 纪律 / 一致性<br>· 行为标签系统识别你的决策模式与心理弱点<br>· 主观笔记与情绪会喂给 DeepSeek，四段式复盘一次比一次懂你</div>`;
     document.getElementById('labAi').disabled=true; return;
   }
   const c=brainCalc(b);
   card.innerHTML=`
     <div class="flex flex-wrap items-center gap-6">
-      <div class="w-24 h-24 rounded-full flex flex-col items-center justify-center shrink-0" style="border:2px solid rgba(120,230,255,.55);box-shadow:0 0 24px rgba(96,225,255,.3),inset 0 0 18px rgba(96,225,255,.12);">
+      <div class="w-24 h-24 rounded-full flex flex-col items-center justify-center shrink-0" style="border:2px solid rgba(56,189,248,.55);box-shadow:0 0 24px rgba(56,189,248,.28),inset 0 0 18px rgba(56,189,248,.1);">
         <div class="text-2xl font-extrabold">Lv.${c.lv}</div><div class="text-[9px] tracking-[.2em] mt-1" style="color:var(--brand);">TRADER</div>
       </div>
       <div>
         <div class="text-xl font-bold tracking-wide">${c.persona}</div>
-        <div class="text-xs mt-1.5" style="color:#6d8ab5;">累计 ${b.trades} 笔 · ${b.uploads} 次上传 · 总盈亏 ${(b.total>=0?'+':'')+fmtN(b.total)}</div>
+        <div class="text-xs mt-1.5" style="color:var(--dim);">累计 ${b.trades} 笔 · ${b.uploads} 次录入 · 总盈亏 ${(b.total>=0?'+':'')+fmtN(b.total)}</div>
         <div class="flex flex-wrap gap-2 mt-3">${c.tags.map(x=>`<span class="chip !text-[11px]">${x}</span>`).join('')}</div>
       </div>
     </div>
     <div class="mt-7 space-y-3">${Object.keys(c.dims).map(k=>`
       <div class="grid grid-cols-[64px_1fr_44px] items-center gap-3">
-        <span class="text-xs tracking-[.18em]" style="color:#6d8ab5;">${k}</span>
+        <span class="text-xs tracking-[.18em]" style="color:var(--dim);">${k}</span>
         <div class="track"><div class="fill" style="width:${c.dims[k]}%;"></div></div>
         <span class="text-sm font-bold text-right tabular-nums">${c.dims[k]}</span>
       </div>`).join('')}</div>`;
   document.getElementById('labAi').disabled=false;
 }
-renderBrain();
 
-document.getElementById('labAnalyze').onclick=analyze;
-document.getElementById('labSample').onclick=()=>{ document.getElementById('labPaste').value='日期,币种,方向,价格,数量,盈亏,备注\n2026-09-22,BTC,买,61200,0.02,260,趋势回踩买入\n2026-09-24,BTC,卖,62800,0.02,180,到达目标止盈\n2026-09-26,ETH,买,2380,1,-120,追涨被套止损\n2026-09-28,SOL,买,148,20,340,突破买入\n2026-09-30,ETH,卖,2460,1,90,反弹减仓\n2026-10-01,BTC,买,63500,0.01,-200,假突破止损\n2026-10-02,SOL,卖,155,20,160,分批止盈\n2026-10-03,BTC,卖,64100,0.01,150,移动止盈'; analyze(); };
-document.getElementById('labClear').onclick=()=>{ document.getElementById('labPaste').value=''; document.getElementById('labMsg').textContent=''; };
-const drop=document.getElementById('labDrop'), file=document.getElementById('labFile');
-drop.onclick=()=>file.click();
-drop.ondragover=e=>{ e.preventDefault(); drop.style.borderColor='rgba(120,230,255,.8)'; };
-drop.ondragleave=()=>drop.style.borderColor='rgba(120,180,255,.35)';
-drop.ondrop=e=>{ e.preventDefault(); drop.style.borderColor='rgba(120,180,255,.35)'; const f=e.dataTransfer.files[0]; if(f)readF(f); };
-file.onchange=()=>{ if(file.files[0])readF(file.files[0]); };
-function readF(f){ const r=new FileReader(); r.onload=()=>{ document.getElementById('labPaste').value=r.result; analyze(); }; r.readAsText(f); }
-
+/* ================= AI 四段结构化复盘（DeepSeek via GitHub Issue） ================= */
 document.getElementById('labAi').onclick=()=>{
   const b=loadB();
-  if(!b||!lastBatch){ document.getElementById('labMsg').textContent='请先上传并分析一批记录。'; return; }
+  if(!b){ document.getElementById('labMsg').textContent='请先录入并分析一批记录。'; return; }
   const c=brainCalc(b);
-  const rows=lastParsed.filter(x=>x.pnl!=null&&!isNaN(x.pnl)).slice(-30).map(x=>`| ${x.date} | ${x.symbol} | ${x.side} | ${(x.pnl>0?'+':'')+x.pnl} | ${x.note||'—'} |`).join('\n');
-  const body='## 实盘分析请求（第 '+b.uploads+' 次）\n\n### 交易画像（TradeBrain 累积）\n'
-    +'- 等级：Lv.'+c.lv+' '+c.persona+'\n- 累计：'+b.trades+' 笔 / 胜率 '+fmtN(c.wr,1)+'% / 利润因子 '+(c.pf>=99?'∞':fmtN(c.pf,2))+' / 最大回撤 '+fmtN(b.maxDD)+'\n'
+  const trades=loadTrades().filter(x=>x.pnl!=null&&!isNaN(x.pnl)).slice(-30);
+  /* 客观数据 + 主观笔记（含情绪）双通道 */
+  const objRows=trades.map(x=>`| ${x.date} | ${x.symbol} | ${x.side} | ${(x.pnl>0?'+':'')+x.pnl} | ${x.tags&&x.tags.length?x.tags.map(k=>tagByK(k).n).join('/') :'—'} |`).join('\n');
+  const subjRows=trades.filter(x=>x.plan||x.reflect||x.mood).map(x=>`| ${x.date} ${x.symbol} | 情绪:${x.mood||'—'} | 开仓想法:${x.plan||'—'} | 出场:${x.exitReason||'—'} | 反思:${x.reflect||'—'} |`).join('\n');
+  const cnt={};
+  loadTrades().forEach(r=>(r.tags||[]).forEach(k=>cnt[k]=(cnt[k]||0)+1));
+  const tagLine=Object.keys(cnt).sort((a,b)=>cnt[b]-cnt[a]).slice(0,6).map(k=>tagByK(k).n+'×'+cnt[k]).join('、')||'（无）';
+  const body='## 实盘复盘请求（第 '+b.uploads+' 次 · 四段结构化输出）\n\n'
+    +'### 交易画像（TradeBrain 累积）\n'
+    +'- 等级：Lv.'+c.lv+' '+c.persona+'\n'
+    +'- 累计：'+b.trades+' 笔 / 胜率 '+(c.wr==null?'—':fmtN(c.wr,1)+'%')+' / 利润因子 '+(c.pf>=99?'∞':fmtN(c.pf,2))+' / 最大回撤 '+fmtN(b.maxDD)+'\n'
     +'- 风格标签：'+c.tags.join('、')+'\n'
+    +'- 高频行为标签：'+tagLine+'\n'
     +'- 维度：经验 '+c.dims['经验']+' / 盈利 '+c.dims['盈利']+' / 风控 '+c.dims['风控']+' / 纪律 '+c.dims['纪律']+' / 一致性 '+c.dims['一致性']+'\n\n'
-    +'### 最近记录（最多 30 笔）\n| 日期 | 币种 | 方向 | 盈亏 | 备注 |\n|---|---|---|---|---|\n'+(rows||'（无）')
-    +'\n\n### 请分析\n1. 结合画像指出我最核心的 1-2 个问题\n2. 给出下周就能执行的具体改进动作\n';
-  const title='【实盘分析】'+new Date().toISOString().slice(0,10)+' 第'+b.uploads+'次';
+    +'### 客观数据（最近最多 30 笔）\n| 日期 | 币种 | 方向 | 盈亏 | 行为标签 |\n|---|---|---|---|---|\n'+(objRows||'（无）')+'\n\n'
+    +'### 主观记录（开仓想法 / 情绪 / 出场理由 / 反思）\n| 标的 | 情绪 | 开仓想法 | 出场 | 反思 |\n|---|---|---|---|---|\n'+(subjRows||'（无）')+'\n\n'
+    +'### 请严格按以下四段结构输出\n'
+    +'#### ① 你的交易优点\n（结合客观数据与主观笔记，指出值得保持的 2-3 点）\n'
+    +'#### ② 暴露的缺点与心理模式\n（结合情绪与行为标签，指出最核心的 1-2 个心理模式）\n'
+    +'#### ③ 客观数据统计\n（核对胜率/盈亏比/回撤等数据，给出与画像维度的一致性评价）\n'
+    +'#### ④ 可落地的改进建议\n（下周就能执行的具体动作，3-5 条，可检查）\n';
+  const title='【实盘复盘】'+new Date().toISOString().slice(0,10)+' 第'+b.uploads+'次';
   window.open('https://github.com/lhk20060417-dev/crypto-learning/issues/new?labels='+encodeURIComponent('实盘分析')+'&title='+encodeURIComponent(title)+'&body='+encodeURIComponent(body),'_blank');
-  document.getElementById('labOk').textContent='已在 GitHub 打开预填好的分析请求，点击「Create」后约 40 秒，DeepSeek 点评会作为评论出现在 Issue 里。仅供学习参考，不构成投资建议。';
+  document.getElementById('labOk').textContent='已在 GitHub 打开预填好的四段式复盘请求，点击「Create」后约 40 秒，DeepSeek 点评会作为评论出现在 Issue 里。仅供学习参考，不构成投资建议。';
 };
-document.getElementById('labReset').onclick=()=>{ localStorage.removeItem(BKEY); lastBatch=null; lastParsed=[]; renderBrain(); document.getElementById('labOk').textContent='画像已清空。'; };
+document.getElementById('labReset').onclick=()=>{ localStorage.removeItem(BKEY); renderBrain(); document.getElementById('labOk').textContent='画像已清空。'; };
+
+/* ================= 启动渲染 ================= */
+function renderAll(){ renderList(); renderTagStats(); renderStats(); renderBrain(); }
+renderAll();
 </script>
 </body>
 </html>

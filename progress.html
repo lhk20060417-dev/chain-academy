@@ -13,7 +13,7 @@
 <nav class="site-nav solid">
   <div class="nav-inner">
     <a href="index.html" class="flex items-center gap-2 shrink-0">
-      <span class="w-7 h-7 rounded-md flex items-center justify-center text-white font-extrabold text-sm" style="background:linear-gradient(135deg,#0f6f83,#155e97)">C</span>
+      <span class="w-7 h-7 rounded-md flex items-center justify-center text-white font-extrabold text-sm" style="background:linear-gradient(135deg,#0C4A6E,#38BDF8)">C</span>
       <span class="font-bold tracking-wide text-sm">Chain<span style="color:var(--brand)">Academy</span></span>
     </a>
     <div class="nav-links-slot hidden lg:flex items-center gap-6 flex-1 justify-center"></div>
@@ -36,9 +36,9 @@
       <div class="text-[10px] tracking-[.3em] font-semibold self-start mb-6" style="color:var(--faint);">OVERALL</div>
       <div class="relative w-48 h-48">
         <svg viewBox="0 0 120 120" class="w-full h-full -rotate-90">
-          <circle cx="60" cy="60" r="52" fill="none" stroke="rgba(148,180,255,.1)" stroke-width="9"/>
+          <circle cx="60" cy="60" r="52" fill="none" stroke="rgba(148,163,184,.1)" stroke-width="9"/>
           <circle id="donut" cx="60" cy="60" r="52" fill="none" stroke="url(#pg1)" stroke-width="9" stroke-linecap="round" stroke-dasharray="326.7" stroke-dashoffset="326.7" style="transition:stroke-dashoffset 1.4s cubic-bezier(.2,.8,.3,1)"/>
-          <defs><linearGradient id="pg1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4dd0e1"/><stop offset="1" stop-color="#38b6ff"/></linearGradient></defs>
+          <defs><linearGradient id="pg1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#38BDF8"/><stop offset="1" stop-color="#7DD3FC"/></linearGradient></defs>
         </svg>
         <div class="absolute inset-0 flex flex-col items-center justify-center">
           <div class="text-4xl font-extrabold" id="overallPct">0%</div>
@@ -103,7 +103,7 @@ if(!records.length){
   rl.innerHTML = `<div class="empty"><span class="empty-icon">◷</span>还没有学习记录。从 <a href="roadmap.html" style="color:var(--brand);">学习路线</a> 开始第一章吧。</div>`;
 } else {
   rl.innerHTML = `<div class="card divide-y" style="--tw-divide-opacity:1;">` + records.slice(0,12).map(r => `
-    <a class="flex items-center gap-4 px-6 py-4 transition-colors hover:bg-[rgba(77,208,225,.05)]" href="${r.type==='exam' ? 'chapter.html?exam='+r.id : 'chapter.html?id='+encodeURIComponent(r.id)}">
+    <a class="flex items-center gap-4 px-6 py-4 transition-colors hover:bg-[rgba(56,189,248,.05)]" href="${r.type==='exam' ? 'chapter.html?exam='+r.id : 'chapter.html?id='+encodeURIComponent(r.id)}">
       <span class="text-lg" style="color:${r.type==='exam'?'var(--warn)':'var(--brand)'};">${r.type==='exam'?'✎':'●'}</span>
       <span class="flex-1">
         <span class="block text-sm font-medium">${esc(r.title)}</span>

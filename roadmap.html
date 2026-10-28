@@ -9,14 +9,18 @@
 <link rel="stylesheet" href="css/vars.css">
 <style>
 .tl{position:relative;}
-.tl::before{content:''; position:absolute; left:19px; top:8px; bottom:8px; width:2px; background:linear-gradient(180deg, rgba(77,208,225,.5), rgba(148,180,255,.08));}
-.tl-dot{position:relative; z-index:1; width:40px; height:40px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; flex-shrink:0; border:2px solid var(--line-strong); background:var(--bg-2); color:var(--faint); transition:all .4s;}
-.tl-item[data-state="active"] .tl-dot{border-color:var(--brand); color:#062a30; background:var(--brand); box-shadow:0 0 22px rgba(77,208,225,.55);}
-.tl-item[data-state="done"] .tl-dot{border-color:rgba(61,220,151,.7); color:#062a30; background:var(--ok); box-shadow:0 0 16px rgba(61,220,151,.4);}
+.tl::before{content:''; position:absolute; left:19px; top:8px; bottom:8px; width:2px; background:linear-gradient(180deg, rgba(56,189,248,.5), rgba(148,163,184,.08));}
+.tl-dot{position:relative; z-index:1; width:40px; height:40px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; flex-shrink:0; border:2px solid var(--line-strong); background:transparent; color:var(--faint); transition:all .4s;}
+/* 进行中：蓝色微光 */
+.tl-item[data-state="active"] .tl-dot{border-color:var(--brand); color:#062a30; background:var(--brand); box-shadow:0 0 22px rgba(56,189,248,.55),0 0 48px rgba(56,189,248,.18); animation:nodeGlow 3.2s ease-in-out infinite;}
+/* 已完成：绿色微光 */
+.tl-item[data-state="done"] .tl-dot{border-color:rgba(52,211,153,.7); color:#052e22; background:var(--ok); box-shadow:0 0 18px rgba(52,211,153,.5),0 0 40px rgba(52,211,153,.14);}
+/* 未解锁：仅轮廓 */
+@keyframes nodeGlow{0%,100%{box-shadow:0 0 22px rgba(56,189,248,.55),0 0 48px rgba(56,189,248,.18);}50%{box-shadow:0 0 30px rgba(56,189,248,.8),0 0 64px rgba(56,189,248,.28);}}
 .tl-item{opacity:.45; transition:opacity .4s;}
 .tl-item[data-state="active"],.tl-item[data-state="done"]{opacity:1;}
 .ch-row{display:flex; align-items:center; gap:12px; padding:10px 14px; border-radius:var(--r); transition:background .25s; cursor:pointer; font-size:.86rem;}
-.ch-row:hover{background:rgba(77,208,225,.07);}
+.ch-row:hover{background:rgba(56,189,248,.07);}
 .ch-row.locked{cursor:not-allowed;}
 .ch-row.locked:hover{background:none;}
 .ch-children{overflow:hidden; transition:max-height .45s cubic-bezier(.2,.8,.3,1), opacity .35s;}
@@ -27,7 +31,7 @@
 <nav class="site-nav solid">
   <div class="nav-inner">
     <a href="index.html" class="flex items-center gap-2 shrink-0">
-      <span class="w-7 h-7 rounded-md flex items-center justify-center text-white font-extrabold text-sm" style="background:linear-gradient(135deg,#0f6f83,#155e97)">C</span>
+      <span class="w-7 h-7 rounded-md flex items-center justify-center text-white font-extrabold text-sm" style="background:linear-gradient(135deg,#0C4A6E,#38BDF8)">C</span>
       <span class="font-bold tracking-wide text-sm">Chain<span style="color:var(--brand)">Academy</span></span>
     </a>
     <div class="nav-links-slot hidden lg:flex items-center gap-6 flex-1 justify-center"></div>
@@ -51,9 +55,9 @@
         <div class="card p-7">
           <div class="relative w-36 h-36 mx-auto">
             <svg viewBox="0 0 120 120" class="w-full h-full -rotate-90">
-              <circle cx="60" cy="60" r="52" fill="none" stroke="rgba(148,180,255,.1)" stroke-width="9"/>
+              <circle cx="60" cy="60" r="52" fill="none" stroke="rgba(148,163,184,.1)" stroke-width="9"/>
               <circle id="sideDonut" cx="60" cy="60" r="52" fill="none" stroke="url(#sg1)" stroke-width="9" stroke-linecap="round" stroke-dasharray="326.7" stroke-dashoffset="326.7" style="transition:stroke-dashoffset 1.2s cubic-bezier(.2,.8,.3,1)"/>
-              <defs><linearGradient id="sg1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4dd0e1"/><stop offset="1" stop-color="#38b6ff"/></linearGradient></defs>
+              <defs><linearGradient id="sg1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#38BDF8"/><stop offset="1" stop-color="#7DD3FC"/></linearGradient></defs>
             </svg>
             <div class="absolute inset-0 flex flex-col items-center justify-center">
               <div class="text-3xl font-extrabold" id="sidePct">0%</div>
@@ -114,7 +118,7 @@ function renderTimeline(){
                 <span class="text-[11px]" style="color:var(--faint);">${c.quiz.length? c.quiz.length+' 题' : t('read')} · ${c.dur}</span>
               </div>`;
             }).join('')}
-            ${exam ? `<div class="ch-row" style="border:1px dashed ${examSt==='locked'?'var(--line-strong)':'rgba(77,208,225,.45)'};margin-top:6px;"
+            ${exam ? `<div class="ch-row" style="border:1px dashed ${examSt==='locked'?'var(--line-strong)':'rgba(56,189,248,.45)'};margin-top:6px;"
               ${examSt==='locked'?'data-tip="'+t('examLocked')+'" onclick="event.stopPropagation();"':''}
               onclick="location.href='chapter.html?exam=${s.id}'">
               <span style="color:${examSt==='done'?'var(--ok)':'var(--brand)'};">${examSt==='done'?'✓':'✎'}</span>

@@ -9,9 +9,9 @@
 <link rel="stylesheet" href="css/vars.css">
 <style>
 .opt-sm{border:1px solid var(--line-strong); border-radius:var(--r); padding:8px 12px; cursor:pointer; transition:all .25s; color:var(--dim); font-size:.8rem;}
-.opt-sm:hover{border-color:rgba(77,208,225,.55); color:var(--txt);}
-.opt-sm.correct{border-color:var(--ok); color:var(--ok); background:rgba(61,220,151,.08);}
-.opt-sm.wrong{border-color:var(--danger); color:var(--danger); background:rgba(255,107,129,.08);}
+.opt-sm:hover{border-color:rgba(56,189,248,.55); color:var(--txt);}
+.opt-sm.correct{border-color:var(--ok); color:var(--ok); background:rgba(52,211,153,.08);}
+.opt-sm.wrong{border-color:var(--danger); color:var(--danger); background:rgba(248,113,113,.08);}
 </style>
 </head>
 <body>
@@ -19,7 +19,7 @@
 <nav class="site-nav solid">
   <div class="nav-inner">
     <a href="index.html" class="flex items-center gap-2 shrink-0">
-      <span class="w-7 h-7 rounded-md flex items-center justify-center text-white font-extrabold text-sm" style="background:linear-gradient(135deg,#0f6f83,#155e97)">C</span>
+      <span class="w-7 h-7 rounded-md flex items-center justify-center text-white font-extrabold text-sm" style="background:linear-gradient(135deg,#0C4A6E,#38BDF8)">C</span>
       <span class="font-bold tracking-wide text-sm">Chain<span style="color:var(--brand)">Academy</span></span>
     </a>
     <div class="nav-links-slot hidden lg:flex items-center gap-6 flex-1 justify-center"></div>
@@ -86,7 +86,7 @@ function renderErrors(){
     return `<div class="card p-6" id="er-${i}">
       <div class="flex items-center justify-between gap-2">
         <span class="tag-brand">${o ? o.stage.num+' · '+o.stage.title : '阶段考核'}</span>
-        ${w.done ? `<span class="chip !text-[10px]" style="border-color:rgba(61,220,151,.5);color:var(--ok);">✓ ${t('mastered')}</span>` : ''}
+        ${w.done ? `<span class="chip !text-[10px]" style="border-color:rgba(52,211,153,.5);color:var(--ok);">✓ ${t('mastered')}</span>` : ''}
       </div>
       <div class="text-sm font-medium mt-3 leading-relaxed">${esc(w.q)}</div>
       ${q ? `
