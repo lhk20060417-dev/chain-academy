@@ -3,7 +3,7 @@
 import re, json, os, html
 
 SRC = os.path.join(os.path.dirname(__file__), '..', 'crypto-learning')
-OUT = os.path.join(os.path.dirname(__file__), 'content.js')
+OUT = os.path.join(os.path.dirname(__file__), 'js', 'content.js')
 
 STAGE_DEFS = [
   dict(dir='01-basics', id='s1', num='01', title='认知地基', en='FOUNDATIONS', risky=False, quiz='10-quiz',

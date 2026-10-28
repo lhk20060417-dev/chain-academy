@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>答疑反馈 · Chain Academy</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/vars.css">
+</head>
+<body>
+
+<nav class="site-nav solid">
+  <div class="nav-inner">
+    <a href="index.html" class="flex items-center gap-2 shrink-0">
+      <span class="w-7 h-7 rounded-md flex items-center justify-center text-white font-extrabold text-sm" style="background:linear-gradient(135deg,#0f6f83,#155e97)">C</span>
+      <span class="font-bold tracking-wide text-sm">Chain<span style="color:var(--brand)">Academy</span></span>
+    </a>
+    <div class="nav-links-slot hidden lg:flex items-center gap-6 flex-1 justify-center"></div>
+    <div class="flex items-center gap-2 shrink-0">
+      <button class="lang-sw chip !py-1.5" data-lang="zh">中文</button>
+      <button class="lang-sw chip !py-1.5" data-lang="en">EN</button>
+      <button class="cta-continue btn-primary !py-2 !px-4 !text-xs">继续上次学习</button>
+    </div>
+  </div>
+</nav>
+
+<div class="container-x pt-28 pb-10 max-w-3xl">
+  <p class="sec-tag">FEEDBACK</p>
+  <h1 class="sec-title">答疑反馈</h1>
+  <p class="sec-desc">记录你在学习中遇到的疑问，保存在浏览器本地，方便整理后向老师或社区提问。</p>
+
+  <form id="fbForm" class="card p-7 mt-10 space-y-6 reveal">
+    <div>
+      <label class="f-label" data-i18n="fbChapter">当前章节</label>
+      <select id="fbChapter" class="field"></select>
+    </div>
+    <div>
+      <label class="f-label" data-i18n="fbQuestion">问题描述</label>
+      <textarea id="fbQuestion" class="field" rows="4" required placeholder="例如：为什么 51% 攻击在算力分散时很难发生？"></textarea>
+    </div>
+    <div>
+      <label class="f-label" data-i18n="fbNote">备注（选填）</label>
+      <input id="fbNote" class="field" placeholder="截图编号 / 相关概念 / 你的理解">
+    </div>
+    <button type="submit" class="btn-primary" data-i18n="fbSubmit">保存疑问</button>
+  </form>
+
+  <div class="mt-12 reveal d1">
+    <div class="text-[10px] tracking-[.3em] font-semibold mb-5" style="color:var(--faint);">HISTORY · 历史疑问</div>
+    <div id="fbHistory" class="space-y-3"></div>
+  </div>
+</div>
+
+<div class="footer-slot"></div>
+
+<script src="js/content.js"></script>
+<script src="js/storage.js"></script>
+<script src="js/animate.js"></script>
+<script>
+renderNav('navFeedback');
+const FKEY = 'feedback';
+
+function renderForm(){
+  document.getElementById('fbChapter').innerHTML =
+    `<option value="">${t('pickChapter')}</option>` +
+    ORDER.map(o => `<option value="${o.ch.id}">${o.stage.num} · ${o.ch.title}</option>`).join('');
+}
+function renderHistory(){
+  const list = store.get(FKEY, []);
+  const box = document.getElementById('fbHistory');
+  if(!list.length){
+    box.innerHTML = `<div class="empty"><span class="empty-icon">✎</span>还没有记录过疑问。</div>`;
+    return;
+  }
+  box.innerHTML = list.slice().reverse().map(f => {
+    const o = ORDER.find(x => x.ch.id === f.ch);
+    return `<div class="card p-5">
+      <div class="flex justify-between text-[11px]" style="color:var(--faint);">
+        <span style="color:var(--brand);">${o ? o.ch.title : '（章节已调整）'}</span><span>${f.date}</span>
+      </div>
+      <div class="text-sm mt-2 leading-relaxed">${esc(f.q)}</div>
+      ${f.note ? `<div class="text-xs mt-2" style="color:var(--faint);">备注：${esc(f.note)}</div>` : ''}
+      <button class="text-[11px] mt-3 hover:underline" style="color:var(--danger);" onclick="delFb('${f.id}')">删除</button>
+    </div>`;
+  }).join('');
+}
+document.getElementById('fbForm').addEventListener('submit', e => {
+  e.preventDefault();
+  const qv = document.getElementById('fbQuestion').value.trim();
+  if(!qv){ toast(t('needQuestion')); return; }
+  const list = store.get(FKEY, []);
+  list.push({ id: Date.now().toString(36), ch: document.getElementById('fbChapter').value, q: qv, note: document.getElementById('fbNote').value.trim(), date: new Date().toISOString().slice(0,10) });
+  store.set(FKEY, list);
+  document.getElementById('fbQuestion').value = '';
+  document.getElementById('fbNote').value = '';
+  renderHistory(); toast(t('saved'));
+});
+function delFb(id){
+  store.set(FKEY, store.get(FKEY, []).filter(f => f.id !== id));
+  renderHistory(); toast(t('cleared'));
+}
+renderForm(); renderHistory();
+</script>
+</body>
+</html>

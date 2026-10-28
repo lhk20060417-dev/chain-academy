@@ -4,1102 +4,199 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Chain Academy · 区块链通识学院</title>
-<meta name="description" content="零基础循序渐进学习区块链底层知识，配套章节习题、进度追踪。仅用于理论知识学习，不提供任何行情、交易、理财服务。">
+<meta name="description" content="系统化区块链通识自学体系：循序渐进 · 自测校验 · 本地留存。仅用于技术理论学习，不构成投资建议。">
 <script src="https://cdn.tailwindcss.com"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/vars.css">
 <style>
-:root{
-  --bg:#070b14; --bg2:#0a101d; --line:rgba(148,180,255,.10);
-  --txt:#e8eefc; --dim:#8ba3c7; --faint:#5b719a;
-  --accent:#4dd0e1; --accent2:#38b6ff;
-}
-html{scroll-behavior:smooth; scroll-padding-top:110px;}
-body{background:var(--bg); color:var(--txt); font-family:'Inter',-apple-system,BlinkMacSystemFont,'PingFang SC','Segoe UI',sans-serif; -webkit-font-smoothing:antialiased;}
-::selection{background:rgba(77,208,225,.3);}
-.font-en{letter-spacing:.28em;}
-.hero-bg{position:absolute; inset:0; overflow:hidden; pointer-events:none;}
+.hero-min{min-height:100vh;}
 .orb{position:absolute; border-radius:50%; filter:blur(90px); opacity:.5; animation:drift 16s ease-in-out infinite alternate;}
-.orb.a{width:520px;height:520px; background:radial-gradient(circle,rgba(56,182,255,.20),transparent 70%); top:-140px; right:-80px;}
-.orb.b{width:420px;height:420px; background:radial-gradient(circle,rgba(77,208,225,.16),transparent 70%); bottom:-120px; left:-60px; animation-delay:-6s;}
-.ring{position:absolute; border:1px solid rgba(148,180,255,.07); border-radius:50%;}
+.orb.a{width:520px;height:520px; background:radial-gradient(circle,rgba(56,182,255,.18),transparent 70%); top:-140px; right:-80px;}
+.orb.b{width:420px;height:420px; background:radial-gradient(circle,rgba(77,208,225,.14),transparent 70%); bottom:-120px; left:-60px; animation-delay:-6s;}
+.ring-line{position:absolute; border:1px solid rgba(148,180,255,.07); border-radius:50%;}
 @keyframes drift{from{transform:translate(0,0) scale(1);}to{transform:translate(-40px,30px) scale(1.08);}}
-.reveal{opacity:0; transform:translateY(26px); transition:opacity .8s cubic-bezier(.2,.8,.25,1), transform .8s cubic-bezier(.2,.8,.25,1);}
-.reveal.in{opacity:1; transform:none;}
-.reveal.d1{transition-delay:.08s;} .reveal.d2{transition-delay:.16s;} .reveal.d3{transition-delay:.24s;} .reveal.d4{transition-delay:.32s;}
-.lift{transition:transform .35s ease, box-shadow .35s ease, border-color .35s ease;}
-.lift:hover{transform:translateY(-6px); box-shadow:0 18px 44px rgba(0,0,0,.45), 0 0 0 1px rgba(77,208,225,.25); border-color:rgba(77,208,225,.4)!important;}
-.glass{background:rgba(12,18,32,.72); backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);}
-.navlink{position:relative; color:var(--dim); font-size:.82rem; letter-spacing:.06em; transition:color .3s; white-space:nowrap;}
-.navlink:hover{color:var(--txt);}
-.navlink::after{content:''; position:absolute; left:0; bottom:-5px; width:0; height:1.5px; background:var(--accent); transition:width .3s;}
-.navlink:hover::after{width:100%;}
-.btn-primary{background:linear-gradient(135deg,#0f6f83,#155e97); color:#eafcff; transition:all .3s; box-shadow:0 8px 26px rgba(56,182,255,.22);}
-.btn-primary:hover{box-shadow:0 10px 34px rgba(56,182,255,.4); transform:translateY(-2px);}
-.btn-ghost{border:1px solid rgba(148,180,255,.28); color:var(--txt); transition:all .3s;}
-.btn-ghost:hover{border-color:rgba(77,208,225,.7); background:rgba(77,208,225,.08);}
-.chip{border:1px solid rgba(148,180,255,.18); border-radius:999px; font-size:.68rem; letter-spacing:.14em; color:var(--dim); padding:.3rem .9rem;}
-.scroll-hint{position:absolute; left:50%; bottom:28px; transform:translateX(-50%); display:flex; flex-direction:column; align-items:center; gap:8px; color:var(--faint); font-size:.62rem; letter-spacing:.42em;}
+.scroll-hint{position:absolute; left:50%; bottom:28px; transform:translateX(-50%); display:flex; flex-direction:column; align-items:center; gap:8px; color:var(--faint); font-size:10px; letter-spacing:.42em;}
 .scroll-hint .chev{width:12px;height:12px; border-right:1.5px solid var(--faint); border-bottom:1.5px solid var(--faint); transform:rotate(45deg); animation:hint 2.2s ease-in-out infinite;}
 @keyframes hint{0%,100%{opacity:.4; transform:rotate(45deg) translate(0,0);}50%{opacity:1; transform:rotate(45deg) translate(4px,4px);}}
-/* 时间轴 */
-.tl{position:relative;}
-.tl::before{content:''; position:absolute; left:19px; top:8px; bottom:8px; width:2px; background:linear-gradient(180deg, rgba(77,208,225,.5), rgba(148,180,255,.08));}
-.tl-dot{position:relative; z-index:1; width:40px; height:40px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:.72rem; font-weight:700; flex-shrink:0; border:2px solid rgba(148,180,255,.2); background:var(--bg2); color:var(--faint); transition:all .4s;}
-.tl-item[data-state="active"] .tl-dot{border-color:var(--accent); color:#062a30; background:var(--accent); box-shadow:0 0 22px rgba(77,208,225,.55);}
-.tl-item[data-state="done"] .tl-dot{border-color:rgba(61,220,151,.7); color:#062a30; background:#3ddc97; box-shadow:0 0 16px rgba(61,220,151,.4);}
-.tl-item{opacity:.45; transition:opacity .4s;}
-.tl-item[data-state="active"],.tl-item[data-state="done"]{opacity:1;}
-.tl-item.unlocked{cursor:pointer;}
-.tl-item.unlocked:hover .tl-card{border-color:rgba(77,208,225,.5); transform:translateY(-3px);}
-.tl-card{transition:all .35s;}
-/* 卡片状态 */
-.card-locked{opacity:.45; filter:saturate(.4);}
-.card-locked:hover{transform:none!important; box-shadow:none!important; border-color:rgba(148,180,255,.1)!important; cursor:not-allowed;}
-.lock-badge{position:absolute; top:.9rem; right:.9rem; color:var(--faint); font-size:.7rem; letter-spacing:.12em;}
-.done-badge{position:absolute; top:.9rem; right:.9rem; color:#3ddc97; font-size:.7rem; letter-spacing:.12em;}
-.progress-track{height:6px; border-radius:999px; background:rgba(148,180,255,.1); overflow:hidden;}
-.progress-fill{height:100%; border-radius:999px; background:linear-gradient(90deg,#1c6e8c,var(--accent)); box-shadow:0 0 8px rgba(77,208,225,.5); transition:width 1.2s cubic-bezier(.2,.8,.3,1);}
-/* 自测 */
-.opt{border:1px solid rgba(148,180,255,.16); border-radius:12px; padding:.75rem 1rem; cursor:pointer; transition:all .25s; color:var(--dim); font-size:.9rem;}
-.opt:hover{border-color:rgba(77,208,225,.55); color:var(--txt); background:rgba(77,208,225,.06);}
-.opt.correct{border-color:#3ddc97; color:#3ddc97; background:rgba(61,220,151,.08);}
-.opt.wrong{border-color:#ff6b81; color:#ff6b81; background:rgba(255,107,129,.08);}
-.opt.picked:not(.correct):not(.wrong){border-color:var(--accent2); color:var(--txt);}
-.q-num{width:26px;height:26px; border-radius:8px; background:rgba(148,180,255,.1); color:var(--dim); font-size:.72rem; display:inline-flex; align-items:center; justify-content:center; font-weight:600;}
-/* 表单 */
-.field{width:100%; background:var(--bg2); border:1px solid rgba(148,180,255,.16); border-radius:12px; color:var(--txt); font-size:.9rem; padding:.8rem 1rem; transition:border-color .3s;}
-.field:focus{outline:none; border-color:rgba(77,208,225,.7); box-shadow:0 0 0 3px rgba(77,208,225,.12);}
-select.field option{background:#0d1424;}
-/* 弹层 */
-.modal-mask{position:fixed; inset:0; background:rgba(4,7,13,.82); backdrop-filter:blur(6px); z-index:60; display:none; align-items:center; justify-content:center; padding:1.2rem;}
-.modal-mask.open{display:flex; animation:fadeIn .3s ease;}
-.modal-box{max-width:860px; width:100%; max-height:88vh; overflow-y:auto; background:linear-gradient(180deg,#0d1424,#080d18); border:1px solid rgba(148,180,255,.14); border-radius:20px; animation:popIn .35s cubic-bezier(.2,.8,.3,1.1);}
-@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
-@keyframes popIn{from{opacity:0; transform:translateY(24px) scale(.97);}to{opacity:1; transform:none;}}
-.modal-box::-webkit-scrollbar{width:8px;} .modal-box::-webkit-scrollbar-thumb{background:rgba(148,180,255,.15); border-radius:999px;}
-/* toast */
-#toast{position:fixed; bottom:26px; left:50%; transform:translateX(-50%) translateY(80px); background:#0e2233; border:1px solid rgba(77,208,225,.5); color:#d9f6ff; font-size:.84rem; padding:.75rem 1.4rem; border-radius:999px; z-index:80; transition:transform .4s cubic-bezier(.2,.8,.3,1.1); box-shadow:0 12px 40px rgba(0,0,0,.5);}
-#toast.show{transform:translateX(-50%) translateY(0);}
-/* 文章正文排版 */
-.article p{color:#b9cbe8; line-height:1.95; margin:0 0 1.1rem; font-size:.95rem;}
-.article h4{color:var(--txt); font-weight:700; margin:1.8rem 0 .8rem; letter-spacing:.05em;}
-.article ul{color:#b9cbe8; line-height:1.9; padding-left:1.2rem; margin-bottom:1.1rem; font-size:.95rem; list-style:disc;}
-.article strong{color:var(--txt);}
-.sec-tag{font-size:.66rem; letter-spacing:.4em; color:var(--accent); font-weight:600;}
-.sec-title{font-size:clamp(1.6rem,3.4vw,2.6rem); font-weight:800; letter-spacing:.02em; margin-top:.6rem;}
-.hr-fade{height:1px; background:linear-gradient(90deg,transparent,rgba(148,180,255,.16),transparent);}
-@media (max-width:768px){ html{scroll-padding-top:130px;} }
+.risk-strip{position:fixed; top:0; left:0; right:0; z-index:60; height:32px; background:#f4f6fa; color:#26324a; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:500; letter-spacing:.03em; padding:0 16px;}
+.risk-fab{position:fixed; right:24px; bottom:24px; z-index:70;}
+@media (prefers-reduced-motion:reduce){.orb,.scroll-hint .chev{animation:none;}}
 </style>
 </head>
-<body class="antialiased">
+<body>
 
-<!-- ===== 固定悬浮导航 ===== -->
-<header class="fixed top-3 inset-x-0 z-40 flex justify-center px-4">
-  <nav class="glass border border-[rgba(148,180,255,.12)] rounded-full pl-5 pr-2 py-2 flex items-center gap-5 md:gap-7 shadow-[0_10px_40px_rgba(0,0,0,.4)] max-w-full overflow-x-auto">
-    <a href="#home" class="flex items-center gap-2 shrink-0">
-      <span class="w-7 h-7 rounded-lg bg-gradient-to-br from-[#0f6f83] to-[#155e97] flex items-center justify-center text-white font-extrabold text-sm shadow-[0_0_16px_rgba(56,182,255,.45)]">C</span>
-      <span class="font-bold tracking-wide text-sm">Chain<span class="text-[#4dd0e1]">Academy</span></span>
-    </a>
-    <div class="hidden lg:flex items-center gap-6">
-      <a class="navlink" href="#home" data-i18n="navHome">首页</a>
-      <a class="navlink" href="#roadmap" data-i18n="navRoadmap">学习路线</a>
-      <a class="navlink" href="#library" data-i18n="navLibrary">章节库</a>
-      <a class="navlink" href="#lab" data-i18n="navLab">分析室</a>
-      <a class="navlink" href="#progress" data-i18n="navProgress">进度总览</a>
-      <a class="navlink" href="#errors" data-i18n="navErrors">错题复盘</a>
-      <a class="navlink" href="#risk" data-i18n="navRisk">风险须知</a>
-    </div>
-    <div class="flex items-center gap-2 shrink-0">
-      <div class="relative">
-        <button id="langBtn" class="text-[#8ba3c7] hover:text-white text-xs tracking-widest border border-[rgba(148,180,255,.18)] rounded-full px-3 py-2 transition-colors">中文 ▾</button>
-        <div id="langMenu" class="hidden absolute right-0 mt-2 w-28 glass border border-[rgba(148,180,255,.14)] rounded-xl overflow-hidden text-xs">
-          <button data-lang="zh" class="w-full text-left px-4 py-2.5 hover:bg-[rgba(77,208,225,.12)]">中文</button>
-          <button data-lang="en" class="w-full text-left px-4 py-2.5 hover:bg-[rgba(77,208,225,.12)]">English</button>
-        </div>
-      </div>
-      <a href="#roadmap" id="ctaContinue" class="btn-primary rounded-full px-4 md:px-5 py-2 text-xs md:text-sm font-semibold whitespace-nowrap" data-i18n="ctaContinue">继续上次学习</a>
-    </div>
-  </nav>
-</header>
-
-<!-- ===== 1. Hero 全屏首屏 ===== -->
-<section id="home" class="relative min-h-screen flex items-center overflow-hidden">
-  <div class="hero-bg">
-    <div class="orb a"></div><div class="orb b"></div>
-    <div class="ring" style="width:640px;height:640px;top:-220px;right:-180px;"></div>
-    <div class="ring" style="width:900px;height:900px;top:-350px;right:-310px;opacity:.6;"></div>
-    <div class="ring" style="width:460px;height:460px;bottom:-160px;left:-140px;"></div>
-  </div>
-  <div class="relative max-w-7xl mx-auto px-6 pt-40 pb-28 w-full">
-    <div class="reveal"><p class="sec-tag">CHAIN ACADEMY · BLOCKCHAIN LITERACY</p></div>
-    <h1 class="reveal d1 mt-5 font-extrabold leading-[1.06] tracking-tight" style="font-size:clamp(2.6rem,7vw,5.2rem);">
-      <span data-i18n="heroTitleA">区块链通识学院</span><br>
-      <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#4dd0e1] via-[#38b6ff] to-[#7ea8ff]" data-i18n="heroTitleB">从底层逻辑理解世界</span>
-    </h1>
-    <p class="reveal d2 mt-7 text-[#8ba3c7] text-base md:text-lg max-w-xl leading-relaxed" data-i18n="heroIntro">零基础循序渐进学习区块链底层知识，配套章节自测、线性解锁与学习进度管理。纯理论自学站点，不涉及任何交易行为。</p>
-    <div class="reveal d3 mt-10 flex flex-wrap gap-4">
-      <a href="#roadmap" class="btn-primary rounded-full px-8 py-3.5 font-semibold text-sm" data-i18n="heroBtnStart">开始学习</a>
-      <a href="#library" class="btn-ghost rounded-full px-8 py-3.5 font-semibold text-sm" data-i18n="heroBtnRoadmap">查看章节库</a>
-    </div>
-    <div class="reveal d4 mt-16 grid grid-cols-2 md:grid-cols-4 gap-px rounded-2xl overflow-hidden border border-[rgba(148,180,255,.1)] max-w-3xl">
-      <div class="bg-[rgba(12,18,32,.6)] p-5"><div class="text-2xl font-extrabold" id="statChapters">12</div><div class="text-[11px] tracking-[.2em] text-[#5b719a] mt-1" data-i18n="statChapters">章节</div></div>
-      <div class="bg-[rgba(12,18,32,.6)] p-5"><div class="text-2xl font-extrabold" id="statQuestions">36</div><div class="text-[11px] tracking-[.2em] text-[#5b719a] mt-1" data-i18n="statQuestions">自测题</div></div>
-      <div class="bg-[rgba(12,18,32,.6)] p-5"><div class="text-2xl font-extrabold" id="statStages">4</div><div class="text-[11px] tracking-[.2em] text-[#5b719a] mt-1" data-i18n="statStages">学习阶段</div></div>
-      <div class="bg-[rgba(12,18,32,.6)] p-5"><div class="text-2xl font-extrabold">100%</div><div class="text-[11px] tracking-[.2em] text-[#5b719a] mt-1" data-i18n="statLocal">本地存储</div></div>
-    </div>
-  </div>
-  <div class="scroll-hint"><span data-i18n="scrollHint">SCROLL</span><span class="chev"></span></div>
-</section>
-
-<!-- ===== 2. Learning Roadmap 学习路线 ===== -->
-<section id="roadmap" class="relative py-28">
-  <div class="max-w-7xl mx-auto px-6">
-    <div class="reveal"><p class="sec-tag">LEARNING ROADMAP</p>
-      <h2 class="sec-title" data-i18n="roadmapTitle">学习路线</h2>
-      <p class="text-[#8ba3c7] mt-4 max-w-xl text-sm leading-relaxed" data-i18n="roadmapDesc">四个阶段按顺序线性解锁：通过当前章节自测（60 分合格）才能解锁下一章；完成阶段全部章节后解锁阶段考核。</p>
-    </div>
-    <div class="mt-14 tl space-y-8" id="timeline"></div>
-  </div>
-</section>
-
-<div class="hr-fade max-w-7xl mx-auto"></div>
-
-<!-- ===== 3. Core Knowledge 核心知识体系 + 风险科普 ===== -->
-<section id="framework" class="py-28">
-  <div class="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-14 items-start">
-    <div class="reveal">
-      <p class="sec-tag">CORE KNOWLEDGE</p>
-      <h2 class="sec-title" data-i18n="coreTitle">这套学习框架是如何设计的</h2>
-      <div class="mt-8 space-y-6 text-[#b9cbe8] text-sm leading-[1.9]">
-        <p><strong>以「理解」而非「操作」为目标。</strong>全部内容围绕区块链的底层原理展开：数据结构、密码学、共识机制、智能合约与监管环境。教程刻意不涉及任何行情、交易与理财内容，帮助学习者建立不受市场噪音干扰的清醒认知。</p>
-        <p><strong>先目标，后路径。</strong>每个章节开头明确学习目标，正文讲透概念，结尾用自测题校验理解程度。错题自动进入复盘区，支持二次练习。</p>
-        <p><strong>进度属于你自己。</strong>所有学习记录仅保存在你的浏览器本地存储中，不上传任何服务器，清除浏览器数据前可先用进度总览自查。</p>
-      </div>
-      <div class="mt-8 grid grid-cols-3 gap-3">
-        <div class="rounded-xl border border-[rgba(148,180,255,.12)] p-4"><div class="text-[#4dd0e1] font-extrabold text-xl">01</div><div class="text-xs text-[#8ba3c7] mt-1" data-i18n="coreF1">概念先行</div></div>
-        <div class="rounded-xl border border-[rgba(148,180,255,.12)] p-4"><div class="text-[#4dd0e1] font-extrabold text-xl">02</div><div class="text-xs text-[#8ba3c7] mt-1" data-i18n="coreF2">自测校验</div></div>
-        <div class="rounded-xl border border-[rgba(148,180,255,.12)] p-4"><div class="text-[#4dd0e1] font-extrabold text-xl">03</div><div class="text-xs text-[#8ba3c7] mt-1" data-i18n="coreF3">错题复盘</div></div>
-      </div>
-    </div>
-    <!-- 风险科普子板块 -->
-    <div class="reveal d2 rounded-2xl border border-[rgba(255,150,80,.25)] bg-gradient-to-b from-[rgba(60,30,10,.35)] to-[rgba(12,18,32,.6)] p-8" id="risk">
-      <div class="flex items-center gap-2 text-[#ffb066] text-xs tracking-[.3em] font-semibold">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 9v4m0 4h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z" stroke="#ffb066" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        RISK NOTICE · 风险科普
-      </div>
-      <h3 class="mt-4 text-xl font-bold" data-i18n="riskTitle">虚拟货币的风险与国内监管规定</h3>
-      <div class="mt-5 space-y-4 text-[#cdb9a8] text-sm leading-[1.85]">
-        <p><strong class="text-[#ffd9b3]">监管定性。</strong>2021 年，中国人民银行等十部门联合发布《关于进一步防范和处置虚拟货币交易炒作风险的通知》，明确虚拟货币不具有法偿性，相关业务活动属于非法金融活动；境外交易所向境内居民提供服务也属非法。</p>
-        <p><strong class="text-[#ffd9b3]">不受法律保护。</strong>投资交易虚拟货币引发的损失自行承担，相关民事法律行为无效，不受法律保护。</p>
-        <p><strong class="text-[#ffd9b3]">典型风险。</strong>价格剧烈波动、传销与非法集资、钓鱼诈骗、私钥丢失无法找回。任何声称「稳赚不赔」「保本高收益」的项目都应视为诈骗信号。</p>
-        <p class="text-[#8a94a8] text-xs border-t border-[rgba(255,150,80,.15)] pt-4">本站不提供行情、交易、钱包充值、提币等任何功能，不链接任何交易所，仅用于区块链技术理论的学习与自测。</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<div class="hr-fade max-w-7xl mx-auto"></div>
-
-<!-- ===== 4. Chapter Library 章节库 ===== -->
-<section id="library" class="py-28">
-  <div class="max-w-7xl mx-auto px-6">
-    <div class="reveal flex flex-wrap items-end justify-between gap-4">
-      <div><p class="sec-tag">CHAPTER LIBRARY</p>
-        <h2 class="sec-title" data-i18n="libraryTitle">章节库</h2>
-        <p class="text-[#8ba3c7] mt-4 text-sm max-w-lg" data-i18n="libraryDesc">每一章都包含知识点正文与配套自测。灰色卡片尚未解锁，按顺序通过自测即可逐步解锁。</p>
-      </div>
-      <div class="chip" id="libProgressChip">0 / 12</div>
-    </div>
-    <div class="mt-12 grid sm:grid-cols-2 lg:grid-cols-3 gap-5" id="chapterGrid"></div>
-  </div>
-</section>
-
-<div class="hr-fade max-w-7xl mx-auto"></div>
-
-<!-- ===== Lab 实盘分析室（市场认知模块） ===== -->
-<section id="lab" class="py-28">
-  <div class="max-w-7xl mx-auto px-6">
-    <div class="reveal">
-      <p class="sec-tag">TRADE LAB · MARKET COGNITION</p>
-      <h2 class="sec-title">实盘分析室</h2>
-      <p class="text-[#8ba3c7] mt-4 text-sm max-w-xl leading-relaxed">上传你的历史操作记录，本地即时统计胜率、盈亏比与回撤，并累积出属于你的交易画像。所有数据只保存在你的浏览器里。</p>
-    </div>
-    <div class="reveal d1 mt-6 rounded-2xl border border-[rgba(255,150,80,.3)] bg-[rgba(60,30,10,.3)] px-5 py-4 text-xs leading-relaxed text-[#ffcf9e]">
-      ⚠ 风险提示：本模块仅用于个人操作记录的学习与复盘，帮助你理解风险、认识自己的决策模式。虚拟货币相关业务活动在国内属于非法金融活动，不受法律保护。行情数据仅作信息展示，本站不提供、不引导任何买卖行为，不构成投资建议。
-    </div>
-
-    <!-- 01 实时行情 -->
-    <div class="mt-16 reveal">
-      <div class="flex items-baseline gap-3 mb-5"><span class="text-[#2c4266] text-xs tracking-[.3em] font-semibold">01</span><h3 class="font-bold text-xl tracking-wide">实时行情</h3><span class="text-[#3f5d85] text-[10px] tracking-[.3em]">LIVE PRICES</span></div>
-      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3" id="labTicks"></div>
-      <div id="labTickSrc" class="text-[11px] text-[#3f5d85] tracking-[.14em] mt-3">正在连接行情源…</div>
-    </div>
-
-    <!-- 02 上传复盘 -->
-    <div class="mt-16 reveal">
-      <div class="flex items-baseline gap-3 mb-5"><span class="text-[#2c4266] text-xs tracking-[.3em] font-semibold">02</span><h3 class="font-bold text-xl tracking-wide">上传操作记录</h3><span class="text-[#3f5d85] text-[10px] tracking-[.3em]">UPLOAD & ANALYZE</span></div>
-      <div id="labDrop" class="rounded-2xl border-[1.5px] border-dashed border-[rgba(120,180,255,.35)] bg-[rgba(10,16,28,.4)] px-6 py-10 text-center cursor-pointer transition-colors hover:border-[rgba(120,230,255,.8)] hover:bg-[rgba(16,30,48,.6)]">
-        <div class="text-[#9db8de] text-sm tracking-wide">把 CSV / JSON 文件拖到这里，或点击选择文件</div>
-        <div class="text-[#4a648c] text-xs mt-2">支持列：日期, 币种, 方向, 价格, 数量, 盈亏, 备注（中英文表头均可）</div>
-        <input type="file" id="labFile" accept=".csv,.json,.txt" class="hidden">
-      </div>
-      <div class="text-[#3f5d85] text-[10px] tracking-[.3em] text-center my-4">—— 或直接粘贴 ——</div>
-      <textarea id="labPaste" class="field font-mono text-xs" rows="4" placeholder="日期,币种,方向,价格,数量,盈亏,备注&#10;2026-09-30,BTC,买,62000,0.01,120,突破回踩买入&#10;2026-10-02,ETH,卖,2450,0.5,-80,止损离场"></textarea>
-      <div class="flex flex-wrap gap-3 mt-4">
-        <button class="btn-primary rounded-full px-6 py-2.5 text-sm font-semibold" id="labAnalyze">分析本次记录</button>
-        <button class="btn-ghost rounded-full px-6 py-2.5 text-sm" id="labSample">填入示例数据</button>
-        <button class="btn-ghost rounded-full px-6 py-2.5 text-sm" id="labClear">清空</button>
-      </div>
-      <div id="labMsg" class="text-[#ff9db0] text-xs mt-4 min-h-[1rem]"></div>
-      <div id="labKpi" class="hidden mt-2 grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3"></div>
-      <div id="labTable" class="mt-5 overflow-x-auto"></div>
-    </div>
-
-    <!-- 03 TradeBrain 画像 -->
-    <div class="mt-16 reveal">
-      <div class="flex items-baseline gap-3 mb-5"><span class="text-[#2c4266] text-xs tracking-[.3em] font-semibold">03</span><h3 class="font-bold text-xl tracking-wide">我的交易画像</h3><span class="text-[#3f5d85] text-[10px] tracking-[.3em]">TRADEBRAIN</span></div>
-      <div id="labBrain" class="rounded-2xl border border-[rgba(120,180,255,.25)] bg-gradient-to-br from-[rgba(14,24,42,.85)] to-[rgba(8,13,24,.7)] p-7 shadow-[0_10px_40px_rgba(0,0,0,.4)]"></div>
-      <div class="flex flex-wrap gap-3 mt-5">
-        <button class="btn-primary rounded-full px-6 py-2.5 text-sm font-semibold" id="labAi" disabled>🧠 AI 深度分析（DeepSeek）</button>
-        <button class="btn-ghost rounded-full px-6 py-2.5 text-sm" id="labReset">清空画像</button>
-      </div>
-      <div id="labOk" class="text-[#3ddc97] text-xs mt-4 min-h-[1rem]"></div>
-      <p class="text-[#4a648c] text-xs leading-[1.9] border-l-2 border-[rgba(90,140,220,.3)] pl-4 mt-6">
-        画像只保存在你自己的浏览器里（localStorage），不会上传到任何地方；只有你点击「AI 深度分析」时，画像摘要和本次记录才会通过 GitHub Issue 发给 DeepSeek 分析，点评以评论形式出现在 Issue 里。画像随每次上传累积进化，分析会带上全部历史，越用越懂你。
-      </p>
-    </div>
-  </div>
-</section>
-
-<div class="hr-fade max-w-7xl mx-auto"></div>
-
-<!-- ===== 5. Study System 学习机制 ===== -->
-<section id="system" class="py-28">
-  <div class="max-w-7xl mx-auto px-6">
-    <div class="reveal"><p class="sec-tag">STUDY SYSTEM</p>
-      <h2 class="sec-title" data-i18n="sysTitle">学习机制</h2>
-    </div>
-    <div class="mt-12 grid md:grid-cols-4 gap-5">
-      <div class="reveal lift rounded-2xl border border-[rgba(148,180,255,.12)] bg-[rgba(12,18,32,.5)] p-7">
-        <div class="text-[#4dd0e1] font-extrabold text-2xl">⇒</div>
-        <h4 class="font-bold mt-4" data-i18n="sys1T">线性解锁</h4>
-        <p class="text-[#8ba3c7] text-sm mt-2 leading-relaxed" data-i18n="sys1D">章节严格按顺序开放。通过当前章自测（≥60 分）解锁下一章，确保基础扎实。</p>
-      </div>
-      <div class="reveal d1 lift rounded-2xl border border-[rgba(148,180,255,.12)] bg-[rgba(12,18,32,.5)] p-7">
-        <div class="text-[#4dd0e1] font-extrabold text-2xl">✓</div>
-        <h4 class="font-bold mt-4" data-i18n="sys2T">自测合格规则</h4>
-        <p class="text-[#8ba3c7] text-sm mt-2 leading-relaxed" data-i18n="sys2D">每章 3 题即时判分；未通过可反复重练，错题自动汇入错题复盘区。</p>
-      </div>
-      <div class="reveal d2 lift rounded-2xl border border-[rgba(148,180,255,.12)] bg-[rgba(12,18,32,.5)] p-7">
-        <div class="text-[#4dd0e1] font-extrabold text-2xl">◎</div>
-        <h4 class="font-bold mt-4" data-i18n="sys3T">本地保存</h4>
-        <p class="text-[#8ba3c7] text-sm mt-2 leading-relaxed" data-i18n="sys3D">进度、成绩、错题全部保存在浏览器 localStorage，无需注册，不上传服务器。</p>
-      </div>
-      <div class="reveal d3 lift rounded-2xl border border-[rgba(148,180,255,.12)] bg-[rgba(12,18,32,.5)] p-7">
-        <div class="text-[#4dd0e1] font-extrabold text-2xl">↺</div>
-        <h4 class="font-bold mt-4" data-i18n="sys4T">记忆断点</h4>
-        <p class="text-[#8ba3c7] text-sm mt-2 leading-relaxed" data-i18n="sys4D">右上角「继续上次学习」会带你回到最近打开的章节，从断点接着学。</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<div class="hr-fade max-w-7xl mx-auto"></div>
-
-<!-- ===== 6. Completion Assessment 阶段考核 ===== -->
-<section id="assessment" class="py-28">
-  <div class="max-w-7xl mx-auto px-6">
-    <div class="reveal"><p class="sec-tag">COMPLETION ASSESSMENT</p>
-      <h2 class="sec-title" data-i18n="asmTitle">阶段考核</h2>
-      <p class="text-[#8ba3c7] mt-4 text-sm max-w-lg" data-i18n="asmDesc">完成本阶段全部章节后解锁综合考卷，70 分通过。综合考检验整阶段知识的融会贯通。</p>
-    </div>
-    <div class="mt-12 grid sm:grid-cols-2 lg:grid-cols-4 gap-5" id="examGrid"></div>
-  </div>
-</section>
-
-<div class="hr-fade max-w-7xl mx-auto"></div>
-
-<!-- ===== 7. Progress Overview 进度总览 ===== -->
-<section id="progress" class="py-28">
-  <div class="max-w-7xl mx-auto px-6">
-    <div class="reveal"><p class="sec-tag">PROGRESS OVERVIEW</p>
-      <h2 class="sec-title" data-i18n="pgTitle">学习进度</h2>
-    </div>
-    <div class="mt-12 grid lg:grid-cols-3 gap-8 items-center">
-      <div class="reveal flex justify-center">
-        <div class="relative w-56 h-56">
-          <svg viewBox="0 0 120 120" class="w-full h-full -rotate-90">
-            <circle cx="60" cy="60" r="52" fill="none" stroke="rgba(148,180,255,.1)" stroke-width="9"/>
-            <circle id="donut" cx="60" cy="60" r="52" fill="none" stroke="url(#g1)" stroke-width="9" stroke-linecap="round" stroke-dasharray="326.7" stroke-dashoffset="326.7" style="transition:stroke-dashoffset 1.4s cubic-bezier(.2,.8,.3,1)"/>
-            <defs><linearGradient id="g1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4dd0e1"/><stop offset="1" stop-color="#38b6ff"/></linearGradient></defs>
-          </svg>
-          <div class="absolute inset-0 flex flex-col items-center justify-center">
-            <div class="text-4xl font-extrabold" id="overallPct">0%</div>
-            <div class="text-[10px] tracking-[.3em] text-[#5b719a] mt-1" data-i18n="pgOverall">总体完成率</div>
-          </div>
-        </div>
-      </div>
-      <div class="reveal d1 lg:col-span-2 grid sm:grid-cols-3 gap-4">
-        <div class="rounded-2xl border border-[rgba(148,180,255,.12)] bg-[rgba(12,18,32,.5)] p-6">
-          <div class="text-3xl font-extrabold text-[#4dd0e1]" id="pgChapters">0/12</div>
-          <div class="text-xs text-[#8ba3c7] mt-2" data-i18n="pgChapters">已完成章节</div>
-        </div>
-        <div class="rounded-2xl border border-[rgba(148,180,255,.12)] bg-[rgba(12,18,32,.5)] p-6">
-          <div class="text-3xl font-extrabold text-[#4dd0e1]" id="pgAnswers">0</div>
-          <div class="text-xs text-[#8ba3c7] mt-2" data-i18n="pgAnswers">已作答题目</div>
-        </div>
-        <div class="rounded-2xl border border-[rgba(148,180,255,.12)] bg-[rgba(12,18,32,.5)] p-6">
-          <div class="text-3xl font-extrabold text-[#ff9db0]" id="pgWrong">0</div>
-          <div class="text-xs text-[#8ba3c7] mt-2" data-i18n="pgWrong">待复盘错题</div>
-        </div>
-        <div class="sm:col-span-3 rounded-2xl border border-[rgba(148,180,255,.12)] bg-[rgba(12,18,32,.5)] p-6" id="pgStageBars"></div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<div class="hr-fade max-w-7xl mx-auto"></div>
-
-<!-- ===== 8. Error Review 错题复盘 ===== -->
-<section id="errors" class="py-28">
-  <div class="max-w-7xl mx-auto px-6">
-    <div class="reveal"><p class="sec-tag">ERROR REVIEW</p>
-      <h2 class="sec-title" data-i18n="erTitle">错题复盘专区</h2>
-      <p class="text-[#8ba3c7] mt-4 text-sm max-w-lg" data-i18n="erDesc">所有自测答错的题目自动汇总到这里。隔一段时间回来重练，是巩固记忆最有效的方式。</p>
-    </div>
-    <div class="mt-12 grid lg:grid-cols-2 gap-6">
-      <div class="reveal rounded-2xl border border-[rgba(148,180,255,.12)] bg-[rgba(12,18,32,.5)] p-7">
-        <div class="flex items-center justify-between">
-          <h4 class="font-bold" data-i18n="erWrong">错题汇总</h4>
-          <button id="btnRetryAll" class="btn-ghost rounded-full px-4 py-1.5 text-xs" data-i18n="erRetryAll">开始二次练习</button>
-        </div>
-        <div id="wrongList" class="mt-5 space-y-3 text-sm"></div>
-      </div>
-      <div class="reveal d1 rounded-2xl border border-[rgba(148,180,255,.12)] bg-[rgba(12,18,32,.5)] p-7">
-        <h4 class="font-bold" data-i18n="erStar">收藏的知识点</h4>
-        <p class="text-xs text-[#5b719a] mt-1" data-i18n="erStarHint">在章节正文中点击「收藏知识点」可加入此列表。</p>
-        <div id="starList" class="mt-5 space-y-3 text-sm"></div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<div class="hr-fade max-w-7xl mx-auto"></div>
-
-<!-- ===== 9. Feedback 答疑反馈 ===== -->
-<section id="feedback" class="py-28">
-  <div class="max-w-3xl mx-auto px-6">
-    <div class="reveal text-center"><p class="sec-tag">FEEDBACK</p>
-      <h2 class="sec-title" data-i18n="fbTitle">答疑反馈</h2>
-      <p class="text-[#8ba3c7] mt-4 text-sm" data-i18n="fbDesc">记录你在学习中遇到的疑问，保存在本地，方便整理后向老师或社区提问。</p>
-    </div>
-    <form id="fbForm" class="reveal d1 mt-12 space-y-5">
-      <div>
-        <label class="text-xs tracking-[.2em] text-[#5b719a]" data-i18n="fbChapter">当前章节</label>
-        <select id="fbChapter" class="field mt-2"></select>
-      </div>
-      <div>
-        <label class="text-xs tracking-[.2em] text-[#5b719a]" data-i18n="fbQuestion">问题描述</label>
-        <textarea id="fbQuestion" class="field mt-2" rows="4" required placeholder="例如：为什么 51% 攻击在算力分散时很难发生？"></textarea>
-      </div>
-      <div>
-        <label class="text-xs tracking-[.2em] text-[#5b719a]" data-i18n="fbNote">备注（选填）</label>
-        <input id="fbNote" class="field mt-2" placeholder="截图编号 / 相关概念 / 你的理解">
-      </div>
-      <button type="submit" class="btn-primary rounded-full px-8 py-3 text-sm font-semibold w-full sm:w-auto" data-i18n="fbSubmit">保存疑问</button>
-    </form>
-    <div id="fbHistory" class="mt-10 space-y-3"></div>
-  </div>
-</section>
-
-<!-- ===== 10. 页脚 ===== -->
-<footer class="border-t border-[rgba(148,180,255,.1)] py-14">
-  <div class="max-w-7xl mx-auto px-6 grid md:grid-cols-4 gap-10">
-    <div class="md:col-span-2">
-      <div class="flex items-center gap-2">
-        <span class="w-7 h-7 rounded-lg bg-gradient-to-br from-[#0f6f83] to-[#155e97] flex items-center justify-center text-white font-extrabold text-sm">C</span>
-        <span class="font-bold">Chain<span class="text-[#4dd0e1]">Academy</span></span>
-      </div>
-      <p class="text-[#5b719a] text-xs leading-relaxed mt-4 max-w-md" data-i18n="ftDisclaimer">免责声明：本站为区块链技术理论知识学习站点，所有内容仅供学习参考，不构成任何投资建议。不提供行情、交易、合约、交易所、钱包充提等任何功能与链接。</p>
-    </div>
-    <div>
-      <div class="text-xs tracking-[.25em] text-[#5b719a] font-semibold" data-i18n="ftRiskT">风险提示</div>
-      <p class="text-[#8ba3c7] text-xs leading-relaxed mt-3">虚拟货币相关业务活动在国内属于非法金融活动，不受法律保护。请警惕传销、非法集资与各类诈骗，远离虚拟货币炒作。</p>
-    </div>
-    <div>
-      <div class="text-xs tracking-[.25em] text-[#5b719a] font-semibold" data-i18n="ftLang">语言 / Language</div>
-      <div class="mt-3 flex gap-2">
-        <button data-lang="zh" class="lang-sw chip hover:border-[rgba(77,208,225,.6)] hover:text-white transition-colors">中文</button>
-        <button data-lang="en" class="lang-sw chip hover:border-[rgba(77,208,225,.6)] hover:text-white transition-colors">EN</button>
-      </div>
-      <p class="text-[#5b719a] text-xs mt-6">© 2026 Chain Academy · v0.1</p>
-    </div>
-  </div>
-</footer>
-
-<!-- ===== 章节详情弹层 ===== -->
-<div class="modal-mask" id="chapterModal">
-  <div class="modal-box">
-    <div class="sticky top-0 glass border-b border-[rgba(148,180,255,.1)] px-7 py-4 flex items-center justify-between z-10">
-      <div class="text-xs tracking-[.25em] text-[#4dd0e1] font-semibold" id="modalStage"></div>
-      <button id="modalClose" class="text-[#8ba3c7] hover:text-white text-sm border border-[rgba(148,180,255,.2)] rounded-full px-4 py-1.5 transition-colors">✕ 关闭</button>
-    </div>
-    <div class="px-7 py-8" id="modalBody"></div>
-  </div>
+<!-- 首页专属：顶部窄横幅精简风险提示 -->
+<div class="risk-strip">
+  <span class="truncate">⚠ 本站仅用于区块链技术理论学习与自测，不构成投资建议。虚拟货币相关业务活动在国内属于非法金融活动，请远离炒作。</span>
+  <button class="ml-3 underline opacity-70 hover:opacity-100 shrink-0" onclick="openModal(fullRiskHtml())" data-i18n="viewFull">查看完整监管说明</button>
 </div>
 
-<div id="toast"></div>
-
-<script src="content.js"></script>
-<script>
-/* =====================================================================
- * Chain Academy · 单页应用逻辑
- * 内容结构（STAGES）与界面文案（I18N）分离，便于后续替换与翻译；
- * 进度全部存储于 localStorage，键名以 ca_ 前缀隔离。
- * 填内容：直接修改下方 STAGES 数组中各章节的 content / quiz 字段。
- * ===================================================================== */
-'use strict';
-
-/* ---------- i18n：界面文案（正文内容请在 STAGES 中翻译） ---------- */
-const I18N = {
-  zh: {
-    riskBanner: '本站仅用于区块链底层技术知识学习，不提供、不引导任何虚拟货币行情、交易、合约、交易所及理财服务。虚拟货币相关业务活动在国内属于非法金融活动，不受法律保护，请谨防风险。',
-    navHome:'首页', navRoadmap:'学习路线', navLibrary:'章节库', navLab:'分析室', navProgress:'进度总览', navErrors:'错题复盘', navRisk:'风险须知',
-    ctaContinue:'继续上次学习', heroTitleA:'区块链通识学院', heroTitleB:'从底层逻辑理解世界',
-    heroIntro:'零基础循序渐进学习区块链底层知识，配套章节自测、线性解锁与学习进度管理。纯理论自学站点，不涉及任何交易行为。',
-    heroBtnStart:'开始学习', heroBtnRoadmap:'查看章节库', scrollHint:'SCROLL',
-    statChapters:'章节', statQuestions:'自测题', statStages:'学习阶段', statLocal:'本地存储',
-    roadmapTitle:'学习路线', roadmapDesc:'四个阶段按顺序线性解锁：通过当前章节自测（60 分合格）才能解锁下一章；完成阶段全部章节后解锁阶段考核。',
-    coreTitle:'这套学习框架是如何设计的', coreF1:'概念先行', coreF2:'自测校验', coreF3:'错题复盘',
-    riskTitle:'虚拟货币的风险与国内监管规定',
-    libraryTitle:'章节库', libraryDesc:'每一章都包含知识点正文与配套自测。灰色卡片尚未解锁，按顺序通过自测即可逐步解锁。',
-    sysTitle:'学习机制', sys1T:'线性解锁', sys1D:'章节严格按顺序开放。通过当前章自测（≥60 分）解锁下一章，确保基础扎实。',
-    sys2T:'自测合格规则', sys2D:'每章 3 题即时判分；未通过可反复重练，错题自动汇入错题复盘区。',
-    sys3T:'本地保存', sys3D:'进度、成绩、错题全部保存在浏览器 localStorage，无需注册，不上传服务器。',
-    sys4T:'记忆断点', sys4D:'右上角「继续上次学习」会带你回到最近打开的章节，从断点接着学。',
-    asmTitle:'阶段考核', asmDesc:'完成本阶段全部章节后解锁综合考卷，70 分通过。综合考检验整阶段知识的融会贯通。',
-    pgTitle:'学习进度', pgOverall:'总体完成率', pgChapters:'已完成章节', pgAnswers:'已作答题目', pgWrong:'待复盘错题',
-    erTitle:'错题复盘专区', erDesc:'所有自测答错的题目自动汇总到这里。隔一段时间回来重练，是巩固记忆最有效的方式。',
-    erWrong:'错题汇总', erRetryAll:'开始二次练习', erStar:'收藏的知识点', erStarHint:'在章节正文中点击「收藏知识点」可加入此列表。',
-    erEmpty:'暂无错题，保持这个状态！', erStarEmpty:'还没有收藏知识点。',
-    fbTitle:'答疑反馈', fbDesc:'记录你在学习中遇到的疑问，保存在本地，方便整理后向老师或社区提问。',
-    fbChapter:'当前章节', fbQuestion:'问题描述', fbNote:'备注（选填）', fbSubmit:'保存疑问',
-    ftDisclaimer:'免责声明：本站为区块链技术理论知识学习站点，所有内容仅供学习参考，不构成任何投资建议。不提供行情、交易、合约、交易所、钱包充提等任何功能与链接。',
-    ftRiskT:'风险提示', ftLang:'语言 / Language',
-    locked:'未解锁', active:'进行中', done:'已完成', inProgress:'学习中', notStarted:'未开始',
-    startChapter:'开始学习', retake:'重新自测', quizTitle:'配套自测', submitQuiz:'提交并判分',
-    passScore:'合格', yourScore:'得分', quizPass:'恭喜，通过本章自测！已解锁下一章。', quizFail:'未达到 60 分，看看解析再试一次。',
-    starPoint:'☆ 收藏本知识点', starred:'★ 已收藏', bookmarkOff:'取消收藏',
-    examLocked:'完成本阶段全部章节后解锁', examStart:'开始考核', examPass:'考核通过，阶段完成！', examFail:'未达 70 分，可返回章节复习后重考。',
-    nextChapter:'下一章 →', backLibrary:'返回章节库',
-    saved:'已保存到本地', cleared:'已清空', needQuestion:'请填写问题描述',
-    retryMode:'二次练习模式：答对自动移出错题', exitRetry:'退出练习',
-    pickChapter:'请选择章节', examScore:'考核得分', readChapter:'阅读',
-  },
-  en: {
-    riskBanner: 'This site is for blockchain technology education only. No crypto prices, trading, derivatives, exchanges or financial services are provided. Virtual-currency-related activities are illegal financial activities in China and are not protected by law.',
-    navHome:'Home', navRoadmap:'Roadmap', navLibrary:'Chapters', navLab:'Lab', navProgress:'Progress', navErrors:'Error Review', navRisk:'Risk Notice',
-    ctaContinue:'Continue Last Study', heroTitleA:'Chain Academy', heroTitleB:'Understand the world from first principles',
-    heroIntro:'Learn blockchain fundamentals step by step, with chapter quizzes, linear unlocks and progress tracking. Theory only — no trading involved.',
-    heroBtnStart:'Start Learning', heroBtnRoadmap:'View Chapters', scrollHint:'SCROLL',
-    statChapters:'Chapters', statQuestions:'Quiz Questions', statStages:'Stages', statLocal:'Local Storage',
-    roadmapTitle:'Learning Roadmap', roadmapDesc:'Four stages unlock linearly: pass the current chapter quiz (60/100) to unlock the next; finish all chapters in a stage to unlock its final assessment.',
-    coreTitle:'How this learning framework is designed', coreF1:'Concepts First', coreF2:'Quiz Check', coreF3:'Error Review',
-    riskTitle:'Risks of virtual currency & regulation in China',
-    libraryTitle:'Chapter Library', libraryDesc:'Every chapter includes reading material and a quiz. Grey cards are locked — pass quizzes in order to unlock.',
-    sysTitle:'Study System', sys1T:'Linear Unlock', sys1D:'Chapters open in strict order. Passing the quiz (≥60) unlocks the next one.',
-    sys2T:'Pass Rule', sys2D:'3 questions per chapter, instant grading; failed items go to the error review pool.',
-    sys3T:'Local Storage', sys3D:'Progress, scores and errors live in your browser localStorage. No sign-up, no server.',
-    sys4T:'Resume Point', sys4D:'“Continue Last Study” takes you back to the chapter you opened most recently.',
-    asmTitle:'Completion Assessment', asmDesc:'Finish all chapters of a stage to unlock its final exam. Pass at 70.',
-    pgTitle:'Progress Overview', pgOverall:'Overall completion', pgChapters:'Chapters done', pgAnswers:'Questions answered', pgWrong:'Errors pending',
-    erTitle:'Error Review', erDesc:'Every wrong answer lands here. Re-practising later is the most effective way to consolidate memory.',
-    erWrong:'Wrong Questions', erRetryAll:'Re-practice All', erStar:'Bookmarked Knowledge', erStarHint:'Use “Bookmark” inside a chapter to add items here.',
-    erEmpty:'No errors yet — keep it that way!', erStarEmpty:'No bookmarks yet.',
-    fbTitle:'Q&A Feedback', fbDesc:'Record questions you encounter. Stored locally for later discussion with teachers or communities.',
-    fbChapter:'Current chapter', fbQuestion:'Your question', fbNote:'Notes (optional)', fbSubmit:'Save Question',
-    ftDisclaimer:'Disclaimer: an educational site for blockchain theory only. Nothing here is investment advice. No prices, trading, derivatives, exchanges or wallet services are provided or linked.',
-    ftRiskT:'Risk Notice', ftLang:'Language / 语言',
-    locked:'Locked', active:'In Progress', done:'Completed', inProgress:'In progress', notStarted:'Not started',
-    startChapter:'Start', retake:'Retake Quiz', quizTitle:'Chapter Quiz', submitQuiz:'Submit & Grade',
-    passScore:'Pass', yourScore:'Score', quizPass:'Passed! Next chapter unlocked.', quizFail:'Below 60 — review the explanations and try again.',
-    starPoint:'☆ Bookmark this point', starred:'★ Bookmarked', bookmarkOff:'Remove bookmark',
-    examLocked:'Unlock by finishing all chapters in this stage', examStart:'Start Exam', examPass:'Stage passed!', examFail:'Below 70 — review the chapters and retake.',
-    nextChapter:'Next Chapter →', backLibrary:'Back to Library',
-    saved:'Saved locally', cleared:'Cleared', needQuestion:'Please write your question',
-    retryMode:'Re-practice: a correct answer removes the error', exitRetry:'Exit',
-    pickChapter:'Select a chapter', examScore:'Exam score', readChapter:'Read',
-  }
-};
-
-/* 内容数据（STAGES / EXAMS）已迁移至 content.js，由 convert.py 从旧站全量生成 */
-
-/* ---------- localStorage 存储层 ---------- */
-const store = {
-  get(k, d){ try{ const v = JSON.parse(localStorage.getItem('ca_'+k)); return v==null?d:v; }catch(e){ return d; } },
-  set(k, v){ localStorage.setItem('ca_'+k, JSON.stringify(v)); },
-};
-let progress = store.get('progress', { chapters:{}, exams:{}, wrong:[], stars:[], answers:0 });
-const saveProgress = () => store.set('progress', progress);
-let lang = store.get('lang', 'zh');
-const t = k => (I18N[lang] && I18N[lang][k]) || I18N.zh[k] || k;
-
-/* ---------- 章节顺序与解锁 ---------- */
-const ORDER = STAGES.flatMap(s => s.chapters.map(c => ({ stage: s, ch: c })));
-ORDER.forEach((o, i) => { o.index = i; o.stageIndex = STAGES.indexOf(o.stage); });
-function chapterState(chId){
-  if(progress.chapters[chId] && progress.chapters[chId].passed) return 'done';
-  const idx = ORDER.findIndex(o => o.ch.id === chId);
-  if(idx === 0) return 'active';
-  const prev = ORDER[idx-1];
-  return (progress.chapters[prev.ch.id] && progress.chapters[prev.ch.id].passed) ? 'active' : 'locked';
-}
-const isUnlocked = chId => chapterState(chId) !== 'locked';
-function stageDone(stage){ return stage.chapters.every(c => progress.chapters[c.id] && progress.chapters[c.id].passed); }
-function examState(exam){
-  const stage = STAGES.find(s => s.id === exam.stageId);
-  if(progress.exams[exam.stageId] && progress.exams[exam.stageId].passed) return 'done';
-  return stageDone(stage) ? 'active' : 'locked';
-}
-
-/* ---------- 渲染 ---------- */
-const el = id => document.getElementById(id);
-function renderTimeline(){
-  el('timeline').innerHTML = STAGES.map((s, si) => {
-    const done = stageDone(s);
-    const active = !done && (si === 0 || stageDone(STAGES[si-1]) || s.chapters.some(c => chapterState(c.id) === 'active'));
-    const state = done ? 'done' : (active ? 'active' : 'locked');
-    const firstCh = s.chapters[0];
-    const openable = state !== 'locked' && isUnlocked(firstCh.id);
-    return `<div class="tl-item flex gap-5 reveal d${Math.min(si,4)}" data-state="${state}">
-      <div class="tl-dot">${s.num}</div>
-      <div class="tl-card flex-1 rounded-2xl border border-[rgba(148,180,255,.12)] bg-[rgba(12,18,32,.5)] p-6 ${openable?'unlocked':''}"
-        ${openable?`onclick="openChapter('${firstCh.id}')"`:''}>
-        <div class="flex flex-wrap items-center justify-between gap-2">
-          <h3 class="font-bold text-lg">${s.title} <span class="text-[#5b719a] text-xs font-en">${s.en}</span></h3>
-          <span class="chip">${done ? '✓ ' + t('done') : (state==='active' ? t('active') : t('locked'))}</span>
-        </div>
-        <p class="text-[#8ba3c7] text-sm mt-2 leading-relaxed">${s.desc||(s.risky?'本阶段涉及市场认知类知识，请以理论学习与风险教育为目的，谨防任何引导交易的行为。':s.en)}</p>
-        <div class="progress-track mt-4"><div class="progress-fill" style="width:${s.chapters.filter(c=>progress.chapters[c.id]&&progress.chapters[c.id].passed).length/s.chapters.length*100}%"></div></div>
-        <div class="text-xs text-[#5b719a] mt-2">${s.chapters.filter(c=>progress.chapters[c.id]&&progress.chapters[c.id].passed).length} / ${s.chapters.length} · ${s.chapters.map(c=>c.title).join(' → ')}</div>
-      </div>
-    </div>`;
-  }).join('');
-}
-function renderLibrary(){
-  el('libProgressChip').textContent = `${Object.keys(progress.chapters).filter(k=>progress.chapters[k].passed).length} / ${ORDER.length}`;
-  el('chapterGrid').innerHTML = ORDER.map((o, i) => {
-    const st = chapterState(o.ch.id);
-    const locked = st === 'locked';
-    return `<article class="lift relative rounded-2xl border border-[rgba(148,180,255,.12)] bg-[rgba(12,18,32,.55)] p-6 flex flex-col ${locked?'card-locked':''} reveal d${i%3+1}"
-      ${locked?'':`onclick="openChapter('${o.ch.id}')"`}>
-      ${locked?`<span class="lock-badge">🔒 ${t('locked')}</span>`:(st==='done'?`<span class="done-badge">✓ ${t('done')}</span>`:'')}
-      <div class="text-[10px] tracking-[.3em] text-[#4dd0e1] font-semibold">${o.stage.num} · ${o.stage.en}</div>
-      <h3 class="font-bold mt-2 text-lg">${o.ch.title}</h3>
-      <p class="text-[#8ba3c7] text-sm mt-2 leading-relaxed flex-1">${o.ch.intro}</p>
-      <div class="flex items-center gap-3 mt-5 text-[11px] text-[#5b719a]">
-        <span>◷ ${o.ch.dur}</span><span>◈ ${o.ch.quiz.length} ${t('statQuestions')}</span>
-        <span class="ml-auto text-[#4dd0e1]">${o.ch.quiz.length?t(st==='done'?'retake':(st==='active'?'startChapter':'locked')):t('readChapter')} →</span>
-      </div>
-    </article>`;
-  }).join('');
-}
-function renderExams(){
-  el('examGrid').innerHTML = EXAMS.map((ex, i) => {
-    const st = examState(ex);
-    const s = STAGES[i];
-    return `<div class="lift relative rounded-2xl border border-[rgba(148,180,255,.12)] bg-[rgba(12,18,32,.55)] p-6 ${st==='locked'?'card-locked':''} reveal d${i+1}"
-      ${st==='locked'?'':`onclick="openExam('${ex.stageId}')"`}>
-      ${st==='locked'?`<span class="lock-badge">🔒</span>`:(st==='done'?`<span class="done-badge">✓ ${t('done')}</span>`:'')}
-      <div class="text-[10px] tracking-[.3em] text-[#4dd0e1] font-semibold">STAGE ${s.num}</div>
-      <h3 class="font-bold mt-2">${s.title}</h3>
-      <p class="text-[#8ba3c7] text-sm mt-2 leading-relaxed">${st==='locked'?t('examLocked'):ex.questions.length+' 题 · 70 '+t('passScore')}</p>
-      <div class="mt-5 text-xs text-[#4dd0e1]">${st==='locked'?t('locked'):t('examStart')+' →'}</div>
-    </div>`;
-  }).join('');
-}
-function renderProgress(){
-  const doneCh = ORDER.filter(o => progress.chapters[o.ch.id] && progress.chapters[o.ch.id].passed).length;
-  const doneEx = EXAMS.filter(e => progress.exams[e.stageId] && progress.exams[e.stageId].passed).length;
-  const total = ORDER.length + EXAMS.length;
-  const pct = Math.round((doneCh + doneEx) / total * 100);
-  el('overallPct').textContent = pct + '%';
-  el('donut').style.strokeDashoffset = 326.7 * (1 - pct/100);
-  el('pgChapters').textContent = doneCh + '/' + ORDER.length;
-  el('pgAnswers').textContent = progress.answers;
-  el('pgWrong').textContent = progress.wrong.length;
-  el('pgStageBars').innerHTML = STAGES.map(s => {
-    const n = s.chapters.filter(c => progress.chapters[c.id] && progress.chapters[c.id].passed).length;
-    const p = Math.round(n / s.chapters.length * 100);
-    return `<div class="mb-4 last:mb-0">
-      <div class="flex justify-between text-xs mb-1.5"><span class="text-[#8ba3c7]">${s.num} · ${s.title}</span><span class="text-[#4dd0e1]">${p}%</span></div>
-      <div class="progress-track"><div class="progress-fill" style="width:${p}%"></div></div>
-    </div>`;
-  }).join('');
-}
-function renderErrors(){
-  const wl = el('wrongList');
-  wl.innerHTML = progress.wrong.length ? progress.wrong.map(w => {
-    const o = ORDER.find(x => x.ch.id === w.chId);
-    if(!o) return '';
-    return `<div class="rounded-xl border border-[rgba(148,180,255,.1)] p-4">
-      <div class="text-[10px] tracking-[.25em] text-[#5b719a]">${o.ch.title}</div>
-      <div class="text-[#b9cbe8] mt-1.5 leading-relaxed">${w.q}</div>
-      <button class="text-xs text-[#4dd0e1] mt-2 hover:underline" onclick="openChapter('${w.chId}', ${w.qIdx})">↳ ${t('retake')}</button>
-    </div>`;
-  }).join('') : `<div class="text-[#5b719a] text-sm py-6 text-center">${t('erEmpty')}</div>`;
-  const sl = el('starList');
-  sl.innerHTML = progress.stars.length ? progress.stars.map(id => {
-    const o = ORDER.find(x => x.ch.id === id);
-    return o ? `<div class="rounded-xl border border-[rgba(148,180,255,.1)] p-4 flex items-center justify-between gap-3">
-      <div><div class="text-[10px] tracking-[.25em] text-[#5b719a]">${o.stage.title}</div><div class="text-[#b9cbe8] mt-1">${o.ch.title}</div></div>
-      <div class="flex gap-2 shrink-0">
-        <button class="text-xs text-[#4dd0e1] hover:underline" onclick="openChapter('${id}')">阅读 →</button>
-        <button class="text-xs text-[#ff9db0] hover:underline" onclick="removeStar('${id}')">✕</button>
-      </div>
-    </div>` : '';
-  }).join('') : `<div class="text-[#5b719a] text-sm py-6 text-center">${t('erStarEmpty')}</div>`;
-}
-function renderFeedback(){
-  el('fbChapter').innerHTML = `<option value="">${t('pickChapter')}</option>` + ORDER.map(o => `<option value="${o.ch.id}">${o.stage.num} · ${o.ch.title}</option>`).join('');
-  const list = store.get('feedback', []);
-  el('fbHistory').innerHTML = list.slice().reverse().map(f => {
-    const o = ORDER.find(x => x.ch.id === f.ch);
-    return `<div class="rounded-xl border border-[rgba(148,180,255,.1)] bg-[rgba(12,18,32,.5)] p-4 text-sm">
-      <div class="flex justify-between text-[11px] text-[#5b719a]"><span>${o?o.ch.title:'—'}</span><span>${f.date}</span></div>
-      <div class="text-[#b9cbe8] mt-1.5">${escapeHtml(f.q)}</div>
-      ${f.note?`<div class="text-[#5b719a] text-xs mt-1">备注：${escapeHtml(f.note)}</div>`:''}
-    </div>`;
-  }).join('');
-}
-function renderAll(){ renderTimeline(); renderLibrary(); renderExams(); renderProgress(); renderErrors(); renderFeedback(); }
-function escapeHtml(s){ return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
-
-/* ---------- 章节详情 + 自测 ---------- */
-let modalCtx = null;
-function openChapter(chId, focusQ){
-  const o = ORDER.find(x => x.ch.id === chId);
-  if(!o || !isUnlocked(chId)) { toast(t('locked')); return; }
-  progress.lastStudy = chId; saveProgress();
-  modalCtx = { type:'quiz', chId, focusQ: focusQ==null?null:focusQ };
-  el('modalStage').textContent = `${o.stage.num} · ${o.stage.title} · ${o.ch.dur}`;
-  el('modalBody').innerHTML = `
-    <h2 class="text-2xl font-extrabold">${o.ch.title}</h2>
-    <p class="text-[#8ba3c7] text-sm mt-2">${o.ch.intro}</p>
-    <div class="mt-3 flex items-center gap-3">
-      <button id="starBtn" class="chip hover:border-[rgba(77,208,225,.7)] hover:text-white transition-colors">${progress.stars.includes(chId)?'★':'☆'} ${progress.stars.includes(chId)?t('starred'):t('starPoint')}</button>
+<nav class="site-nav" style="top:32px;">
+  <div class="nav-inner">
+    <a href="index.html" class="flex items-center gap-2 shrink-0">
+      <span class="w-7 h-7 rounded-md flex items-center justify-center text-white font-extrabold text-sm" style="background:linear-gradient(135deg,#0f6f83,#155e97)">C</span>
+      <span class="font-bold tracking-wide text-sm">Chain<span style="color:var(--brand)">Academy</span></span>
+    </a>
+    <div class="nav-links-slot hidden lg:flex items-center gap-6 flex-1 justify-center"></div>
+    <div class="flex items-center gap-2 shrink-0">
+      <button class="lang-sw chip !py-1.5" data-lang="zh">中文</button>
+      <button class="lang-sw chip !py-1.5" data-lang="en">EN</button>
+      <button class="cta-continue btn-primary !py-2 !px-4 !text-xs">继续上次学习</button>
     </div>
-    <div class="hr-fade my-7"></div>
-    <div class="article">${o.ch.content}</div>
-    <div id="modalRisk" class="mt-5"></div>
-    <div class="hr-fade my-7"></div>
-    <div id="quizZone"></div>
-    <div id="quizNext" class="mt-5"></div>`;
-  el('starBtn').onclick = () => toggleStar(chId);
-  el('modalRisk').innerHTML = o.stage.risky
-    ? '<div class="rounded-xl border border-[rgba(255,150,80,.35)] bg-[rgba(60,30,10,.3)] px-4 py-3 text-xs leading-relaxed text-[#ffcf9e]">⚠ 本章节属于市场认知类知识，仅作理论学习。请始终牢记：虚拟货币相关业务在国内属于非法金融活动，不受法律保护，本站不引导任何交易行为。</div>' : '';
-  if(o.ch.quiz.length){
-    el('quizZone').innerHTML = `
-      <h3 class="font-bold text-lg mb-1">✎ ${t('quizTitle')}</h3>
-      <p class="text-xs text-[#5b719a] mb-5">${o.ch.quiz.length} 题 · 60 ${t('passScore')}</p>
-      <div class="space-y-6" id="quizBox"></div>
-      <div class="mt-7 flex flex-wrap gap-3">
-        <button class="btn-primary rounded-full px-7 py-2.5 text-sm font-semibold" onclick="gradeChapter()">${t('submitQuiz')}</button>
-        <button class="btn-ghost rounded-full px-7 py-2.5 text-sm" onclick="resetQuiz()">↺</button>
-        <span id="quizResult" class="self-center text-sm font-semibold"></span>
-      </div>`;
-    buildQuiz(o.ch, 'quizZone'.length?'quizBox':'quizBox');
-  } else {
-    el('quizZone').innerHTML = `
-      <div class="rounded-2xl border border-[rgba(148,180,255,.12)] p-6 text-center">
-        <p class="text-[#8ba3c7] text-sm mb-5">本节为知识阅读章节，没有配套自测题。阅读完成后点击下方按钮记录进度。</p>
-        <button class="btn-primary rounded-full px-7 py-2.5 text-sm font-semibold" onclick="markRead()">✓ 完成本节学习</button>
-        <span id="quizResult" class="block mt-4 text-sm font-semibold"></span>
-      </div>`;
-  }
-  el('chapterModal').classList.add('open');
-  document.body.style.overflow = 'hidden';
-  const box = el('chapterModal').querySelector('.modal-box'); if(box) box.scrollTop = 0;
-  if(focusQ != null){
-    setTimeout(() => {
-      const target = el('opts-' + focusQ);
-      if(target) target.scrollIntoView({ behavior:'smooth', block:'center' });
-    }, 350);
-  }
-}
-function buildQuiz(ch, boxId){
-  el(boxId).innerHTML = ch.quiz.map((q, qi) => `
-    <div class="rounded-2xl border border-[rgba(148,180,255,.12)] p-5">
-      <div class="flex items-start gap-3"><span class="q-num shrink-0">${qi+1}</span><div class="font-medium text-[15px] leading-relaxed">${q.q}</div></div>
-      <div class="grid gap-2.5 mt-4" id="opts-${qi}">
-        ${q.opts.map((op, oi) => `<div class="opt" data-qi="${qi}" data-oi="${oi}" onclick="pickOpt(this)">${String.fromCharCode(65+oi)}. ${op}</div>`).join('')}
+  </div>
+</nav>
+
+<!-- Hero -->
+<section class="hero-min relative flex items-center overflow-hidden" style="padding-top:32px;">
+  <div class="absolute inset-0 overflow-hidden" style="pointer-events:none;">
+    <div class="orb a"></div><div class="orb b"></div>
+    <div class="ring-line" style="width:640px;height:640px;top:-220px;right:-180px;"></div>
+    <div class="ring-line" style="width:900px;height:900px;top:-350px;right:-310px;opacity:.6;"></div>
+    <div class="ring-line" style="width:460px;height:460px;bottom:-160px;left:-140px;"></div>
+  </div>
+  <div class="relative container-x w-full pt-32 pb-24">
+    <div class="reveal"><p class="sec-tag">CHAIN ACADEMY · BLOCKCHAIN LITERACY</p></div>
+    <h1 class="reveal d1 mt-5 font-extrabold leading-[1.06] tracking-tight" style="font-size:clamp(2.6rem,7vw,5rem);">
+      区块链通识学院<br>
+      <span class="text-transparent bg-clip-text" style="background-image:linear-gradient(90deg,#4dd0e1,#38b6ff,#7ea8ff);">从底层逻辑理解世界</span>
+    </h1>
+    <p class="reveal d2 mt-7 font-semibold text-base md:text-lg" style="color:var(--dim);">系统化区块链通识自学体系｜循序渐进 · 自测校验 · 本地留存</p>
+    <p class="reveal d2 mt-3 text-xs md:text-sm" style="color:var(--faint);">仅用于区块链技术科普学习，不构成投资建议；全部学习数据只保存在你自己的浏览器中。</p>
+    <div class="reveal d3 mt-10 flex flex-wrap gap-4">
+      <a href="roadmap.html" class="btn-primary">Start Learning</a>
+      <a href="roadmap.html" class="btn-ghost">View Roadmap</a>
+    </div>
+    <div class="reveal d4 mt-16 grid grid-cols-2 md:grid-cols-4 gap-px max-w-3xl overflow-hidden rounded-md border" style="border-color:var(--line);background:var(--line);">
+      <div class="p-5" style="background:rgba(10,16,29,.9);"><div class="text-2xl font-extrabold" id="statChapters">—</div><div class="text-[11px] tracking-[.2em] mt-1" style="color:var(--faint);">章节</div></div>
+      <div class="p-5" style="background:rgba(10,16,29,.9);"><div class="text-2xl font-extrabold" id="statQuestions">—</div><div class="text-[11px] tracking-[.2em] mt-1" style="color:var(--faint);">自测题</div></div>
+      <div class="p-5" style="background:rgba(10,16,29,.9);"><div class="text-2xl font-extrabold" id="statStages">—</div><div class="text-[11px] tracking-[.2em] mt-1" style="color:var(--faint);">学习阶段</div></div>
+      <div class="p-5" style="background:rgba(10,16,29,.9);"><div class="text-2xl font-extrabold">100%</div><div class="text-[11px] tracking-[.2em] mt-1" style="color:var(--faint);">本地存储</div></div>
+    </div>
+  </div>
+  <div class="scroll-hint"><span>SCROLL</span><span class="chev"></span></div>
+</section>
+
+<!-- ① 核心理念三卡片 -->
+<section class="py-24">
+  <div class="container-x">
+    <div class="reveal"><p class="sec-tag">PHILOSOPHY</p><h2 class="sec-title">三个朴素的学习信条</h2></div>
+    <div class="mt-10 grid md:grid-cols-3 gap-4">
+      <div class="reveal card card-hover p-8">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#4dd0e1" stroke-width="1.6"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+        <h3 class="font-bold mt-5">顺序解锁</h3>
+        <p class="text-sm mt-2 leading-relaxed" style="color:var(--dim);">一章通过，下一章才开放。基础不牢，地动山摇。</p>
       </div>
-      <div class="hidden mt-3 text-xs leading-relaxed text-[#8ba3c7] border-l-2 border-[rgba(77,208,225,.4)] pl-3" id="exp-${qi}"></div>
-    </div>`).join('');
-}
-function pickOpt(elm){
-  if(elm.parentNode.dataset.graded === '1') return;
-  elm.parentNode.querySelectorAll('.opt').forEach(o => o.classList.remove('picked'));
-  elm.classList.add('picked');
-}
-function markRead(){
-  const o=ORDER.find(x=>x.ch.id===modalCtx.chId);
-  if(!(progress.chapters[o.ch.id]&&progress.chapters[o.ch.id].passed)){
-    progress.chapters[o.ch.id]={passed:true,score:null,date:new Date().toISOString().slice(0,10)};
-    saveProgress();
-  }
-  const res=el('quizResult'); res.textContent=t('quizPass'); res.style.color='#3ddc97';
-  const next=ORDER[o.index+1];
-  el('quizNext').innerHTML=next?`<button class="btn-primary rounded-full px-7 py-2.5 text-sm font-semibold" onclick="openChapter('${next.ch.id}')">${t('nextChapter')}</button>`:'';
-  renderAll();
-}
-function gradeChapter(){
-  const o=ORDER.find(x=>x.ch.id===modalCtx.chId);
-  if(!o.ch.quiz.length) return;
-  let correct = 0;
-  o.ch.quiz.forEach((q, qi) => {
-    const box = el('opts-'+qi); box.dataset.graded = '1';
-    const picked = box.querySelector('.opt.picked');
-    box.querySelectorAll('.opt').forEach(op => { if(+op.dataset.oi === q.a) op.classList.add('correct'); });
-    const pIdx = picked ? +picked.dataset.oi : null;
-    if(pIdx === q.a){ correct++; }
-    else { if(picked) picked.classList.add('wrong'); addWrong(o.ch.id, qi, q.q); }
-    const exp = el('exp-'+qi);
-    exp.innerHTML = `<strong class="${pIdx===q.a?'text-[#3ddc97]':'text-[#ff9db0]'}">${pIdx===q.a?'✓':'✗'}</strong> ${q.exp}`;
-    exp.classList.remove('hidden');
-  });
-  progress.answers += o.ch.quiz.length; saveProgress();
-  const score = Math.round(correct / o.ch.quiz.length * 100);
-  const res = el('quizResult');
-  res.textContent = `${t('yourScore')} ${score} · ${score >= 60 ? t('quizPass') : t('quizFail')}`;
-  res.style.color = score >= 60 ? '#3ddc97' : '#ff9db0';
-  if(score >= 60 && !(progress.chapters[o.ch.id] && progress.chapters[o.ch.id].passed)){
-    progress.chapters[o.ch.id] = { passed:true, score, date:new Date().toISOString().slice(0,10) };
-    saveProgress();
-  }
-  const next = ORDER[o.index + 1];
-  el('quizNext').innerHTML = score >= 60 && next
-    ? `<button class="btn-primary rounded-full px-7 py-2.5 text-sm font-semibold" onclick="openChapter('${next.ch.id}')">${t('nextChapter')}</button>` : '';
-  renderAll();
-}
-function resetQuiz(){
-  const o = ORDER.find(x => x.ch.id === modalCtx.chId);
-  buildQuiz(o.ch, 'quizBox');
-  el('quizResult').textContent = '';
-  el('quizNext').innerHTML = '';
-}
-function addWrong(chId, qIdx, qText){
-  if(!progress.wrong.some(w => w.chId === chId && w.qIdx === qIdx)){
-    progress.wrong.push({ chId, qIdx, q: qText });
-    saveProgress();
-  }
-}
-function removeWrong(chId, qIdx){
-  progress.wrong = progress.wrong.filter(w => !(w.chId === chId && w.qIdx === qIdx));
-  saveProgress(); renderErrors();
-}
-function toggleStar(chId){
-  if(progress.stars.includes(chId)) progress.stars = progress.stars.filter(x => x !== chId);
-  else progress.stars.push(chId);
-  saveProgress(); renderErrors();
-  el('starBtn').textContent = (progress.stars.includes(chId)?'★ ':'☆ ') + (progress.stars.includes(chId)?t('starred'):t('starPoint'));
-}
-function removeStar(chId){ toggleStar(chId); }
-
-/* ---------- 阶段考核 ---------- */
-function openExam(stageId){
-  const ex = EXAMS.find(e => e.stageId === stageId);
-  if(examState(ex) === 'locked'){ toast(t('examLocked')); return; }
-  const s = STAGES.find(x => x.id === stageId);
-  modalCtx = { type:'exam', stageId };
-  el('modalStage').textContent = `STAGE ${s.num} · FINAL ASSESSMENT`;
-  el('modalBody').innerHTML = `
-    <h2 class="text-2xl font-extrabold">${s.title} · ${t('asmTitle')}</h2>
-    <p class="text-[#8ba3c7] text-sm mt-2">${ex.questions.length} 题 · 70 ${t('passScore')}</p>
-    <div class="hr-fade my-7"></div>
-    <div class="space-y-6" id="quizBox"></div>
-    <div class="mt-7 flex flex-wrap gap-3 items-center">
-      <button class="btn-primary rounded-full px-7 py-2.5 text-sm font-semibold" onclick="gradeExam()">${t('submitQuiz')}</button>
-      <span id="quizResult" class="text-sm font-semibold"></span>
-    </div>`;
-  const pseudoCh = { quiz: ex.questions.map(x => x.q) };
-  buildQuiz(pseudoCh, 'quizBox');
-  ex.questions.forEach((x, qi) => { /* 标注来源章节 */ });
-  el('chapterModal').classList.add('open');
-  document.body.style.overflow = 'hidden';
-}
-function gradeExam(){
-  const ex = EXAMS.find(e => e.stageId === modalCtx.stageId);
-  let correct = 0;
-  ex.questions.forEach((x, qi) => {
-    const box = el('opts-'+qi); box.dataset.graded = '1';
-    box.querySelectorAll('.opt').forEach(op => { if(+op.dataset.oi === x.q.a) op.classList.add('correct'); });
-    const picked = box.querySelector('.opt.picked');
-    if(picked && +picked.dataset.oi === x.q.a) correct++;
-    else { if(picked) picked.classList.add('wrong'); addWrong(x.chId, x.qIdx!=null?x.qIdx:0, x.chTitle + '：' + x.q.q); }
-  });
-  progress.answers += ex.questions.length;
-  const score = Math.round(correct / ex.questions.length * 100);
-  const res = el('quizResult');
-  res.textContent = `${t('examScore')} ${score} · ${score >= 70 ? t('examPass') : t('examFail')}`;
-  res.style.color = score >= 70 ? '#3ddc97' : '#ff9db0';
-  if(score >= 70){ progress.exams[modalCtx.stageId] = { passed:true, score, date:new Date().toISOString().slice(0,10) }; }
-  saveProgress(); renderAll();
-}
-
-/* ---------- 错题二次练习 ---------- */
-function retryWrong(){
-  if(!progress.wrong.length){ toast(t('erEmpty')); return; }
-  const w = progress.wrong[0];
-  const o = ORDER.find(x => x.ch.id === w.chId);
-  if(!o){ progress.wrong.shift(); saveProgress(); renderErrors(); return retryWrong(); }
-  openChapter(w.chId, w.qIdx);
-}
-
-/* ---------- 反馈表单 ---------- */
-el('fbForm').addEventListener('submit', e => {
-  e.preventDefault();
-  const q = el('fbQuestion').value.trim();
-  if(!q){ toast(t('needQuestion')); return; }
-  const list = store.get('feedback', []);
-  list.push({ ch: el('fbChapter').value, q, note: el('fbNote').value.trim(), date: new Date().toISOString().slice(0,10) });
-  store.set('feedback', list);
-  el('fbQuestion').value = ''; el('fbNote').value = '';
-  renderFeedback(); toast(t('saved'));
-});
-
-/* ---------- 弹层 / toast / 语言 ---------- */
-el('modalClose').onclick = closeModal;
-el('chapterModal').addEventListener('click', e => { if(e.target === el('chapterModal')) closeModal(); });
-document.addEventListener('keydown', e => { if(e.key === 'Escape') closeModal(); });
-function closeModal(){ el('chapterModal').classList.remove('open'); document.body.style.overflow = ''; }
-let toastTimer;
-function toast(msg){ const tt = el('toast'); tt.textContent = msg; tt.classList.add('show'); clearTimeout(toastTimer); toastTimer = setTimeout(() => tt.classList.remove('show'), 2600); }
-
-function applyLang(){
-  document.querySelectorAll('[data-i18n]').forEach(n => { n.textContent = t(n.dataset.i18n); });
-  document.documentElement.lang = lang === 'zh' ? 'zh-CN' : 'en';
-  el('langBtn').textContent = (lang === 'zh' ? '中文' : 'EN') + ' ▾';
-  renderAll();
-}
-el('langBtn').onclick = () => el('langMenu').classList.toggle('hidden');
-document.querySelectorAll('[data-lang]').forEach(b => b.addEventListener('click', () => {
-  lang = b.dataset.lang; store.set('lang', lang); applyLang(); el('langMenu').classList.add('hidden');
-}));
-
-/* 继续上次学习 */
-el('ctaContinue').addEventListener('click', e => {
-  const last = progress.lastStudy;
-  if(last && isUnlocked(last)){ e.preventDefault(); openChapter(last); }
-});
-
-/* 错题区按钮 */
-el('btnRetryAll').onclick = retryWrong;
-
-/* ---------- Lab 实盘分析室（数据全部留在本地浏览器） ---------- */
-(function(){
-  const L = id => 'lab'+id;
-  const q = s => document.querySelector(s);
-  const fmtN = (n,d) => (n==null||isNaN(n))?'—':Number(n).toLocaleString('en-US',{minimumFractionDigits:d==null?2:d,maximumFractionDigits:d==null?2:d});
-
-  /* 01 实时行情：多源容错，数据仅作信息展示 */
-  const COINS=[{sym:'BTC',okx:'BTC-USDT',bin:'BTCUSDT'},{sym:'ETH',okx:'ETH-USDT',bin:'ETHUSDT'},{sym:'SOL',okx:'SOL-USDT',bin:'SOLUSDT'},{sym:'BNB',okx:'BNB-USDT',bin:'BNBUSDT'},{sym:'XRP',okx:'XRP-USDT',bin:'XRPUSDT'},{sym:'DOGE',okx:'DOGE-USDT',bin:'DOGEUSDT'}];
-  q('#labTicks').innerHTML = COINS.map(c=>`
-    <div class="rounded-2xl border border-[rgba(90,140,220,.16)] bg-gradient-to-br from-[rgba(14,22,38,.7)] to-[rgba(8,13,24,.5)] p-4">
-      <div class="flex justify-between text-[10px] tracking-[.18em] text-[#9db8de]"><span>${c.sym}/USDT</span><span id="labSrc${c.sym}" class="text-[#2c4266]"></span></div>
-      <div id="labP${c.sym}" class="text-lg font-bold mt-2 tabular-nums transition-colors duration-500">—</div>
-      <div id="labC${c.sym}" class="text-[11px] mt-1 tabular-nums"></div>
-    </div>`).join('');
-  function setPrice(sym,price,chg,src){
-    const e=q('#labP'+sym), old=parseFloat(e.dataset.v||'0');
-    e.textContent='$'+fmtN(price,price<1?4:2); e.dataset.v=price;
-    e.style.color = old ? (price>old?'#3ddc97':price<old?'#ff6b81':'#e8eefc') : '#e8eefc';
-    setTimeout(()=>e.style.color='#e8eefc',600);
-    const c=q('#labC'+sym);
-    if(chg!=null){ c.textContent=(chg>=0?'▲ +':'▼ ')+fmtN(chg,2)+'%'; c.style.color=chg>=0?'#3ddc97':'#ff6b81'; }
-    const s=q('#labSrc'+sym); if(s)s.textContent=src;
-  }
-  const src=q('#labTickSrc');
-  const binance=()=>fetch('https://data-api.binance.vision/api/v3/ticker/24hr?symbols='+encodeURIComponent('['+COINS.map(c=>'"'+c.bin+'"').join(',')+']'))
-    .then(r=>{if(!r.ok)throw 0;return r.json();}).then(a=>{a.forEach(t=>{const c=COINS.find(x=>x.bin===t.symbol);if(c)setPrice(c.sym,+t.lastPrice,+t.priceChangePercent,'Binance');});src.textContent='数据源：Binance · 每 30 秒自动刷新 · 数据仅作信息展示';});
-  const gateio=()=>fetch('https://api.gateio.ws/api/v4/spot/tickers').then(r=>{if(!r.ok)throw 0;return r.json();}).then(arr=>{
-    COINS.forEach(c=>{const t=arr.find(x=>x.currency_pair===c.okx.replace('-','_'));
-      if(t)setPrice(c.sym,+t.last,t.change_percentage?+t.change_percentage:null,'Gate.io');});
-    src.textContent='数据源：Gate.io · 每 30 秒自动刷新 · 数据仅作信息展示';});
-  const okx=()=>fetch('https://www.okx.com/api/v5/market/tickers?instType=SPOT').then(r=>{if(!r.ok)throw 0;return r.json();}).then(d=>{
-    d.data.forEach(t=>{const c=COINS.find(x=>x.okx===t.instId);if(c)setPrice(c.sym,+t.last,+t.open24h?((+t.last/t.open24h-1)*100):null,'OKX');});src.textContent='数据源：OKX · 每 30 秒自动刷新 · 数据仅作信息展示';});
-  const gecko=()=>fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,solana,binancecoin,ripple,dogecoin&vs_currencies=usd&include_24hr_change=true')
-    .then(r=>{if(!r.ok)throw 0;return r.json();}).then(d=>{const m={BTC:'bitcoin',ETH:'ethereum',SOL:'solana',BNB:'binancecoin',XRP:'ripple',DOGE:'dogecoin'};
-    COINS.forEach(c=>{if(d[m[c.sym]])setPrice(c.sym,d[m[c.sym]].usd,d[m[c.sym]].usd_24h_change,'CoinGecko');});src.textContent='数据源：CoinGecko · 每 30 秒自动刷新 · 数据仅作信息展示';});
-  function refresh(){ binance().catch(gateio).catch(okx).catch(gecko).catch(()=>{ src.textContent='行情源暂时无法连接（可能被网络环境拦截），数据功能不受影响，会自动重试。'; }); }
-  refresh(); setInterval(refresh,30000);
-
-  /* 02 解析与统计 */
-  const COLMAP={date:/日期|时间|date|time/i,symbol:/币种|交易对|代码|symbol|pair|coin/i,side:/方向|买卖|类型|side|direction|type/i,price:/价格|price/i,amount:/数量|仓位|amount|qty|quantity|vol/i,pnl:/盈亏|收益|pnl|profit|roe/i,note:/备注|理由|原因|想法|note|reason/i};
-  let lastBatch=null, lastParsed=[];
-  function parseText(text){
-    text=text.trim(); if(!text)return null;
-    if(text[0]==='['||text[0]==='{'){ try{ const j=JSON.parse(text); return normalize(Array.isArray(j)?j:(j.trades||j.records||[])); }catch(e){ return null; } }
-    const lines=text.split(/\r?\n/).filter(l=>l.trim());
-    const delim=lines[0].indexOf('\t')>-1?'\t':(lines[0].split(';').length>lines[0].split(',').length?';':',');
-    const rows=lines.map(l=>l.split(delim).map(c=>c.trim()));
-    const head=rows[0], idx={};
-    Object.keys(COLMAP).forEach(k=>head.forEach((h,i)=>{ if(idx[k]==null&&COLMAP[k].test(h)) idx[k]=i; }));
-    const hasHead=idx.pnl!=null||idx.symbol!=null;
-    const dataRows=hasHead?rows.slice(1):rows;
-    if(!hasHead) Object.assign(idx,{date:0,symbol:1,side:2,price:3,amount:4,pnl:5,note:6});
-    return normalize(dataRows.map(r=>{ const o={}; Object.keys(idx).forEach(k=>o[k]=r[idx[k]]); return o; }));
-  }
-  function normalize(list){
-    return list.map(r=>{
-      const g=(...ks)=>{ for(const k of ks){ const v=r[k]; if(v!=null&&v!=='')return v; } return ''; };
-      const side=String(g('side','方向','类型')).toLowerCase();
-      return { date:String(g('date','日期','时间')).slice(0,20), symbol:String(g('symbol','币种','交易对')).toUpperCase().replace(/USDT|\/USD$/,''),
-        side:/卖|空|short|sell/.test(side)?'空':(/买|多|long|buy/.test(side)?'多':'—'),
-        price:parseFloat(g('price','价格'))||null, amount:parseFloat(g('amount','数量','qty'))||null,
-        pnl:parseFloat(String(g('pnl','盈亏','收益')).replace(/[%\s]/g,'')), note:String(g('note','备注','理由','原因','想法')).slice(0,60) };
-    }).filter(r=>r.symbol||r.pnl!=null||r.date);
-  }
-  function calcStats(trades){
-    const wp=trades.filter(t=>t.pnl!=null&&!isNaN(t.pnl));
-    const wins=wp.filter(t=>t.pnl>0), losses=wp.filter(t=>t.pnl<0);
-    const gw=wins.reduce((s,t)=>s+t.pnl,0), gl=Math.abs(losses.reduce((s,t)=>s+t.pnl,0));
-    let cum=0,peak=0,dd=0; wp.forEach(t=>{cum+=t.pnl;peak=Math.max(peak,cum);dd=Math.max(dd,peak-cum);});
-    const n=wp.length;
-    return { n, total:wp.reduce((s,t)=>s+t.pnl,0), winRate:n?wins.length/n*100:null,
-      payoff:(wins.length&&losses.length)?(gw/wins.length)/(gl/losses.length):null,
-      pf:gl>0?gw/gl:(gw>0?99:null), maxDD:dd, gw, gl,
-      avg:n?wp.reduce((s,t)=>s+t.pnl,0)/n:null, notes:trades.filter(t=>t.note).length };
-  }
-  function renderBatch(st,trades){
-    const k=(label,val,color)=>`<div class="rounded-xl border border-[rgba(90,140,220,.16)] bg-[rgba(10,16,28,.55)] px-4 py-3"><div class="text-[10px] tracking-[.2em] text-[#54719e]">${label}</div><div class="text-lg font-bold mt-1 tabular-nums" style="color:${color||'#e8eefc'}">${val}</div></div>`;
-    q('#labKpi').classList.remove('hidden');
-    q('#labKpi').innerHTML = k('笔数',st.n) + k('总盈亏',(st.total>=0?'+':'')+fmtN(st.total),st.total>=0?'#3ddc97':'#ff6b81')
-      + k('胜率',st.winRate==null?'—':fmtN(st.winRate,1)+'%') + k('盈亏比',st.payoff==null?'—':fmtN(st.payoff,2))
-      + k('利润因子',st.pf==null?'—':(st.pf>=99?'∞':fmtN(st.pf,2))) + k('最大回撤',fmtN(st.maxDD)) + k('单笔期望',st.avg==null?'—':fmtN(st.avg));
-    q('#labTable').innerHTML = trades.length ? `<table class="w-full text-xs" style="border-collapse:collapse">
-      <thead><tr>${['日期','币种','方向','价格','数量','盈亏','备注'].map(h=>`<th style="text-align:left;padding:.5rem .7rem;border-bottom:1px solid rgba(90,140,220,.25);color:#54719e;letter-spacing:.12em">${h}</th>`).join('')}</tr></thead>
-      <tbody>${trades.slice(0,12).map(t=>`<tr class="hover:bg-[rgba(16,30,48,.5)]">
-        <td style="padding:.45rem .7rem;border-bottom:1px solid rgba(90,140,220,.08);color:#b9d2f2;white-space:nowrap">${t.date}</td>
-        <td style="padding:.45rem .7rem;border-bottom:1px solid rgba(90,140,220,.08)">${t.symbol}</td>
-        <td style="padding:.45rem .7rem;border-bottom:1px solid rgba(90,140,220,.08)">${t.side}</td>
-        <td style="padding:.45rem .7rem;border-bottom:1px solid rgba(90,140,220,.08)" class="tabular-nums">${fmtN(t.price,t.price<1?4:2)}</td>
-        <td style="padding:.45rem .7rem;border-bottom:1px solid rgba(90,140,220,.08)">${t.amount==null?'—':t.amount}</td>
-        <td style="padding:.45rem .7rem;border-bottom:1px solid rgba(90,140,220,.08);color:${t.pnl>0?'#3ddc97':t.pnl<0?'#ff6b81':'#b9d2f2'}" class="tabular-nums">${t.pnl==null||isNaN(t.pnl)?'—':(t.pnl>0?'+':'')+fmtN(t.pnl)}</td>
-        <td style="padding:.45rem .7rem;border-bottom:1px solid rgba(90,140,220,.08);color:#54719e">${t.note||''}</td></tr>`).join('')}</tbody></table>`
-      + (trades.length>12?'<div class="text-center text-[10px] tracking-[.3em] text-[#3f5d85] my-3">仅预览前 12 行，分析使用全部数据</div>':'') : '';
-  }
-  function analyze(){
-    const trades=parseText(q('#labPaste').value);
-    if(!trades||!trades.length){ q('#labMsg').textContent='没有解析到有效记录。请检查格式，或点「填入示例数据」查看示例。'; return; }
-    const st=calcStats(trades);
-    if(!st.n){ q('#labMsg').textContent=`解析到 ${trades.length} 行，但缺少可用的「盈亏」列。`; renderBatch(st,trades); return; }
-    lastBatch=st; lastParsed=trades; renderBatch(st,trades); trainBrain(st);
-    q('#labMsg').textContent=''; q('#labOk').textContent=`已解析 ${trades.length} 行（${st.n} 笔有盈亏），画像已更新。`;
-  }
-
-  /* 03 TradeBrain 画像 */
-  const BKEY='tradebrain_v1';
-  const loadB=()=>{ try{ return JSON.parse(localStorage.getItem(BKEY))||null; }catch(e){ return null; } };
-  function brainCalc(b){
-    const wr=b.trades?b.wins/b.trades*100:null;
-    const pf=b.gl>0?b.gw/b.gl:(b.gw>0?99:null);
-    const payoff=b.gl>0&&b.wins>0?(b.gw/b.wins)/(b.gl/Math.max(1,b.trades-b.wins)):null;
-    const noteRate=b.trades?b.notes/b.trades*100:0;
-    const ddRatio=b.gw>0?b.maxDD/b.gw:1;
-    const dims={ '经验':Math.min(100,Math.round(Math.sqrt(b.trades)*10)),
-      '盈利':pf==null?10:(pf>=99?95:pf>=2?90:pf>=1.5?78:pf>=1.2?64:Math.max(15,Math.round(pf*50))),
-      '风控':ddRatio<=0.1?90:ddRatio<=0.25?70:ddRatio<=0.5?50:30,
-      '纪律':Math.round(Math.min(50,b.uploads*10)+noteRate*0.5),
-      '一致性':wr==null?10:Math.max(10,Math.round(100-Math.abs(wr-50)*1.6)) };
-    const tags=[];
-    if(pf!=null&&pf>=1.5&&wr>=45)tags.push('稳健盈利');
-    if(payoff!=null&&payoff>=2)tags.push('让利润奔跑');
-    if(payoff!=null&&payoff<0.9&&b.trades>=10)tags.push('止盈过急');
-    if(ddRatio>0.5&&b.trades>=10)tags.push('回撤偏深');
-    if(wr!=null&&wr<35&&b.trades>=20)tags.push('情绪化交易?');
-    if(b.trades>=10&&noteRate<30)tags.push('记录不完整');
-    if(!tags.length)tags.push('潜力新星');
-    const lv=b.trades>=700?8:b.trades>=400?7:b.trades>=200?6:b.trades>=100?5:b.trades>=50?4:b.trades>=25?3:b.trades>=10?2:1;
-    const persona=tags[0]==='稳健盈利'?'稳健的趋势跟随者':tags[0]==='让利润奔跑'?'耐心型波段选手':tags[0]==='止盈过急'?'积极的短线选手':tags[0]==='回撤偏深'?'激进型进攻选手':tags[0]==='情绪化交易?'?'需要修炼心态的勇士':'正在进化的交易者';
-    return {wr,pf,payoff,noteRate,dims,tags:tags.slice(0,4),lv,persona};
-  }
-  function trainBrain(st){
-    const b=loadB()||{uploads:0,trades:0,wins:0,gw:0,gl:0,total:0,maxDD:0,notes:0};
-    b.uploads++; b.trades+=st.n; b.wins+=Math.round(st.winRate/100*st.n);
-    b.gw+=st.gw; b.gl+=st.gl; b.total+=st.total; b.maxDD=Math.max(b.maxDD,st.maxDD); b.notes+=st.notes;
-    localStorage.setItem(BKEY,JSON.stringify(b)); renderBrain();
-  }
-  function renderBrain(){
-    const b=loadB(), card=q('#labBrain');
-    if(!b||!b.trades){
-      card.innerHTML=`<div class="text-[#4a648c] text-sm leading-[1.9]">还没有画像。上传第一批操作记录，TradeBrain 会开始为你累积交易画像：<br>· 每次上传都会进化等级与称号<br>· 五个维度：经验 / 盈利 / 风控 / 纪律 / 一致性<br>· 标签系统识别你的决策风格与弱点<br>· 画像会喂给 DeepSeek，AI 分析一次比一次懂你</div>`;
-      q('#labAi').disabled=true; return;
-    }
-    const c=brainCalc(b);
-    card.innerHTML=`
-      <div class="flex flex-wrap items-center gap-6">
-        <div class="w-24 h-24 rounded-full flex flex-col items-center justify-center shrink-0 border-2 border-[rgba(120,230,255,.55)]" style="box-shadow:0 0 24px rgba(96,225,255,.3),inset 0 0 18px rgba(96,225,255,.12)">
-          <div class="text-2xl font-extrabold">Lv.${c.lv}</div><div class="text-[9px] tracking-[.2em] text-[#4dd0e1] mt-1">TRADER</div>
-        </div>
-        <div>
-          <div class="text-xl font-bold tracking-wide">${c.persona}</div>
-          <div class="text-xs text-[#6d8ab5] tracking-wide mt-1.5">累计 ${b.trades} 笔 · ${b.uploads} 次上传 · 总盈亏 ${(b.total>=0?'+':'')+fmtN(b.total)}</div>
-          <div class="flex flex-wrap gap-2 mt-3">${c.tags.map(x=>`<span class="border border-[rgba(120,200,255,.35)] text-[#9fd8ff] rounded-full text-[11px] tracking-wide px-3 py-1">${x}</span>`).join('')}</div>
-        </div>
+      <div class="reveal d1 card card-hover p-8">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#4dd0e1" stroke-width="1.6"><path d="M9 11l3 3 8-8"/><circle cx="12" cy="12" r="10"/></svg>
+        <h3 class="font-bold mt-5">自测校验</h3>
+        <p class="text-sm mt-2 leading-relaxed" style="color:var(--dim);">每章配自测题，即时判分。看懂 ≠ 掌握，测过才算。</p>
       </div>
-      <div class="mt-7 space-y-3">${Object.keys(c.dims).map(k=>`
-        <div class="grid grid-cols-[64px_1fr_44px] items-center gap-3">
-          <span class="text-xs text-[#6d8ab5] tracking-[.18em]">${k}</span>
-          <div class="h-2 rounded-full overflow-hidden" style="background:rgba(90,140,220,.12)"><div class="h-full rounded-full" style="width:${c.dims[k]}%;background:linear-gradient(90deg,#1c6e8c,#4dd0e1);box-shadow:0 0 10px rgba(77,208,225,.5)"></div></div>
-          <span class="text-sm font-bold text-right tabular-nums">${c.dims[k]}</span>
-        </div>`).join('')}</div>`;
-    q('#labAi').disabled=false;
-  }
-  renderBrain();
+      <div class="reveal d2 card card-hover p-8">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#4dd0e1" stroke-width="1.6"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>
+        <h3 class="font-bold mt-5">复盘沉淀</h3>
+        <p class="text-sm mt-2 leading-relaxed" style="color:var(--dim);">错题自动归档，隔段时间回来重练，记忆才真正属于你。</p>
+      </div>
+    </div>
+  </div>
+</section>
 
-  q('#labAnalyze').onclick=analyze;
-  q('#labSample').onclick=()=>{ q('#labPaste').value='日期,币种,方向,价格,数量,盈亏,备注\n2026-09-22,BTC,买,61200,0.02,260,趋势回踩买入\n2026-09-24,BTC,卖,62800,0.02,180,到达目标止盈\n2026-09-26,ETH,买,2380,1,-120,追涨被套止损\n2026-09-28,SOL,买,148,20,340,突破买入\n2026-09-30,ETH,卖,2460,1,90,反弹减仓\n2026-10-01,BTC,买,63500,0.01,-200,假突破止损\n2026-10-02,SOL,卖,155,20,160,分批止盈\n2026-10-03,BTC,卖,64100,0.01,150,移动止盈'; analyze(); };
-  q('#labClear').onclick=()=>{ q('#labPaste').value=''; q('#labMsg').textContent=''; };
-  const drop=q('#labDrop'), file=q('#labFile');
-  drop.onclick=()=>file.click();
-  drop.ondragover=e=>{ e.preventDefault(); drop.classList.add('border-[rgba(120,230,255,.8)]'); };
-  drop.ondragleave=()=>drop.classList.remove('border-[rgba(120,230,255,.8)]');
-  drop.ondrop=e=>{ e.preventDefault(); drop.classList.remove('border-[rgba(120,230,255,.8)]'); const f=e.dataTransfer.files[0]; if(f)readF(f); };
-  file.onchange=()=>{ if(file.files[0])readF(file.files[0]); };
-  function readF(f){ const r=new FileReader(); r.onload=()=>{ q('#labPaste').value=r.result; analyze(); }; r.readAsText(f); }
+<div class="hr-fade container-x"></div>
 
-  q('#labAi').onclick=()=>{
-    const b=loadB();
-    if(!b||!lastBatch){ q('#labMsg').textContent='请先上传并分析一批记录。'; return; }
-    const c=brainCalc(b);
-    const rows=lastParsed.filter(t=>t.pnl!=null&&!isNaN(t.pnl)).slice(-30).map(t=>`| ${t.date} | ${t.symbol} | ${t.side} | ${(t.pnl>0?'+':'')+t.pnl} | ${t.note||'—'} |`).join('\n');
-    const body='## 实盘分析请求（第 '+b.uploads+' 次）\n\n### 交易画像（TradeBrain 累积）\n'
-      +'- 等级：Lv.'+c.lv+' '+c.persona+'\n- 累计：'+b.trades+' 笔 / 胜率 '+fmtN(c.wr,1)+'% / 利润因子 '+(c.pf>=99?'∞':fmtN(c.pf,2))+' / 最大回撤 '+fmtN(b.maxDD)+'\n'
-      +'- 风格标签：'+c.tags.join('、')+'\n'
-      +'- 维度：经验 '+c.dims['经验']+' / 盈利 '+c.dims['盈利']+' / 风控 '+c.dims['风控']+' / 纪律 '+c.dims['纪律']+' / 一致性 '+c.dims['一致性']+'\n\n'
-      +'### 最近记录（最多 30 笔）\n| 日期 | 币种 | 方向 | 盈亏 | 备注 |\n|---|---|---|---|---|\n'+(rows||'（无）')
-      +'\n\n### 请分析\n1. 结合画像指出我最核心的 1-2 个问题\n2. 给出下周就能执行的具体改进动作\n';
-    const title='【实盘分析】'+new Date().toISOString().slice(0,10)+' 第'+b.uploads+'次';
-    window.open('https://github.com/lhk20060417-dev/crypto-learning/issues/new?labels='+encodeURIComponent('实盘分析')+'&title='+encodeURIComponent(title)+'&body='+encodeURIComponent(body),'_blank');
-    q('#labOk').textContent='已在 GitHub 打开预填好的分析请求，点击「Create」后约 40 秒，DeepSeek 点评会作为评论出现在 Issue 里。';
-  };
-  q('#labReset').onclick=()=>{ localStorage.removeItem(BKEY); lastBatch=null; lastParsed=[]; renderBrain(); q('#labOk').textContent='画像已清空。'; };
-})();
+<!-- ② 六大学习阶段预览 -->
+<section class="py-24">
+  <div class="container-x">
+    <div class="reveal flex flex-wrap items-end justify-between gap-4">
+      <div><p class="sec-tag">CURRICULUM</p><h2 class="sec-title">六大学习阶段</h2></div>
+      <a href="roadmap.html" class="text-sm" style="color:var(--brand);">查看完整路线 →</a>
+    </div>
+    <div class="mt-10 grid sm:grid-cols-2 lg:grid-cols-3 gap-4" id="stageGrid"></div>
+  </div>
+</section>
 
-/* ---------- 进入视口渐入 ---------- */
-const io = new IntersectionObserver(es => es.forEach(en => { if(en.isIntersecting){ en.target.classList.add('in'); io.unobserve(en.target); } }), { threshold:.12 });
-function watchReveals(){ document.querySelectorAll('.reveal:not(.in)').forEach(n => io.observe(n)); }
+<div class="hr-fade container-x"></div>
 
-/* ---------- 启动 ---------- */
-el('statChapters').textContent = ORDER.length;
-el('statQuestions').textContent = ORDER.reduce((s, o) => s + o.ch.quiz.length, 0);
-el('statStages').textContent = STAGES.length;
-applyLang();
+<!-- ③ 平台能力 -->
+<section class="py-24">
+  <div class="container-x">
+    <div class="reveal"><p class="sec-tag">CAPABILITIES</p><h2 class="sec-title">为自学而生的学习系统</h2></div>
+    <div class="mt-10 grid md:grid-cols-3 gap-4">
+      <div class="reveal card p-8">
+        <div class="tag-brand">01 · LOCAL FIRST</div>
+        <h3 class="font-bold mt-3">本地存储</h3>
+        <p class="text-sm mt-2 leading-relaxed" style="color:var(--dim);">进度、成绩、错题全部保存在浏览器 localStorage，无需注册、不上传服务器、换个设备也不互相干扰。</p>
+      </div>
+      <div class="reveal d1 card p-8">
+        <div class="tag-brand">02 · ASSESSMENT</div>
+        <h3 class="font-bold mt-3">阶段结业考核</h3>
+        <p class="text-sm mt-2 leading-relaxed" style="color:var(--dim);">完成阶段全部章节解锁综合考卷，70 分通过，检验整阶段知识的融会贯通。</p>
+      </div>
+      <div class="reveal d2 card p-8">
+        <div class="tag-brand">03 · VISUALIZED</div>
+        <h3 class="font-bold mt-3">进度可视化</h3>
+        <p class="text-sm mt-2 leading-relaxed" style="color:var(--dim);">整体完成率、各阶段进度条、最近学习记录——学了多少，一眼看清。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ④ 独立风险警示区块 -->
+<section class="py-24">
+  <div class="container-x">
+    <div class="reveal relative overflow-hidden rounded-md p-10 md:p-14" style="border:1px solid rgba(255,150,80,.28); background:linear-gradient(150deg,rgba(60,30,10,.35),rgba(8,13,24,.7));">
+      <div class="flex items-center gap-2 text-xs font-semibold tracking-[.3em]" style="color:var(--warn);">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 9v4m0 4h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z" stroke="#ffb066" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        RISK NOTICE
+      </div>
+      <h3 class="text-xl md:text-2xl font-bold mt-4">先认识风险，再谈区块链</h3>
+      <p class="text-sm mt-4 leading-[1.9] max-w-2xl" style="color:#cdb9a8;">虚拟货币不具有法偿性，相关业务活动在国内属于非法金融活动，不受法律保护；价格波动、合约漏洞、传销诈骗等风险真实存在。本站全部内容仅作技术理论学习之用。</p>
+      <button class="btn-ghost !text-xs mt-7" onclick="openModal(fullRiskHtml())">查看完整监管说明 →</button>
+      <div class="risk-fab">
+        <button class="chip !py-2.5 !px-4 shadow-lg" style="border-color:rgba(255,150,80,.5);color:var(--warn);background:rgba(7,11,20,.9);" onclick="openModal(fullRiskHtml())">⚠ 风险须知</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="footer-slot"></div>
+
+<script src="js/content.js"></script>
+<script src="js/storage.js"></script>
+<script src="js/animate.js"></script>
+<script>
+renderNav('navHome');
+
+/* 完整监管说明（弹窗内容，首页不放长法条原文） */
+function fullRiskHtml(){
+  return `
+  <h3 style="color:var(--txt);font-weight:700;font-size:1.1rem;margin-bottom:14px;">虚拟货币的风险与国内监管规定</h3>
+  <div class="article" style="font-size:.88rem;">
+    <p><strong style="color:#ffd9b3;">监管定性。</strong>2021 年，中国人民银行等十部门联合发布通知，明确虚拟货币不具有法偿性，相关业务活动属于非法金融活动；境外交易所向境内居民提供服务也属非法。</p>
+    <p><strong style="color:#ffd9b3;">不受法律保护。</strong>投资交易虚拟货币引发的损失自行承担，相关民事法律行为无效，不受法律保护。</p>
+    <p><strong style="color:#ffd9b3;">典型风险。</strong>价格剧烈波动、传销与非法集资、钓鱼诈骗、私钥丢失无法找回。任何声称「稳赚不赔」「保本高收益」的项目都应视为诈骗信号。</p>
+    <p style="color:var(--faint);font-size:.8rem;">本站不提供行情、交易、钱包充提等任何功能，不链接任何交易所，仅用于区块链技术理论的学习与自测。</p>
+  </div>`;
+}
+
+/* 阶段预览卡片 */
+const ICONS = ['◈','⬡','△','◇','◉','✦'];
+document.getElementById('stageGrid').innerHTML = STAGES.map((s,i)=>{
+  const n = s.chapters.length;
+  return `<a href="roadmap.html" class="reveal d${i%3+1} card card-hover p-7 block">
+    <div class="flex items-center justify-between">
+      <span style="color:var(--brand);font-size:22px;">${ICONS[i]||'◈'}</span>
+      <span class="tag-brand">${s.num} · ${s.en}</span>
+    </div>
+    <h3 class="font-bold mt-4 text-lg">${s.title}</h3>
+    <p class="text-sm mt-2 leading-relaxed" style="color:var(--dim);">${(s.chapters[0].intro||'').slice(0,54)||s.en}</p>
+    <div class="text-[11px] mt-5 tracking-[.15em]" style="color:var(--faint);">${n} 个章节 · 点击查看路线</div>
+  </a>`;
+}).join('');
+
+document.getElementById('statChapters').textContent = ORDER.length;
+document.getElementById('statQuestions').textContent = ORDER.reduce((s,o)=>s+o.ch.quiz.length,0);
+document.getElementById('statStages').textContent = STAGES.length;
 watchReveals();
-const _ra = renderAll;
-renderAll = function(){ _ra(); watchReveals(); };
 </script>
 </body>
 </html>

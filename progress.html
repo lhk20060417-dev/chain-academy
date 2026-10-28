@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>进度总览 · Chain Academy</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/vars.css">
+</head>
+<body>
+
+<nav class="site-nav solid">
+  <div class="nav-inner">
+    <a href="index.html" class="flex items-center gap-2 shrink-0">
+      <span class="w-7 h-7 rounded-md flex items-center justify-center text-white font-extrabold text-sm" style="background:linear-gradient(135deg,#0f6f83,#155e97)">C</span>
+      <span class="font-bold tracking-wide text-sm">Chain<span style="color:var(--brand)">Academy</span></span>
+    </a>
+    <div class="nav-links-slot hidden lg:flex items-center gap-6 flex-1 justify-center"></div>
+    <div class="flex items-center gap-2 shrink-0">
+      <button class="lang-sw chip !py-1.5" data-lang="zh">中文</button>
+      <button class="lang-sw chip !py-1.5" data-lang="en">EN</button>
+      <button class="cta-continue btn-primary !py-2 !px-4 !text-xs">继续上次学习</button>
+    </div>
+  </div>
+</nav>
+
+<div class="container-x pt-28 pb-10">
+  <p class="sec-tag">PROGRESS OVERVIEW</p>
+  <h1 class="sec-title">学习进度</h1>
+  <p class="sec-desc">全部数据来自你浏览器中的本地记录，只反映本机本浏览器的学习情况。</p>
+
+  <div class="grid lg:grid-cols-[300px_1fr] gap-8 mt-12 items-start">
+    <!-- 环形图 -->
+    <div class="reveal card p-8 flex flex-col items-center">
+      <div class="text-[10px] tracking-[.3em] font-semibold self-start mb-6" style="color:var(--faint);">OVERALL</div>
+      <div class="relative w-48 h-48">
+        <svg viewBox="0 0 120 120" class="w-full h-full -rotate-90">
+          <circle cx="60" cy="60" r="52" fill="none" stroke="rgba(148,180,255,.1)" stroke-width="9"/>
+          <circle id="donut" cx="60" cy="60" r="52" fill="none" stroke="url(#pg1)" stroke-width="9" stroke-linecap="round" stroke-dasharray="326.7" stroke-dashoffset="326.7" style="transition:stroke-dashoffset 1.4s cubic-bezier(.2,.8,.3,1)"/>
+          <defs><linearGradient id="pg1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4dd0e1"/><stop offset="1" stop-color="#38b6ff"/></linearGradient></defs>
+        </svg>
+        <div class="absolute inset-0 flex flex-col items-center justify-center">
+          <div class="text-4xl font-extrabold" id="overallPct">0%</div>
+          <div class="text-[10px] tracking-[.3em] mt-1" style="color:var(--faint);">总体完成率</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 统计面板 + 阶段柱状图 -->
+    <div class="space-y-6">
+      <div class="reveal d1 grid sm:grid-cols-3 gap-4">
+        <div class="card p-6"><div class="text-3xl font-extrabold" style="color:var(--brand);" id="stChapters">0</div><div class="text-xs mt-2" style="color:var(--dim);">已学章节</div></div>
+        <div class="card p-6"><div class="text-3xl font-extrabold" style="color:var(--brand);" id="stAnswers">0</div><div class="text-xs mt-2" style="color:var(--dim);">完成习题</div></div>
+        <div class="card p-6"><div class="text-3xl font-extrabold" style="color:var(--danger);" id="stWrong">0</div><div class="text-xs mt-2" style="color:var(--dim);">错题总数</div></div>
+      </div>
+      <div class="reveal d2 card p-7">
+        <div class="text-[10px] tracking-[.3em] font-semibold mb-6" style="color:var(--faint);">各阶段完成比例</div>
+        <div id="stageBars"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 最近学习记录 -->
+  <div class="mt-14 reveal">
+    <div class="text-[10px] tracking-[.3em] font-semibold mb-5" style="color:var(--faint);">RECENT · 最近学习记录</div>
+    <div id="recentList"></div>
+  </div>
+</div>
+
+<div class="footer-slot"></div>
+
+<script src="js/content.js"></script>
+<script src="js/storage.js"></script>
+<script src="js/animate.js"></script>
+<script>
+renderNav('navProgress');
+
+const pct = overallPct();
+document.getElementById('overallPct').textContent = pct + '%';
+setTimeout(() => document.getElementById('donut').style.strokeDashoffset = 326.7 * (1 - pct/100), 120);
+const doneCh = ORDER.filter(o => progress.chapters[o.ch.id] && progress.chapters[o.ch.id].passed).length;
+document.getElementById('stChapters').textContent = doneCh + ' / ' + ORDER.length;
+document.getElementById('stAnswers').textContent = progress.answers;
+document.getElementById('stWrong').textContent = progress.wrong.length;
+
+document.getElementById('stageBars').innerHTML = STAGES.map(s => {
+  const n = s.chapters.filter(c => progress.chapters[c.id] && progress.chapters[c.id].passed).length;
+  const p = Math.round(n / s.chapters.length * 100);
+  return `<div class="mb-5 last:mb-0">
+    <div class="flex justify-between text-xs mb-2"><span style="color:var(--dim);">${s.num} · ${s.title}</span><span style="color:var(--brand);">${p}%</span></div>
+    <div class="track"><div class="fill" style="width:${p}%"></div></div>
+  </div>`;
+}).join('');
+
+/* 最近学习记录：章节 + 考核，按日期倒序 */
+const records = [];
+ORDER.forEach(o => { const r = progress.chapters[o.ch.id]; if(r && r.date) records.push({ date:r.date, title:o.ch.title, sub:o.stage.title, score:r.score, type:'ch', id:o.ch.id }); });
+EXAMS.forEach(e => { const r = progress.exams[e.stageId]; const s = STAGES.find(x => x.id === e.stageId); if(r && r.date) records.push({ date:r.date, title:s.title + ' · 阶段考核', sub:s.en, score:r.score, type:'exam', id:e.stageId }); });
+records.sort((a,b) => b.date.localeCompare(a.date));
+const rl = document.getElementById('recentList');
+if(!records.length){
+  rl.innerHTML = `<div class="empty"><span class="empty-icon">◷</span>还没有学习记录。从 <a href="roadmap.html" style="color:var(--brand);">学习路线</a> 开始第一章吧。</div>`;
+} else {
+  rl.innerHTML = `<div class="card divide-y" style="--tw-divide-opacity:1;">` + records.slice(0,12).map(r => `
+    <a class="flex items-center gap-4 px-6 py-4 transition-colors hover:bg-[rgba(77,208,225,.05)]" href="${r.type==='exam' ? 'chapter.html?exam='+r.id : 'chapter.html?id='+encodeURIComponent(r.id)}">
+      <span class="text-lg" style="color:${r.type==='exam'?'var(--warn)':'var(--brand)'};">${r.type==='exam'?'✎':'●'}</span>
+      <span class="flex-1">
+        <span class="block text-sm font-medium">${esc(r.title)}</span>
+        <span class="block text-[11px] mt-0.5" style="color:var(--faint);">${r.sub}</span>
+      </span>
+      <span class="text-xs tabular-nums" style="color:var(--dim);">${r.score!=null ? r.score+' 分' : '已读'}</span>
+      <span class="text-[11px]" style="color:var(--faint);">${r.date}</span>
+    </a>`).join('') + `</div>`;
+}
+</script>
+</body>
+</html>

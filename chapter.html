@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>章节 · Chain Academy</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/vars.css">
+<style>
+.opt{border:1px solid var(--line-strong); border-radius:var(--r); padding:12px 16px; cursor:pointer; transition:all .25s; color:var(--dim); font-size:.88rem;}
+.opt:hover{border-color:rgba(77,208,225,.55); color:var(--txt); background:rgba(77,208,225,.06);}
+.opt.correct{border-color:var(--ok); color:var(--ok); background:rgba(61,220,151,.08);}
+.opt.wrong{border-color:var(--danger); color:var(--danger); background:rgba(255,107,129,.08);}
+.opt.picked:not(.correct):not(.wrong){border-color:var(--brand-2); color:var(--txt);}
+.q-num{width:26px;height:26px; border-radius:var(--r); background:rgba(148,180,255,.1); color:var(--dim); font-size:12px; display:inline-flex; align-items:center; justify-content:center; font-weight:600;}
+.toc-link{display:block; padding:6px 12px; font-size:.8rem; border-radius:var(--r); color:var(--faint); transition:all .25s; border-left:2px solid transparent;}
+.toc-link:hover{color:var(--txt); background:rgba(77,208,225,.06);}
+.toc-link.on{color:var(--brand); border-left-color:var(--brand);}
+</style>
+</head>
+<body>
+
+<nav class="site-nav solid">
+  <div class="nav-inner">
+    <a href="index.html" class="flex items-center gap-2 shrink-0">
+      <span class="w-7 h-7 rounded-md flex items-center justify-center text-white font-extrabold text-sm" style="background:linear-gradient(135deg,#0f6f83,#155e97)">C</span>
+      <span class="font-bold tracking-wide text-sm">Chain<span style="color:var(--brand)">Academy</span></span>
+    </a>
+    <div class="nav-links-slot hidden lg:flex items-center gap-6 flex-1 justify-center"></div>
+    <div class="flex items-center gap-2 shrink-0">
+      <button class="lang-sw chip !py-1.5" data-lang="zh">中文</button>
+      <button class="lang-sw chip !py-1.5" data-lang="en">EN</button>
+      <button class="cta-continue btn-primary !py-2 !px-4 !text-xs">继续上次学习</button>
+    </div>
+  </div>
+</nav>
+
+<div class="container-x pt-24 pb-10" id="pageRoot">
+  <!-- 骨架屏：数据在本地，加载极快，骨架只为保持体验一致 -->
+  <div id="skel">
+    <div class="skeleton sk-title"></div>
+    <div class="skeleton sk-line" style="width:30%;"></div>
+    <div class="grid lg:grid-cols-[220px_1fr] gap-10 mt-8">
+      <div class="hidden lg:block space-y-3"><div class="skeleton sk-line"></div><div class="skeleton sk-line"></div><div class="skeleton sk-line"></div><div class="skeleton sk-line"></div></div>
+      <div class="max-w-2xl"><div class="skeleton sk-line"></div><div class="skeleton sk-line" style="width:92%"></div><div class="skeleton sk-line" style="width:96%"></div><div class="skeleton sk-line" style="width:70%"></div><div class="skeleton sk-line" style="width:88%"></div><div class="skeleton sk-line" style="width:50%"></div></div>
+    </div>
+  </div>
+  <div id="content" class="hidden"></div>
+</div>
+
+<div class="footer-slot"></div>
+
+<script src="js/content.js"></script>
+<script src="js/storage.js"></script>
+<script src="js/animate.js"></script>
+<script>
+renderNav('navLibrary');
+
+const params = new URLSearchParams(location.search);
+const chId = params.get('id');
+const examId = params.get('exam');
+
+if(examId) renderExam(examId);
+else if(chId) renderChapter(chId);
+else location.href = 'library.html';
+
+function renderChapter(chId){
+  const o = ORDER.find(x => x.ch.id === chId);
+  if(!o){ location.href = 'library.html'; return; }
+  if(!isUnlocked(chId)){ toast(t('locked')); location.href = 'library.html'; return; }
+  progress.lastStudy = chId; saveProgress();
+  const st = chapterState(chId);
+  const prev = ORDER[o.index - 1], next = ORDER[o.index + 1];
+  const prevOk = prev && isUnlocked(prev.ch.id);
+  const nextOk = next && isUnlocked(next.ch.id);
+
+  setContent(`
+    <div class="flex flex-wrap items-center gap-3 text-[11px] tracking-[.2em]" style="color:var(--faint);">
+      <a href="library.html" style="color:var(--brand);">${t('backLibrary')}</a>
+      <span>/</span><span>${o.stage.num} · ${o.stage.title}</span>
+      ${o.stage.risky ? `<span class="chip !text-[10px]" style="border-color:rgba(255,150,80,.4);color:var(--warn);">⚠ 市场认知 · 理论学习</span>` : ''}
+      <span class="chip !text-[10px]">${st==='done'?'✓ '+t('done'):t('active')}</span>
+    </div>
+    <h1 class="text-2xl md:text-3xl font-extrabold mt-4">${o.ch.title}</h1>
+    <p class="text-sm mt-2" style="color:var(--dim);">${o.ch.intro || ''} · ◷ ${o.ch.dur}</p>
+    <div class="grid lg:grid-cols-[220px_1fr] gap-10 mt-10">
+      <aside class="hidden lg:block">
+        <div class="sticky top-24">
+          <div class="text-[10px] tracking-[.3em] font-semibold mb-3" style="color:var(--faint);">目录</div>
+          <nav id="toc"></nav>
+        </div>
+      </aside>
+      <div class="max-w-2xl">
+        ${o.stage.risky ? `<div class="rounded-md border px-4 py-3 text-xs leading-relaxed mb-8" style="border-color:rgba(255,150,80,.35);background:rgba(60,30,10,.3);color:#ffcf9e;">⚠ 本章节属于市场认知类知识，仅作理论学习。请始终牢记：虚拟货币相关业务在国内属于非法金融活动，不受法律保护，本站不引导任何交易行为。</div>` : ''}
+        <div class="article" id="articleBody">${o.ch.content}</div>
+        <div class="hr-fade my-8"></div>
+        <div id="quizZone"></div>
+        <div class="hr-fade my-8"></div>
+        <div class="flex flex-wrap gap-3">
+          <button class="btn-ghost !text-xs" ${prevOk?`onclick="location.href='chapter.html?id=${encodeURIComponent(prev.ch.id)}'"`:'disabled'}>${t('prevCh')}${prev?` · ${prev.ch.title}`:''}</button>
+          <button class="btn-ghost !text-xs" ${nextOk?`onclick="location.href='chapter.html?id=${encodeURIComponent(next.ch.id)}'"`:'disabled'}>${t('nextCh')}${next?` · ${next.ch.title}`:''}</button>
+        </div>
+      </div>
+    </div>`);
+
+  buildToc();
+  if(o.ch.quiz.length) buildQuizZone(o.ch, 'quiz');
+  else {
+    document.getElementById('quizZone').innerHTML = `
+      <div class="card p-6 text-center">
+        <p class="text-sm mb-5" style="color:var(--dim);">本节为知识阅读章节，没有配套自测题。阅读完成后点击下方按钮记录进度。</p>
+        <button class="btn-primary" onclick="markRead()">${t('markRead')}</button>
+        <div id="quizResult" class="mt-4 text-sm font-semibold"></div>
+      </div>`;
+  }
+}
+
+function renderExam(stageId){
+  const exam = EXAMS.find(e => e.stageId === stageId);
+  const s = STAGES.find(x => x.id === stageId);
+  if(!exam || !s){ location.href = 'roadmap.html'; return; }
+  if(examState(exam) === 'locked'){ toast(t('examLocked')); location.href = 'roadmap.html'; return; }
+  const st = examState(exam);
+  setContent(`
+    <div class="flex flex-wrap items-center gap-3 text-[11px] tracking-[.2em]" style="color:var(--faint);">
+      <a href="roadmap.html" style="color:var(--brand);">← ${t('navRoadmap')}</a>
+      <span>/</span><span>STAGE ${s.num} · ${s.en}</span>
+      <span class="chip !text-[10px]">${st==='done'?'✓ '+t('done'):t('active')}</span>
+    </div>
+    <h1 class="text-2xl md:text-3xl font-extrabold mt-4">${s.title} · ${t('stageExam')}</h1>
+    <p class="text-sm mt-2" style="color:var(--dim);">${exam.questions.length} 题 · 70 ${t('pass')}</p>
+    <div class="max-w-2xl mt-10">
+      <div id="quizZone"></div>
+      <div class="flex flex-wrap gap-3 mt-8">
+        <a class="btn-ghost !text-xs" href="roadmap.html">← ${t('navRoadmap')}</a>
+      </div>
+    </div>`);
+  buildQuizZone({ id:'exam-'+stageId, quiz: exam.questions.map(x => x.q), _exam: exam }, 'exam');
+}
+
+function buildToc(){
+  const body = document.getElementById('articleBody');
+  const heads = [...body.querySelectorAll('h4,h3')];
+  const toc = document.getElementById('toc');
+  if(!heads.length){ toc.innerHTML = '<div class="text-xs" style="color:var(--faint);">—</div>'; return; }
+  toc.innerHTML = heads.map((h,i) => `<a class="toc-link" data-i="${i}" onclick="document.getElementById('${h.id}').scrollIntoView({behavior:'smooth',block:'start'})">${esc(h.textContent)}</a>`).join('');
+  heads.forEach((h,i) => { h.id = 'h-'+i; });
+}
+
+let quizMode = 'quiz';
+function buildQuizZone(ch, mode){
+  quizMode = mode;
+  const box = document.getElementById('quizZone');
+  box.innerHTML = `
+    <h3 class="font-bold text-lg mb-1">✎ ${t('quizTitle')}</h3>
+    <p class="text-xs mb-5" style="color:var(--faint);">${ch.quiz.length} 题 · ${mode==='exam'?'70':'60'} ${t('pass')}</p>
+    <div class="space-y-6">${ch.quiz.map((q,qi) => `
+      <div class="card p-5">
+        <div class="flex items-start gap-3"><span class="q-num shrink-0">${qi+1}</span><div class="font-medium text-[15px] leading-relaxed">${esc(q.q)}</div></div>
+        <div class="grid gap-2.5 mt-4" id="opts-${qi}">
+          ${q.opts.map((op,oi) => `<div class="opt" data-qi="${qi}" data-oi="${oi}" onclick="pickOpt(this)">${String.fromCharCode(65+oi)}. ${esc(op)}</div>`).join('')}
+        </div>
+        <div class="hidden mt-3 text-xs leading-relaxed pl-3" style="color:var(--dim);border-left:2px solid rgba(77,208,225,.4);" id="exp-${qi}"></div>
+      </div>`).join('')}
+    </div>
+    <div class="mt-7 flex flex-wrap gap-3 items-center">
+      <button class="btn-primary" onclick="grade(${mode==='exam'?70:60})">${t('submitQuiz')}</button>
+      <button class="btn-ghost" onclick="buildQuizZone(chCache, '${mode}');document.getElementById('quizResult')&&(document.getElementById('quizResult').textContent='')">↺</button>
+      <span id="quizResult" class="text-sm font-semibold"></span>
+    </div>`;
+  window.chCache = ch;
+}
+function pickOpt(elm){
+  if(elm.parentNode.dataset.graded === '1') return;
+  elm.parentNode.querySelectorAll('.opt').forEach(o => o.classList.remove('picked'));
+  elm.classList.add('picked');
+}
+function grade(passLine){
+  const ch = window.chCache;
+  const isExam = !!ch._exam;
+  let correct = 0;
+  ch.quiz.forEach((q, qi) => {
+    const box = document.getElementById('opts-'+qi); box.dataset.graded = '1';
+    box.querySelectorAll('.opt').forEach(op => { if(+op.dataset.oi === q.a) op.classList.add('correct'); });
+    const picked = box.querySelector('.opt.picked');
+    const pIdx = picked ? +picked.dataset.oi : null;
+    if(pIdx === q.a) correct++;
+    else { if(picked) picked.classList.add('wrong');
+      const ref = isExam ? ch._exam.questions[qi] : null;
+      addWrong(ref ? ref.chId : ch.id, ref ? (ref.qIdx!=null?ref.qIdx:0) : qi, q.q, pIdx); }
+    const exp = document.getElementById('exp-'+qi);
+    exp.innerHTML = `<strong style="color:${pIdx===q.a?'var(--ok)':'var(--danger)'}">${pIdx===q.a?'✓':'✗'}</strong> ${esc(q.exp||'')}`;
+    exp.classList.remove('hidden');
+  });
+  const score = Math.round(correct / ch.quiz.length * 100);
+  const res = document.getElementById('quizResult');
+  res.textContent = `${t('yourScore')} ${score} · ${score >= passLine ? (isExam?t('examPass'):t('quizPass')) : (isExam?t('examFail'):t('quizFail'))}`;
+  res.style.color = score >= passLine ? 'var(--ok)' : 'var(--danger)';
+  if(isExam){
+    if(score >= passLine) progress.exams[ch._exam.stageId] = { passed:true, score, date:new Date().toISOString().slice(0,10) };
+  } else if(score >= passLine && !(progress.chapters[ch.id] && progress.chapters[ch.id].passed)){
+    progress.chapters[ch.id] = { passed:true, score, date:new Date().toISOString().slice(0,10) };
+  }
+  progress.answers += ch.quiz.length; saveProgress();
+  toast(res.textContent);
+}
+function markRead(){
+  const o = ORDER.find(x => x.ch.id === chId);
+  if(!(progress.chapters[o.ch.id] && progress.chapters[o.ch.id].passed)){
+    progress.chapters[o.ch.id] = { passed:true, score:null, date:new Date().toISOString().slice(0,10) };
+    saveProgress();
+  }
+  document.getElementById('quizResult').textContent = t('readDone');
+  document.getElementById('quizResult').style.color = 'var(--ok)';
+  toast(t('readDone'));
+}
+/* 错题：记录用户当时的错误选择，供错题复盘页展示 */
+function addWrong(chId, qIdx, qText, picked){
+  if(picked == null) return;
+  const exist = progress.wrong.find(w => w.chId === chId && w.qIdx === qIdx);
+  if(exist) exist.picked = picked;
+  else progress.wrong.push({ chId, qIdx, q: qText, picked, done:false });
+  saveProgress();
+}
+
+function setContent(html){
+  document.getElementById('skel').style.display = 'none';
+  const c = document.getElementById('content');
+  c.innerHTML = html; c.classList.remove('hidden');
+  window.scrollTo(0,0);
+}
+</script>
+</body>
+</html>
