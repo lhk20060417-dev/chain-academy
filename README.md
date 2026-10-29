@@ -21,12 +21,15 @@
 | `master.html` | 第七学段「顶级交易思维」总览 |
 | `roadmap.html` / `library.html` | 旧地址，自动跳转到 `course.html` |
 
-## 本地运行
+## 本地运行与手机访问
 
 ```bash
-python3 -m http.server 8145
-# http://127.0.0.1:8145/
+./serve.sh          # 电脑：http://127.0.0.1:8145/
+                    # 手机（同一 Wi-Fi）：http://<本机局域网IP>:8145/
+./tunnel.sh         # 临时公网地址：手机用流量也能打开
 ```
+
+`127.0.0.1` 在手机上指向手机自己，无法打开；请使用局域网 IP 或临时隧道。详见 `../mobile-access/README.md`。
 
 无构建、无后端、无依赖。学习/纪律/消息簿数据保存在 `localStorage`（前缀 `ca_`）。
 

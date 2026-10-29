@@ -100,7 +100,7 @@
 }
 .act-card:hover::before{width:100%;}
 
-.formula--hero{border-color:var(--line-gold); background:color-mix(in srgb, var(--brand) 5%, var(--bg-2)); font-size:.95rem; padding:22px 24px;}
+.formula--hero{border-color:var(--line-gold); background:rgba(200,169,106,.05); background:color-mix(in srgb, var(--brand) 5%, var(--bg-2)); font-size:.95rem; padding:22px 24px;}
 .formula--hero .big{font-size:1.35rem; color:var(--txt); display:block; margin-bottom:10px; letter-spacing:-.01em;}
 .formula--hero .note{font-family:var(--font-sans); font-size:.8rem; color:var(--dim); line-height:1.7; margin-top:12px; display:block;}
 
@@ -229,7 +229,7 @@
 .playbook li::marker{color:var(--brand); font-family:var(--font-mono);}
 
 /* ---------------- 实验室页 ---------------- */
-.tool-tabs-wrap{position:sticky; top:var(--nav-h); z-index:40; background:color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter:blur(14px); border-bottom:1px solid var(--line);}
+.tool-tabs-wrap{position:sticky; top:var(--nav-h); z-index:40; background:rgba(8,9,11,.88); background:color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter:blur(14px); border-bottom:1px solid var(--line);}
 .tool-panel{display:none;}
 .tool-panel.on{display:block; animation:fade .35s var(--ease);}
 .tool__title{display:flex; flex-wrap:wrap; align-items:baseline; gap:14px; margin-bottom:8px;}
@@ -445,7 +445,7 @@ open(p,'w',encoding='utf8').write(s)
 
 /* ---------------- 课程页 ---------------- */
 .course-head{padding-top:calc(var(--nav-h) + clamp(36px,5vw,64px)); padding-bottom:clamp(20px,3vw,32px);}
-.course-toolbar{display:flex; flex-wrap:wrap; gap:12px; align-items:center; justify-content:space-between; padding-bottom:16px; border-bottom:1px solid var(--line-strong); position:sticky; top:var(--nav-h); z-index:30; background:color-mix(in srgb, var(--bg) 90%, transparent); backdrop-filter:blur(12px); margin-bottom:24px;}
+.course-toolbar{display:flex; flex-wrap:wrap; gap:12px; align-items:center; justify-content:space-between; padding-bottom:16px; border-bottom:1px solid var(--line-strong); position:sticky; top:var(--nav-h); z-index:30; background:rgba(8,9,11,.9); background:color-mix(in srgb, var(--bg) 90%, transparent); backdrop-filter:blur(12px); margin-bottom:24px;}
 .course-grid{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px;}
 .k-card{display:flex; flex-direction:column; gap:9px; padding:18px; border:1px solid var(--line); border-radius:var(--r); background:var(--surface); cursor:pointer; transition:all .28s var(--ease); min-height:150px;}
 .k-card:hover{border-color:var(--line-gold); transform:translateY(-2px); background:var(--surface-2);}

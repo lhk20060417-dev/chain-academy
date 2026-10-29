@@ -110,6 +110,7 @@ code,kbd,pre,.mono{font-family:var(--font-mono); font-variant-numeric:tabular-nu
   transition:background .35s var(--ease), border-color .35s var(--ease), backdrop-filter .35s;
 }
 .site-nav.solid{
+  background:rgba(8,9,11,.82);
   background:color-mix(in srgb, var(--bg) 78%, transparent);
   -webkit-backdrop-filter:blur(18px) saturate(140%);
   backdrop-filter:blur(18px) saturate(140%);
@@ -252,7 +253,7 @@ code,kbd,pre,.mono{font-family:var(--font-mono); font-variant-numeric:tabular-nu
 }
 .callout--warn{border-left-color:var(--warn);}
 .callout--warn .callout__label{color:var(--warn);}
-.callout--risk{border-left-color:var(--danger); background:color-mix(in srgb, var(--danger) 6%, var(--surface));}
+.callout--risk{border-left-color:var(--danger); background:rgba(201,123,108,.06); background:color-mix(in srgb, var(--danger) 6%, var(--surface));}
 .callout--risk .callout__label{color:var(--danger);}
 .callout--note{border-left-color:var(--info);}
 .callout--note .callout__label{color:var(--info);}

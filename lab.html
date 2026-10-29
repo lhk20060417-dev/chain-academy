@@ -8,9 +8,6 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Noto+Sans+SC:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%2308090B'/%3E%3Cpath d='M16 7l9 9-9 9-9-9z' fill='none' stroke='%23C8A96A' stroke-width='1.4'/%3E%3Ccircle cx='16' cy='16' r='2.2' fill='%23C8A96A'/%3E%3C/svg%3E">
-<link rel="stylesheet" href="css/vars.css">
-<link rel="stylesheet" href="css/system.css">
-<link rel="stylesheet" href="css/pages.css">
 <style>
 /* 标签 chip：可点选的心理行为标签 */
 .tag-chip{border:1px solid var(--line-strong); border-radius:var(--r-full); font-size:11px; padding:4px 12px; color:var(--dim); transition:all .2s; user-select:none; cursor:pointer; background:transparent;}
@@ -31,6 +28,7 @@
 .tab-btn.on{border-color:var(--brand); color:var(--brand); background:rgba(200,169,106,.08); box-shadow:0 0 14px rgba(200,169,106,.12);}
 </style>
 <noscript><style>.reveal{opacity:1!important;transform:none!important;}</style></noscript>
+<link rel="stylesheet" href="css/app.css">
 </head>
 <body>
 
@@ -161,10 +159,7 @@
 
 <div id="siteFooter"></div>
 
-<script src="js/content.js"></script>
-<script src="js/content-master.js"></script>
-<script src="js/storage.js"></script>
-<script src="js/ui.js"></script>
+<script src="js/app.js"></script>
 <script>
 renderChrome('tools');
 
