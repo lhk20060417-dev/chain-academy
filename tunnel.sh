@@ -53,7 +53,7 @@ canvas.paste(img,(40,40))
 d=ImageDraw.Draw(canvas)
 try:
     f1=ImageFont.truetype('/System/Library/Fonts/Supplemental/Songti.ttc',32)
-    f2=ImageFont.truetype('/System/Library/Fonts/PingFang.ttc',19)
+    f2=ImageFont.truetype('/System/Library/Fonts/Hiragino Sans GB.ttc',19)
     f3=ImageFont.truetype('/System/Library/Fonts/Menlo.ttc',14)
 except Exception:
     f1=f2=f3=ImageFont.load_default()
