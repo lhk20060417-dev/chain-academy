@@ -34,6 +34,7 @@ const NAV_MORE = [
   { key:'master',   href:'master.html',   zh:'顶级交易思维' },
   { key:'lab',      href:'lab.html',      zh:'复盘工作台' },
   { key:'feedback', href:'feedback.html', zh:'提问与反馈' },
+  { key:'intro',    href:'index.html?intro=1', zh:'重播开场引导' },
 ];
 
 /* ---------------- 主题 ---------------- */
@@ -271,6 +272,7 @@ function initCmdk(){
     { k:'页面', title:'消息面', href:'news.html' },
     { k:'页面', title:'交易纪律', href:'discipline.html' },
     { k:'页面', title:'交易自检', href:'selfcheck.html' },
+    { k:'页面', title:'重播开场引导', href:'index.html?intro=1' },
     { k:'页面', title:'交易数学实验室', href:'tools.html' },
     { k:'页面', title:'顶级交易思维', href:'master.html' },
     { k:'页面', title:'学习进度', href:'progress.html' },

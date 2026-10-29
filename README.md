@@ -9,7 +9,7 @@
 
 | 页面 | 作用 |
 |---|---|
-| `index.html` | 控制台：情绪仪表、链上快照、纪律打卡、影响雷达、学习进度、自检入口（桌面端锁定一屏） |
+| `index.html` | 开场引导（首次进入）+ 控制台：实时盘面、实时快讯、情绪仪表、链上快照、纪律打卡、影响雷达、学习进度（桌面端锁定一屏） |
 | `course.html` | 系统课程 / 技术知识库 / 策略库；按基础→入门→进阶→高级分级，**无顺序解锁** |
 | `chapter.html` | 章节阅读器：目录、正文、自测、阶段考核 |
 | `news.html` | 影响力事件库（S/A/B/C 分级 + 方向 + 传导机制）、信息源、每周节奏、我的消息簿 |
@@ -43,6 +43,7 @@ js/data-news.js     影响力事件库（50 类）、信息源、每周节奏
 js/data-selfcheck.js 自检题库、本地评分、DeepSeek 提示词
 js/discipline.js    纪律数据层（localStorage）
 js/ai.js            DeepSeek 客户端
+js/live.js          实时数据层：盘面 / 情绪 / 链上 / RSS 消息（多代理竞速 + 缓存）
 js/storage.js       进度与解锁逻辑（v5 已取消解锁限制）
 js/ui.js            导航/页脚、主题、⌘K 搜索、Markdown 渲染
 js/chart.js         合成行情图
@@ -53,6 +54,13 @@ js/chart.js         合成行情图
 GitHub Pages 直接以仓库为源即可。`sitemap.xml` / `robots.txt` 中的域名需替换为你的实际地址。
 
 改版说明见 [DESIGN-REVIEW.md](DESIGN-REVIEW.md)。
+
+## 实时数据
+
+- 盘面：`data-api.binance.vision`（BTC/ETH/SOL，15 秒刷新）
+- 情绪：`api.alternative.me`（恐惧贪婪指数与 14 天历史）
+- 链上：`api.blockchair.com` / `mempool.space`
+- 消息：Cointelegraph / CoinDesk RSS，经公共 CORS 代理竞速抓取；代理不稳定时会退回上次缓存或影响力事件库
 
 ## 隐私与边界
 

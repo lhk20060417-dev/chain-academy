@@ -23,8 +23,23 @@
   <header class="news-hero wrap">
     <p class="eyebrow reveal">SIGNALS · 消息面</p>
     <h1 class="h1 reveal d1" style="margin-top:18px;">消息不是信号，<br>影响力才是。</h1>
-    <p class="lede reveal d2">这里不是实时新闻流。它是一套「影响力框架」：把可能影响加密市场的消息类型，按 S/A/B/C 分级，标注方向、传导机制与观察指标；再让你把自己的消息记进来，逐条评估。</p>
+    <p class="lede reveal d2">这里是两层信息：<strong style="color:var(--txt-2);font-weight:500;">实时快讯</strong>负责告诉你"刚刚发生了什么"，<strong style="color:var(--txt-2);font-weight:500;">影响力框架</strong>负责告诉你"它可能怎样传导"。快讯按关键词初筛分级，框架按 S/A/B/C 标注方向与观察指标；你也可以把自己的消息记进来，逐条评估。</p>
   </header>
+
+  <section class="wrap" style="padding-top:clamp(18px,3vw,32px);margin-top:14px;border-top:1px solid var(--line);padding-bottom:26px;">
+    <div class="sec-head" style="margin-bottom:14px;align-items:center;">
+      <div>
+        <p class="eyebrow" style="font-size:10px;">LIVE · 实时快讯</p>
+        <h2 class="h3" style="margin-top:8px;">盘面与消息，实时同步</h2>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px;">
+        <span class="micro" id="liveStatus">连接中…</span>
+        <button class="btn btn--ghost btn--sm" id="liveRefresh">刷新</button>
+      </div>
+    </div>
+    <div class="live-news" id="liveNews"></div>
+    <p class="micro" style="margin-top:10px;letter-spacing:.06em;">来源：Cointelegraph / CoinDesk RSS（经公共代理）· 等级由标题关键词初筛，仅供参考 · 点击打开原文</p>
+  </section>
 
   <section class="wrap" style="padding-bottom:20px;">
     <div class="news-board">
@@ -107,6 +122,7 @@
 <script src="js/data-news.js"></script>
 <script src="js/discipline.js"></script>
 <script src="js/storage.js"></script>
+<script src="js/live.js"></script>
 <script src="js/ui.js"></script>
 <script src="js/ai.js"></script>
 <script>
@@ -131,6 +147,19 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('logForm').addEventListener('submit', addLog);
   document.getElementById('aiRateBtn').addEventListener('click', aiRate);
   updateAIHint();
+
+  renderLiveNews();
+  window.addEventListener('live:update', renderLiveNews);
+  window.addEventListener('live:news-fail', () => {
+    if(LIVE.news && LIVE.news.length) return;
+    document.getElementById('liveStatus').textContent = '消息源暂不可用';
+    document.getElementById('liveNews').innerHTML = `<div class="live-card"><p class="live-card__t" style="color:var(--faint);">公共 RSS 代理暂时不可用。你可以稍后点击右上角「刷新」，或直接使用下方的影响力事件库与自己的消息簿。</p></div>`;
+  });
+  startLive({ prices:false, spark:false, fng:false, chain:false, news:true });
+  document.getElementById('liveRefresh').addEventListener('click', () => {
+    document.getElementById('liveStatus').textContent = '刷新中…';
+    refreshNews().then(renderLiveNews);
+  });
 });
 
 function renderFilters(){
@@ -287,6 +316,32 @@ function renderRhythm(){
       <div class="rhythm-day__n">${d.note}</div>
     </div>`).join('');
 }
+
+/* ---------------- 实时快讯 ---------------- */
+function renderLiveNews(){
+  const box = document.getElementById('liveNews');
+  const status = document.getElementById('liveStatus');
+  const list = (LIVE.news || []).slice(0, 6);
+  if(!list.length){
+    status.textContent = '等待数据源…';
+    box.innerHTML = `<div class="live-card"><p class="live-card__t" style="color:var(--faint);">正在拉取最新消息。若长时间无数据，说明公共代理暂时不可用，你仍可以使用下方的影响力事件库与自己的消息簿。</p></div>`;
+    return;
+  }
+  status.textContent = '已同步 · ' + new Date().toLocaleTimeString('zh-CN', { hour:'2-digit', minute:'2-digit' });
+  box.innerHTML = list.map(n => `
+    <a class="live-card" href="${n.link}" target="_blank" rel="noopener noreferrer">
+      <div class="live-card__top">
+        <span class="impact" data-lv="${n.level}"><i class="impact__dot"></i>${n.level}</span>
+        <span class="live-tag">${escapeHtml(n.source)}</span>
+      </div>
+      <p class="live-card__t">${escapeHtml(n.title)}</p>
+      <div class="live-card__m">
+        <span class="dir" data-d="${n.dir}">${NEWS_DIRS.find(d=>d.key===n.dir)?.label || '中性'}</span>
+        <span>${timeAgo(n.date)}</span>
+      </div>
+    </a>`).join('');
+}
+
 </script>
 </body>
 </html>
