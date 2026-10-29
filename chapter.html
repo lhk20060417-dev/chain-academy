@@ -47,31 +47,34 @@ const examId = params.get('exam');
 document.addEventListener('DOMContentLoaded', () => {
   if(examId) renderExam(examId);
   else if(chId) renderChapter(chId);
-  else location.href = 'library.html';
+  else location.href = 'course.html';
 });
 
 /* ---------------- 章节 ---------------- */
 function renderChapter(id){
   const o = ORDER.find(x => x.ch.id === id);
-  if(!o){ location.href = 'library.html'; return; }
-  if(!isUnlocked(id)){ toast('请先完成上一节的自测'); setTimeout(()=>location.href='library.html', 700); return; }
+  if(!o){ location.href = 'course.html'; return; }
+  if(!isUnlocked(id)){ location.href = 'course.html'; return; }
 
   progress.lastStudy = id; saveProgress();
   const st = chapterState(id);
   const prev = ORDER[o.index - 1], next = ORDER[o.index + 1];
   const quizN = (o.ch.quiz || []).length;
   const words = stripHtml(o.ch.content).length;
+  const lvl = (typeof STAGE_LEVEL !== 'undefined' && STAGE_LEVEL[o.stage.id]) || 'basic';
+  const lvlLabel = { basic:'基础', intro:'入门', advanced:'进阶', pro:'高级' }[lvl];
 
   document.getElementById('content').innerHTML = `
     <header class="chapter-head">
       <div class="wrap">
         <div class="chapter-kicker">
-          <a href="library.html">← 章节库</a>
+          <a href="course.html">← 课程</a>
           <span>·</span>
           <span>${o.stage.num} ${o.stage.title}</span>
           <span>·</span>
           <span>${o.stage.en}</span>
-          ${st==='done' ? '<span class="chip is-on">已通过</span>' : '<span class="chip">进行中</span>'}
+          <span class="level-chip" data-lv="${lvl}">${lvlLabel}</span>
+          ${st==='done' ? '<span class="chip is-on">已通过</span>' : ''}
         </div>
         <h1 class="chapter-title">${o.ch.title.replace(/^第 \d+ 节：/, '')}</h1>
         <p class="chapter-lede">${o.ch.intro || ''}</p>
@@ -80,6 +83,7 @@ function renderChapter(id){
           <span>正文字数 <b>${words}</b></span>
           <span>自测 <b>${quizN} 题</b></span>
           <span>阶段 <b>${o.stage.title}</b></span>
+          <span>难度 <b>${lvlLabel}</b></span>
         </div>
       </div>
     </header>
@@ -272,14 +276,14 @@ function markRead(id){
 function renderExam(stageId){
   const exam = EXAMS.find(e => e.stageId === stageId);
   const s = STAGES.find(x => x.id === stageId);
-  if(!exam || !s){ location.href = 'roadmap.html'; return; }
-  if(examState(exam) === 'locked'){ toast('请先完成本阶段全部章节'); setTimeout(()=>location.href='roadmap.html',700); return; }
+  if(!exam || !s){ location.href = 'course.html'; return; }
+  if(examState(exam) === 'locked'){ location.href = 'course.html'; return; }
   const st = examState(exam);
   document.getElementById('content').innerHTML = `
     <header class="chapter-head">
       <div class="wrap">
         <div class="chapter-kicker">
-          <a href="roadmap.html">← 课程图谱</a><span>·</span><span>STAGE ${s.num}</span><span>·</span><span>${s.en}</span>
+          <a href="course.html">← 课程</a><span>·</span><span>STAGE ${s.num}</span><span>·</span><span>${s.en}</span>
           ${st==='done' ? '<span class="chip is-on">已通过</span>' : '<span class="chip">待考核</span>'}
         </div>
         <h1 class="chapter-title">${s.title} · 阶段综合考核</h1>

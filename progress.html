@@ -128,7 +128,7 @@ document.addEventListener('DOMContentLoaded', () => {
   records.sort((a,b) => b.date.localeCompare(a.date));
   const rl = document.getElementById('recentList');
   if(!records.length){
-    rl.innerHTML = `<div class="empty" style="margin-top:24px;"><span class="empty__icon">◷</span>还没有学习记录。从 <a href="roadmap.html" style="color:var(--brand);">课程图谱</a> 开始第一节。</div>`;
+    rl.innerHTML = `<div class="empty" style="margin-top:24px;"><span class="empty__icon">◷</span>还没有学习记录。从 <a href="course.html" style="color:var(--brand);">课程</a> 开始第一节。</div>`;
   } else {
     rl.innerHTML = records.slice(0,12).map(r => `
       <a href="${r.type==='exam' ? 'chapter.html?exam='+r.id : 'chapter.html?id='+encodeURIComponent(r.id)}"

@@ -1,118 +1,23 @@
 <!DOCTYPE html>
-<html lang="zh-CN" data-theme="obsidian">
+<html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>章节库 · Chain Academy</title>
-<meta name="description" content="Chain Academy 全部 73 节课的索引：按学段筛选、搜索关键词，查看每节的完成状态与题目数量。">
-<meta name="theme-color" content="#08090B">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%2308090B'/%3E%3Cpath d='M16 7l9 9-9 9-9-9z' fill='none' stroke='%23C8A96A' stroke-width='1.4'/%3E%3Ccircle cx='16' cy='16' r='2.2' fill='%23C8A96A'/%3E%3C/svg%3E">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Noto+Sans+SC:wght@400;500;600&family=Noto+Serif+SC:wght@400;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/vars.css">
-<link rel="stylesheet" href="css/system.css">
-<link rel="stylesheet" href="css/pages.css">
-<noscript><style>.reveal{opacity:1!important;transform:none!important;}</style></noscript>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>课程 · Chain Academy</title>
+<meta http-equiv="refresh" content="0; url=course.html">
+<link rel="canonical" href="course.html">
+<style>
+  body{margin:0;min-height:100vh;display:grid;place-items:center;background:#08090B;color:#EAE6DE;
+       font-family:"Instrument Sans","Noto Sans SC",-apple-system,sans-serif;}
+  a{color:#C8A96A;}
+  p{color:#9A968E;font-size:14px;}
+</style>
 </head>
 <body>
-
-<div id="siteNav"></div>
-
-<main>
-  <header class="page-head">
-    <div class="wrap">
-      <div class="sec-head" style="margin-bottom:0;">
-        <div>
-          <p class="eyebrow reveal">LIBRARY · 章节库</p>
-          <h1 class="h1 reveal d1" style="margin-top:20px;">73 节课，<br>一张可检索的地图。</h1>
-        </div>
-        <div class="reveal d2" style="text-align:right;">
-          <div class="micro" id="libCount">—</div>
-          <p class="small faint" style="margin:6px 0 0;">灰色卡片尚未解锁</p>
-        </div>
-      </div>
-    </div>
-  </header>
-
-  <div class="wrap">
-    <div style="display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:space-between;padding-bottom:22px;border-bottom:1px solid var(--line-strong);">
-      <div class="filter-bar" id="filterBar"></div>
-      <div style="position:relative;min-width:220px;flex:0 1 280px;">
-        <input class="field" id="libSearch" placeholder="搜索标题或关键词…" style="font-family:var(--font-sans);" autocomplete="off">
-      </div>
-    </div>
-
-    <div class="lib-grid" id="libGrid" style="margin-top:28px;"></div>
-    <div id="libEmpty" class="empty" hidden><span class="empty__icon">◇</span>没有匹配的章节，换个关键词试试。</div>
+  <div style="text-align:center;">
+    <p>章节库已合并到「课程」页，并取消了顺序解锁。</p>
+    <p><a href="course.html">如果没有自动跳转，请点击这里 →</a></p>
   </div>
-</main>
-
-<div id="siteFooter"></div>
-
-<script src="js/content.js"></script>
-<script src="js/content-master.js"></script>
-<script src="js/storage.js"></script>
-<script src="js/ui.js"></script>
-<script>
-renderChrome('library');
-let curStage = 'all', curQuery = '';
-
-document.addEventListener('DOMContentLoaded', () => {
-  renderFilters();
-  renderGrid();
-  document.getElementById('libSearch').addEventListener('input', e => {
-    curQuery = e.target.value.trim().toLowerCase();
-    renderGrid();
-  });
-  observeNew(document);
-});
-
-function renderFilters(){
-  const el = document.getElementById('filterBar');
-  el.innerHTML = `<button class="chip ${curStage==='all'?'is-on':''}" data-f="all">全部</button>` +
-    STAGES.map(s => `<button class="chip ${curStage===s.id?'is-on':''}" data-f="${s.id}">${s.num} ${s.title}</button>`).join('');
-  el.querySelectorAll('[data-f]').forEach(b => b.onclick = () => {
-    curStage = b.dataset.f; renderFilters(); renderGrid();
-  });
-}
-
-function renderGrid(){
-  const rows = [];
-  STAGES.forEach(s => {
-    if(curStage !== 'all' && curStage !== s.id) return;
-    s.chapters.forEach(c => {
-      const hay = (c.title + ' ' + (c.intro||'') + ' ' + s.title).toLowerCase();
-      if(curQuery && !hay.includes(curQuery)) return;
-      rows.push({ s, c });
-    });
-  });
-
-  const grid = document.getElementById('libGrid');
-  document.getElementById('libEmpty').hidden = rows.length > 0;
-  document.getElementById('libCount').textContent = `${ORDER.filter(o=>progress.chapters[o.ch.id]?.passed).length} / ${ORDER.length} 已完成`;
-
-  grid.innerHTML = rows.map(({s,c}, i) => {
-    const st = chapterState(c.id);
-    const locked = st === 'locked';
-    const done = st === 'done';
-    return `<a class="lib-card is-${st} ${locked?'is-locked':''} reveal d${Math.min(i%4,3)}"
-      href="${locked ? 'javascript:void 0' : 'chapter.html?id='+encodeURIComponent(c.id)}"
-      ${locked ? `onclick="toast('通过上一节自测后解锁')"` : ''}>
-      <div class="lib-card__top">
-        <span>${s.num} · ${s.title}</span>
-        <span style="color:${done?'var(--pos)':locked?'var(--faint)':'var(--brand)'};">${done?'已通过':locked?'未解锁':'可学习'}</span>
-      </div>
-      <h3 class="lib-card__t">${c.title.replace(/^第 \d+ 节：/,'')}</h3>
-      <p class="lib-card__d">${c.intro || ''}</p>
-      <div class="lib-card__foot">
-        <span>${c.quiz.length} 题 · ${c.dur}</span>
-        <span>${done ? '↺ 复习' : '→'}</span>
-      </div>
-    </a>`;
-  }).join('');
-  observeNew(grid);
-}
-</script>
 </body>
 </html>

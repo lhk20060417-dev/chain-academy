@@ -16,25 +16,17 @@ const saveProgress = () => store.set('progress', progress);
 /* ---------- 章节顺序与线性解锁 ---------- */
 const ORDER = STAGES.flatMap(s => s.chapters.map(c => ({ stage: s, ch: c })));
 ORDER.forEach((o, i) => { o.index = i; });
+/* v5：取消顺序解锁。所有章节默认开放，进度只用于记录，不再作为门槛。 */
 function chapterState(chId){
-  if(progress.chapters[chId] && progress.chapters[chId].passed) return 'done';
-  const idx = ORDER.findIndex(o => o.ch.id === chId);
-  if(idx === 0) return 'active';
-  const cur = ORDER[idx];
-  /* 标注 open 的学段（如第七学段「顶级交易思维」）可独立进入：本学段第一节默认开放 */
-  if(cur.stage.open){
-    const firstOfStage = ORDER.findIndex(o => o.stage.id === cur.stage.id);
-    if(idx === firstOfStage) return 'active';
-  }
-  const prev = ORDER[idx-1];
-  return (progress.chapters[prev.ch.id] && progress.chapters[prev.ch.id].passed) ? 'active' : 'locked';
+  return (progress.chapters[chId] && progress.chapters[chId].passed) ? 'done' : 'active';
 }
-const isUnlocked = chId => chapterState(chId) !== 'locked';
+const isUnlocked = () => true;
+const STAGE_LEVEL = { s1:'basic', s2:'basic', s3:'intro', s4:'intro', s5:'intro', s6:'advanced', s7:'pro' };
+function chapterLevel(ch){ return ch.level || null; }
 function stageDone(stage){ return stage.chapters.every(c => progress.chapters[c.id] && progress.chapters[c.id].passed); }
 function examState(exam){
-  const stage = STAGES.find(s => s.id === exam.stageId);
   if(progress.exams[exam.stageId] && progress.exams[exam.stageId].passed) return 'done';
-  return stageDone(stage) ? 'active' : 'locked';
+  return 'active';
 }
 function overallPct(){
   const doneCh = ORDER.filter(o => progress.chapters[o.ch.id] && progress.chapters[o.ch.id].passed).length;
@@ -106,7 +98,7 @@ function renderNav(active){
     b.onclick = e => {
       const last = progress.lastStudy;
       if(last && isUnlocked(last)){ e.preventDefault(); location.href = 'chapter.html?id=' + encodeURIComponent(last); }
-      else location.href = 'roadmap.html';
+      else location.href = 'course.html';
     };
   });
   document.querySelectorAll('.lang-sw').forEach(b => {

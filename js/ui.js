@@ -20,12 +20,20 @@ const ICON = {
 
 /* ---------------- 导航条目 ---------------- */
 const NAV_ITEMS = [
-  { key:'home',   href:'index.html',   zh:'首页',   en:'Index' },
-  { key:'roadmap',href:'roadmap.html', zh:'课程图谱', en:'Roadmap' },
-  { key:'library',href:'library.html', zh:'章节库',  en:'Library' },
-  { key:'master', href:'master.html',  zh:'思维体系', en:'Mastery' },
-  { key:'tools',  href:'tools.html',   zh:'实验室',  en:'Lab' },
-  { key:'progress',href:'progress.html',zh:'进度',   en:'Progress' },
+  { key:'home',      href:'index.html',     zh:'控制台', en:'Console' },
+  { key:'course',    href:'course.html',    zh:'课程',   en:'Course' },
+  { key:'news',      href:'news.html',      zh:'消息面', en:'Signals' },
+  { key:'discipline',href:'discipline.html',zh:'纪律',   en:'Discipline' },
+  { key:'selfcheck', href:'selfcheck.html', zh:'自检',   en:'Self-check' },
+  { key:'tools',     href:'tools.html',     zh:'实验室', en:'Lab' },
+];
+
+const NAV_MORE = [
+  { key:'progress', href:'progress.html', zh:'学习进度' },
+  { key:'errors',   href:'errors.html',   zh:'错题复盘' },
+  { key:'master',   href:'master.html',   zh:'顶级交易思维' },
+  { key:'lab',      href:'lab.html',      zh:'复盘工作台' },
+  { key:'feedback', href:'feedback.html', zh:'提问与反馈' },
 ];
 
 /* ---------------- 主题 ---------------- */
@@ -57,10 +65,16 @@ function renderChrome(activeKey){
         <a href="index.html" class="brand" aria-label="Chain Academy 首页">
           <span class="brand__mark" aria-hidden="true"></span>
           <span class="brand__name">Chain <b>Academy</b></span>
-          <span class="brand__ver">V4</span>
+          <span class="brand__ver">V5</span>
         </a>
         <nav class="nav-links" aria-label="主导航">
           ${NAV_ITEMS.map(n => `<a class="navlink ${activeKey===n.key?'active':''}" href="${n.href}">${n.zh}</a>`).join('')}
+          <div class="nav-more">
+            <button class="navlink nav-more__btn ${['progress','errors','master','lab','feedback'].includes(activeKey)?'active':''}" aria-haspopup="true" aria-expanded="false">更多</button>
+            <div class="nav-more__menu" role="menu">
+              ${NAV_MORE.map(n => `<a role="menuitem" href="${n.href}">${n.zh}</a>`).join('')}
+            </div>
+          </div>
         </nav>
         <div class="nav-actions">
           <button class="search-trigger" data-cmdk-open aria-label="搜索章节">
@@ -68,13 +82,14 @@ function renderChrome(activeKey){
           </button>
           <button class="icon-btn" data-theme-toggle aria-label="切换主题"></button>
           <button class="icon-btn nav-toggle" data-menu-toggle aria-label="菜单">${ICON.menu}</button>
-          <a href="roadmap.html" class="btn btn--primary btn--sm" data-continue>继续学习 ${ICON.arrow}</a>
+          <a href="course.html" class="btn btn--primary btn--sm" data-continue>继续学习 ${ICON.arrow}</a>
         </div>
       </div>
     </header>
     <div class="mobile-menu" id="mobileMenu" hidden>
       <div class="mobile-menu__inner">
         ${NAV_ITEMS.map(n => `<a href="${n.href}" class="mobile-menu__link">${n.zh}<span>${n.en}</span></a>`).join('')}
+        ${NAV_MORE.map(n => `<a href="${n.href}" class="mobile-menu__link" style="font-size:1.15rem;">${n.zh}<span>MORE</span></a>`).join('')}
       </div>
     </div>`;
   }
@@ -95,16 +110,17 @@ function renderChrome(activeKey){
           </div>
           <div>
             <div class="footer-h">课程</div>
-            <a class="footer-a" href="roadmap.html">课程图谱</a>
-            <a class="footer-a" href="library.html">章节库</a>
+            <a class="footer-a" href="course.html">课程与技术库</a>
             <a class="footer-a" href="master.html">顶级交易思维</a>
+            <a class="footer-a" href="news.html">消息面</a>
             <a class="footer-a" href="tools.html">交易数学实验室</a>
           </div>
           <div>
             <div class="footer-h">工具</div>
+            <a class="footer-a" href="discipline.html">交易纪律</a>
+            <a class="footer-a" href="selfcheck.html">交易自检</a>
             <a class="footer-a" href="progress.html">学习进度</a>
             <a class="footer-a" href="errors.html">错题复盘</a>
-            <a class="footer-a" href="feedback.html">提问与反馈</a>
             <a class="footer-a" href="lab.html">复盘工作台</a>
           </div>
           <div>
@@ -127,6 +143,17 @@ function renderChrome(activeKey){
   /* 主题切换 */
   document.querySelectorAll('[data-theme-toggle]').forEach(btn => {
     btn.addEventListener('click', () => applyTheme(currentTheme() === 'paper' ? 'obsidian' : 'paper', true));
+  });
+
+  /* 更多菜单 */
+  document.querySelectorAll('.nav-more').forEach(wrap => {
+    const btn = wrap.querySelector('.nav-more__btn');
+    btn.addEventListener('click', e => {
+      e.stopPropagation();
+      const open = wrap.classList.toggle('open');
+      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+    document.addEventListener('click', () => { wrap.classList.remove('open'); btn.setAttribute('aria-expanded','false'); });
   });
 
   /* 继续学习 */
@@ -237,14 +264,30 @@ function initCmdk(){
   const input = el.querySelector('#cmdkInput');
   const list = el.querySelector('#cmdkList');
   const staticPages = [
-    { k:'页面', title:'课程图谱', href:'roadmap.html' },
-    { k:'页面', title:'章节库', href:'library.html' },
-    { k:'页面', title:'顶级交易思维', href:'master.html' },
+    { k:'页面', title:'控制台', href:'index.html' },
+    { k:'页面', title:'课程与知识库', href:'course.html' },
+    { k:'页面', title:'技术知识库', href:'course.html#kb' },
+    { k:'页面', title:'策略库', href:'course.html#strategy' },
+    { k:'页面', title:'消息面', href:'news.html' },
+    { k:'页面', title:'交易纪律', href:'discipline.html' },
+    { k:'页面', title:'交易自检', href:'selfcheck.html' },
     { k:'页面', title:'交易数学实验室', href:'tools.html' },
+    { k:'页面', title:'顶级交易思维', href:'master.html' },
     { k:'页面', title:'学习进度', href:'progress.html' },
     { k:'页面', title:'错题复盘', href:'errors.html' },
   ];
-  const all = () => [...chapterEntries().map(c => ({ k:c.num + ' 阶段', title:c.title, sub:c.stage, href:c.href })), ...staticPages];
+  function knowledgeEntries(){
+    if(typeof KNOWLEDGE === 'undefined') return [];
+    return KNOWLEDGE.map(k => ({ k:'知识', title:k.name, sub:k.en, href:'course.html#kb' }));
+  }
+  function eventEntries(){
+    if(typeof EVENT_LIBRARY === 'undefined') return [];
+    return EVENT_LIBRARY.map(e => ({ k:'事件', title:e.name, sub:e.level + ' 级', href:'news.html#' + e.id }));
+  }
+  const all = () => [
+    ...chapterEntries().map(c => ({ k:c.num + ' 阶段', title:c.title, sub:c.stage, href:c.href })),
+    ...knowledgeEntries(), ...eventEntries(), ...staticPages,
+  ];
 
   function render(q){
     const kw = q.trim().toLowerCase();
@@ -321,7 +364,7 @@ function toast(msg){
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => tt.classList.remove('show'), 2800);
 }
-function openModal(html){
+function openModal(html, label){
   let mask = document.getElementById('globalModal');
   if(!mask){
     mask = document.createElement('div');
@@ -332,7 +375,7 @@ function openModal(html){
   }
   document.getElementById('globalModalBody').innerHTML = `
     <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:20px;">
-      <div class="micro" style="color:var(--brand);">RISK NOTICE</div>
+      <div class="micro" style="color:var(--brand);">${label || 'RISK NOTICE'}</div>
       <button class="icon-btn" onclick="closeModal()" aria-label="关闭">${ICON.close}</button>
     </div>` + html;
   mask.classList.add('open');
@@ -371,4 +414,36 @@ function countUpNodes(){
     const d = parseInt(n.dataset.decimals || '0', 10);
     if(!isNaN(v)) countUp(n, v, { decimals:d });
   });
+}
+
+/* ---------------- 极简 Markdown 渲染（仅用于 AI 回复） ---------------- */
+function escapeHtml(s){
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+function mdLite(md){
+  if(!md) return '';
+  let html = escapeHtml(md);
+  html = html.replace(/^### (.*)$/gm, '<h3>$1</h3>')
+             .replace(/^## (.*)$/gm, '<h2>$1</h2>')
+             .replace(/^# (.*)$/gm, '<h2>$1</h2>')
+             .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+             .replace(/`([^`]+)`/g, '<code>$1</code>');
+  const lines = html.split('\n');
+  const out = [];
+  let list = null;
+  const flush = () => { if(list){ out.push(`<${list}>${buf.join('')}</${list}>`); list = null; } };
+  let buf = [];
+  for(const raw of lines){
+    const line = raw.trim();
+    if(!line){ flush(); continue; }
+    const m = line.match(/^[-*]\s+(.*)$/);
+    const mo = line.match(/^\d+[.)]\s+(.*)$/);
+    if(m){ if(list !== 'ul'){ flush(); list = 'ul'; buf = []; } buf.push(`<li>${m[1]}</li>`); continue; }
+    if(mo){ if(list !== 'ol'){ flush(); list = 'ol'; buf = []; } buf.push(`<li>${mo[1]}</li>`); continue; }
+    flush();
+    if(/^<h[23]>/.test(line)) out.push(line);
+    else out.push(`<p>${line}</p>`);
+  }
+  flush();
+  return out.join('');
 }

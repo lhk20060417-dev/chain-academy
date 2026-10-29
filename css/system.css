@@ -538,3 +538,23 @@ textarea.field{font-family:var(--font-sans); line-height:1.7; resize:vertical; m
   .btn{width:100%;}
   .cluster .btn{width:auto;}
 }
+
+/* ======================= 15 更多菜单（v5） ======================= */
+.nav-more{position:relative;}
+.nav-more__btn{display:inline-flex; align-items:center; gap:6px; padding-block:6px; color:var(--txt-2); font-size:.845rem;}
+.nav-more__btn::after{content:"⌄"; font-family:var(--font-mono); font-size:10px; opacity:.6; position:static; width:auto; height:auto; background:none; box-shadow:none;}
+.nav-more.open .nav-more__btn{color:var(--txt);}
+.nav-more__menu{
+  position:absolute; top:calc(100% + 14px); right:-8px; min-width:168px; padding:6px;
+  background:var(--surface-2); border:1px solid var(--line-strong); border-radius:var(--r);
+  box-shadow:var(--shadow-pop); opacity:0; visibility:hidden; transform:translateY(-6px);
+  transition:all .22s var(--ease); z-index:90;
+}
+.nav-more.open .nav-more__menu{opacity:1; visibility:visible; transform:none;}
+.nav-more__menu a{display:block; padding:9px 12px; font-size:.82rem; color:var(--txt-2); border-radius:2px;}
+.nav-more__menu a:hover{background:var(--brand-wash); color:var(--txt);}
+
+/* v5 标题与导语的标准间距 */
+.h1 + .lede{margin-top:22px;}
+.h1 + .copy{margin-top:18px;}
+.display + .lede{margin-top:26px;}

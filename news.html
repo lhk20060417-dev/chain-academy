@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="obsidian">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>消息面 · Chain Academy</title>
+<meta name="description" content="加密市场影响力事件库：按 S/A/B/C 分级、标注方向与传导机制，附信息源清单与每周节奏。支持自建消息簿与 AI 影响评估。">
+<meta name="theme-color" content="#08090B">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%2308090B'/%3E%3Cpath d='M16 7l9 9-9 9-9-9z' fill='none' stroke='%23C8A96A' stroke-width='1.4'/%3E%3Ccircle cx='16' cy='16' r='2.2' fill='%23C8A96A'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Noto+Sans+SC:wght@400;500;600&family=Noto+Serif+SC:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/vars.css">
+<link rel="stylesheet" href="css/system.css">
+<link rel="stylesheet" href="css/pages.css">
+<noscript><style>.reveal{opacity:1!important;transform:none!important;}</style></noscript>
+</head>
+<body>
+
+<div id="siteNav"></div>
+
+<main>
+  <header class="news-hero wrap">
+    <p class="eyebrow reveal">SIGNALS · 消息面</p>
+    <h1 class="h1 reveal d1" style="margin-top:18px;">消息不是信号，<br>影响力才是。</h1>
+    <p class="lede reveal d2">这里不是实时新闻流。它是一套「影响力框架」：把可能影响加密市场的消息类型，按 S/A/B/C 分级，标注方向、传导机制与观察指标；再让你把自己的消息记进来，逐条评估。</p>
+  </header>
+
+  <section class="wrap" style="padding-bottom:20px;">
+    <div class="news-board">
+      <!-- 左：事件库 -->
+      <div>
+        <div class="news-filters" id="newsFilters"></div>
+        <div class="news-filters" id="catFilters" style="margin-bottom:14px;"></div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+          <span class="micro" id="newsCount">—</span>
+          <input class="field" id="newsSearch" placeholder="搜索事件类型…" style="max-width:220px;font-family:var(--font-sans);padding:8px 12px;">
+        </div>
+        <div class="news-list" id="newsList"></div>
+      </div>
+
+      <!-- 右：详情 -->
+      <aside>
+        <div class="news-detail" id="newsDetail"></div>
+        <div style="margin-top:20px;">
+          <div class="sec-head" style="margin-bottom:12px;">
+            <div>
+              <p class="eyebrow eyebrow--plain" style="font-size:10px;">MY LOG · 我的消息簿</p>
+            </div>
+            <span class="micro" id="logCount">0 条</span>
+          </div>
+          <form id="logForm" style="display:flex;flex-direction:column;gap:8px;">
+            <input class="field" id="logTitle" placeholder="粘贴一条消息标题…" style="font-family:var(--font-sans);">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+              <select class="field" id="logLevel"></select>
+              <select class="field" id="logDir"></select>
+            </div>
+            <textarea class="field" id="logNote" rows="2" placeholder="备注：传导逻辑 / 观察指标（选填）" style="font-family:var(--font-sans);"></textarea>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+              <button class="btn btn--primary btn--sm" type="submit">记入消息簿</button>
+              <button class="btn btn--ghost btn--sm" type="button" id="aiRateBtn">AI 评估影响</button>
+            </div>
+            <p class="f-hint" id="aiHint">AI 评估需要 DeepSeek API Key，可在<a href="selfcheck.html" style="color:var(--brand);">自检页</a>设置。</p>
+          </form>
+          <div id="logList" style="margin-top:12px;"></div>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- 信息源 -->
+  <section class="section section--tight" style="border-top:1px solid var(--line);">
+    <div class="wrap">
+      <div class="sec-head">
+        <div>
+          <p class="eyebrow reveal">SOURCES · 信息源</p>
+          <h2 class="h2 reveal d1" style="margin-top:14px;font-size:clamp(1.5rem,2.6vw,2rem);">自己去验证，而不是等结论。</h2>
+        </div>
+      </div>
+      <div class="source-grid" id="sourceGrid"></div>
+    </div>
+  </section>
+
+  <!-- 每周节奏 -->
+  <section class="section section--tight" style="border-top:1px solid var(--line);padding-top:0;">
+    <div class="wrap" style="padding-top:clamp(32px,5vw,56px);">
+      <div class="sec-head">
+        <div>
+          <p class="eyebrow reveal">RHYTHM · 每周节奏</p>
+          <h2 class="h2 reveal d1" style="margin-top:14px;font-size:clamp(1.5rem,2.6vw,2rem);">哪一天，容易出事。</h2>
+        </div>
+        <p class="copy reveal d2" style="max-width:340px;font-size:.86rem;">宏观数据与衍生品到期有固定的时间结构。知道"什么时候该提高警惕"，比预测"会发生什么"更可行。</p>
+      </div>
+      <div class="rhythm" id="rhythm"></div>
+      <div class="callout callout--note" style="margin-top:32px;">
+        <span class="callout__label">诚实说明</span>
+        本站没有实时新闻抓取（纯静态页面无法稳定绕过跨域限制）。上面的「事件库」是影响力机制的结构化整理，「我的消息簿」由你手动录入。这样做的好处是：你不会把"刷到的标题"误当成"经过评估的信号"。所有内容仅用于理论学习，不构成投资建议。
+      </div>
+    </div>
+  </section>
+</main>
+
+<div id="siteFooter"></div>
+
+<script src="js/content.js"></script>
+<script src="js/content-master.js"></script>
+<script src="js/data-news.js"></script>
+<script src="js/discipline.js"></script>
+<script src="js/storage.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/ai.js"></script>
+<script>
+renderChrome('news');
+
+const IMP = Object.fromEntries(IMPACT_LEVELS.map(l => [l.key, l]));
+const CATS = Object.fromEntries(NEWS_CATS.map(c => [c.key, c]));
+let filterLevel = 'all', filterCat = 'all', q = '', selected = null;
+
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('logLevel').innerHTML = IMPACT_LEVELS.map(l => `<option value="${l.key}">${l.key} · ${l.label}</option>`).join('');
+  document.getElementById('logDir').innerHTML = NEWS_DIRS.map(d => `<option value="${d.key}">${d.sign} ${d.label}</option>`).join('');
+  renderFilters();
+  renderSources();
+  renderRhythm();
+  renderList();
+  const id = location.hash.replace('#','');
+  selected = EVENT_LIBRARY.find(e => e.id === id) || EVENT_LIBRARY[0];
+  renderDetail();
+  renderLog();
+  document.getElementById('newsSearch').addEventListener('input', e => { q = e.target.value.trim().toLowerCase(); renderList(); });
+  document.getElementById('logForm').addEventListener('submit', addLog);
+  document.getElementById('aiRateBtn').addEventListener('click', aiRate);
+  updateAIHint();
+});
+
+function renderFilters(){
+  document.getElementById('newsFilters').innerHTML =
+    `<button class="chip ${filterLevel==='all'?'is-on':''}" data-lv="all">全部等级</button>` +
+    IMPACT_LEVELS.map(l => `<button class="chip ${filterLevel===l.key?'is-on':''}" data-lv="${l.key}">${l.key} · ${l.label}</button>`).join('');
+  document.querySelectorAll('#newsFilters [data-lv]').forEach(b => b.onclick = () => { filterLevel = b.dataset.lv; renderFilters(); renderList(); });
+  document.getElementById('catFilters').innerHTML =
+    `<button class="chip ${filterCat==='all'?'is-on':''}" data-cat="all">全部类型</button>` +
+    NEWS_CATS.map(c => `<button class="chip ${filterCat===c.key?'is-on':''}" data-cat="${c.key}">${c.label}</button>`).join('');
+  document.querySelectorAll('#catFilters [data-cat]').forEach(b => b.onclick = () => { filterCat = b.dataset.cat; renderFilters(); renderList(); });
+}
+
+function renderList(){
+  const list = EVENT_LIBRARY.filter(e => {
+    if(filterLevel !== 'all' && e.level !== filterLevel) return false;
+    if(filterCat !== 'all' && e.cat !== filterCat) return false;
+    if(q && !(e.name + ' ' + e.mechanism).toLowerCase().includes(q)) return false;
+    return true;
+  }).sort((a,b) => IMPACT_LEVELS.findIndex(l=>l.key===a.level) - IMPACT_LEVELS.findIndex(l=>l.key===b.level));
+  document.getElementById('newsCount').textContent = `${list.length} / ${EVENT_LIBRARY.length} 类事件 · 点击查看传导机制`;
+  document.getElementById('newsList').innerHTML = list.map(e => `
+    <div class="news-row" data-id="${e.id}" tabindex="0" role="button">
+      <span class="news-row__lv impact" data-lv="${e.level}"><i class="impact__dot"></i>${e.level}</span>
+      <span>
+        <div class="news-row__t">${e.name}</div>
+        <div class="news-row__meta"><span>${CATS[e.cat].label}</span><span>${e.window}</span></div>
+      </span>
+      <span class="news-row__side">
+        <span class="dir" data-d="${e.dir}">${NEWS_DIRS.find(d=>d.key===e.dir).sign} ${NEWS_DIRS.find(d=>d.key===e.dir).label}</span>
+        <span class="micro">${e.watch.split('、').slice(0,2).join(' / ')}</span>
+      </span>
+    </div>`).join('');
+  document.querySelectorAll('.news-row').forEach(el => {
+    const open = () => {
+      selected = EVENT_LIBRARY.find(e => e.id === el.dataset.id);
+      renderDetail(); history.replaceState(null,'','#'+el.dataset.id);
+      el.scrollIntoView({ block:'nearest' });
+    };
+    el.addEventListener('click', open);
+    el.addEventListener('keydown', e => { if(e.key === 'Enter') open(); });
+  });
+}
+
+function renderDetail(){
+  const e = selected;
+  if(!e) return;
+  document.getElementById('newsDetail').innerHTML = `
+    <div class="impact" data-lv="${e.level}"><i class="impact__dot"></i>${e.level} · ${IMP[e.level].label}</div>
+    <h3 class="news-detail__t">${e.name}</h3>
+    <div style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:6px;">
+      <span class="chip">${CATS[e.cat].label}</span>
+      <span class="chip">${e.window}</span>
+      <span class="chip" style="color:${e.dir==='bull'?'var(--pos)':e.dir==='bear'?'var(--neg)':'var(--brand)'};">${NEWS_DIRS.find(d=>d.key===e.dir).sign} ${NEWS_DIRS.find(d=>d.key===e.dir).label}</span>
+    </div>
+    <div class="nd-block"><div class="nd-label">传导机制</div><p class="nd-p">${e.mechanism}</p></div>
+    <div class="nd-block"><div class="nd-label">观察指标</div><p class="nd-p">${e.watch}</p></div>
+    ${e.note ? `<div class="nd-block"><div class="nd-label">口径提醒</div><p class="nd-p">${e.note}</p></div>` : ''}
+    <div class="nd-block" style="padding-top:12px;border-top:1px solid var(--line);">
+      <p class="nd-p" style="font-size:.75rem;color:var(--faint);">${IMP[e.level].desc}　影响等级描述的是"可能改变定价的程度"，不是方向判断。</p>
+    </div>`;
+}
+
+/* ---------------- 我的消息簿 ---------------- */
+function getLog(){ return store.get('newslog', []); }
+function addLog(ev){
+  ev.preventDefault();
+  const title = document.getElementById('logTitle').value.trim();
+  if(!title){ toast('先写一条消息'); return; }
+  const list = getLog();
+  list.unshift({
+    id: Date.now().toString(36),
+    title,
+    level: document.getElementById('logLevel').value,
+    dir: document.getElementById('logDir').value,
+    note: document.getElementById('logNote').value.trim(),
+    date: todayStr(),
+  });
+  store.set('newslog', list);
+  document.getElementById('logForm').reset();
+  renderLog();
+  toast('已记入消息簿');
+}
+function renderLog(){
+  const list = getLog();
+  document.getElementById('logCount').textContent = list.length + ' 条';
+  const box = document.getElementById('logList');
+  if(!list.length){ box.innerHTML = `<p class="small faint" style="line-height:1.7;">还没有记录。把今天看到的消息粘进来，给它一个等级与方向——这一步本身就是在训练判断。</p>`; return; }
+  box.innerHTML = list.slice(0, 8).map(item => `
+    <div class="news-log__item">
+      <div>
+        <div class="news-log__t">${escapeHtml(item.title)}</div>
+        <div class="news-log__meta"><span class="impact" data-lv="${item.level}"><i class="impact__dot"></i>${item.level}</span> · ${NEWS_DIRS.find(d=>d.key===item.dir)?.label || ''} · ${item.date}</div>
+        ${item.note ? `<div class="news-log__meta" style="color:var(--dim);">${escapeHtml(item.note)}</div>` : ''}
+      </div>
+      <button class="rule-del" data-del="${item.id}" aria-label="删除">✕</button>
+    </div>`).join('');
+  box.querySelectorAll('[data-del]').forEach(b => b.onclick = () => {
+    store.set('newslog', getLog().filter(x => x.id !== b.dataset.del));
+    renderLog();
+  });
+}
+function updateAIHint(){
+  const hint = document.getElementById('aiHint');
+  if(hasAIKey()){
+    hint.innerHTML = '已检测到 DeepSeek Key。AI 会给出等级、方向与传导链，仅供参考。';
+    hint.style.color = 'var(--faint)';
+  }
+}
+
+/* ---------------- AI 评估 ---------------- */
+async function aiRate(){
+  const title = document.getElementById('logTitle').value.trim();
+  if(!title){ toast('先输入一条消息'); return; }
+  if(!hasAIKey()){ toast('请先在自检页设置 DeepSeek Key'); return; }
+  const box = openModal(`<div id="aiOut" class="md" style="min-height:80px;"><p class="faint">正在分析…</p></div>`, 'DEEPSEEK · IMPACT REVIEW');
+  try{
+    const out = await askDeepSeek(
+`请评估下面这条消息对加密市场的潜在影响。只做机制分析，不给任何交易建议、不给买卖方向的具体点位。
+
+消息：${title}
+
+请严格按以下结构输出（中文，400 字以内）：
+## 影响等级
+（S / A / B / C 之一，并用一句话说明理由）
+## 方向偏向
+（偏多 / 偏空 / 双向 / 中性，说明传导链）
+## 传导机制
+（2–3 句，写清楚"通过什么变量影响谁"）
+## 观察指标
+（3 个可查证的指标）
+## 失效条件
+（什么情况下这个判断不成立）`,
+      { system:'你是严谨的加密市场研究助理，只做机制与概率分析，拒绝给出交易建议。', temperature:0.3, maxTokens:900 }
+    );
+    document.getElementById('aiOut').innerHTML = mdLite(out);
+  }catch(err){
+    document.getElementById('aiOut').innerHTML = `<p style="color:var(--neg);">评估失败：${escapeHtml(err.message)}</p><p class="faint small">请检查 Key、余额与网络后重试。</p>`;
+  }
+}
+
+/* ---------------- 信息源与节奏 ---------------- */
+function renderSources(){
+  document.getElementById('sourceGrid').innerHTML = SOURCES.map(g => `
+    <div>
+      <div class="source-group__h">${g.group}</div>
+      ${g.items.map(it => `<a class="source-a" href="${it.url}" target="_blank" rel="noopener noreferrer"><span>${it.name}</span><span>↗</span></a>`).join('')}
+    </div>`).join('');
+}
+function renderRhythm(){
+  document.getElementById('rhythm').innerHTML = WEEKLY_RHYTHM.map(d => `
+    <div class="rhythm-day" data-lv="${d.level}">
+      <div class="rhythm-day__d">${d.day} <span class="impact" data-lv="${d.level}"><i class="impact__dot"></i></span></div>
+      <div class="rhythm-day__n">${d.note}</div>
+    </div>`).join('');
+}
+</script>
+</body>
+</html>

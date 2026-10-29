@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="obsidian">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>课程 · Chain Academy</title>
+<meta name="description" content="73 节系统课程与 98 个技术概念：按基础、入门、进阶、高级分级，取消顺序解锁，可自由检索。仅用于理论学习。">
+<meta name="theme-color" content="#08090B">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%2308090B'/%3E%3Cpath d='M16 7l9 9-9 9-9-9z' fill='none' stroke='%23C8A96A' stroke-width='1.4'/%3E%3Ccircle cx='16' cy='16' r='2.2' fill='%23C8A96A'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Noto+Sans+SC:wght@400;500;600&family=Noto+Serif+SC:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/vars.css">
+<link rel="stylesheet" href="css/system.css">
+<link rel="stylesheet" href="css/pages.css">
+<noscript><style>.reveal{opacity:1!important;transform:none!important;}</style></noscript>
+</head>
+<body>
+
+<div id="siteNav"></div>
+
+<main>
+  <header class="course-head wrap">
+    <p class="eyebrow reveal">CURRICULUM · 课程与技术库</p>
+    <h1 class="h1 reveal d1" style="margin-top:18px;">没有门槛，<br>只有先后建议。</h1>
+    <p class="lede reveal d2">顺序解锁已取消：任何一节都可以直接打开。但知识有依赖关系——我们按「基础 → 入门 → 进阶 → 高级」给每个条目分级，并标注它依赖什么。</p>
+    <div class="grid" style="grid-template-columns:repeat(4,1fr);gap:14px;margin-top:30px;border-top:1px solid var(--line);padding-top:18px;" id="levelStats"></div>
+  </header>
+
+  <div class="wrap">
+    <div class="course-toolbar">
+      <div class="tabs" id="courseTabs" style="margin-bottom:0;border-bottom:0;">
+        <button class="tab on" data-p="course">系统课程</button>
+        <button class="tab" data-p="kb">技术知识库</button>
+        <button class="tab" data-p="strategy">策略库</button>
+      </div>
+      <div style="position:relative;flex:0 1 300px;min-width:200px;">
+        <input class="field" id="search" placeholder="搜索课程 / 概念 / 策略…" style="font-family:var(--font-sans);padding-left:14px;" autocomplete="off">
+      </div>
+    </div>
+
+    <div class="filter-bar" id="levelBar" style="margin-bottom:22px;"></div>
+    <div class="filter-bar" id="catBar" style="margin-bottom:22px;display:none;"></div>
+
+    <!-- 系统课程 -->
+    <section id="panel-course">
+      <div id="courseList"></div>
+    </section>
+
+    <!-- 技术知识库 -->
+    <section id="panel-kb" hidden>
+      <div class="course-grid" id="kbGrid"></div>
+      <div class="empty" id="kbEmpty" hidden style="margin-top:20px;"><span class="empty__icon">◇</span>没有匹配的概念。</div>
+    </section>
+
+    <!-- 策略库 -->
+    <section id="panel-strategy" hidden>
+      <div class="course-grid" id="strategyGrid"></div>
+    </section>
+
+    <div class="callout callout--note" style="margin-top:44px;">
+      <span class="callout__label">关于分级</span>
+      分级描述的是「理解与使用难度」，不是收益潜力。高级概念并不比基础概念更容易赚钱；相反，基础不牢时使用高级工具，通常会放大亏损。所有条目仅用于理论学习，不构成投资建议。
+    </div>
+  </div>
+</main>
+
+<div id="siteFooter"></div>
+
+<script src="js/content.js"></script>
+<script src="js/content-master.js"></script>
+<script src="js/data-knowledge.js"></script>
+<script src="js/storage.js"></script>
+<script src="js/ui.js"></script>
+<script>
+renderChrome('course');
+
+const LV = Object.fromEntries(KNOWLEDGE_LEVELS.map(l => [l.key, l]));
+const CAT = Object.fromEntries(KNOWLEDGE_CATS.map(c => [c.key, c]));
+let tab = 'course', level = 'all', cat = 'all', query = '';
+
+document.addEventListener('DOMContentLoaded', () => {
+  const counts = { basic:0, intro:0, advanced:0, pro:0 };
+  ORDER.forEach(o => counts[STAGE_LEVEL[o.stage.id] || 'basic']++);
+  KNOWLEDGE.forEach(k => counts[k.level]++);
+  document.getElementById('levelStats').innerHTML = KNOWLEDGE_LEVELS.map(l => `
+    <div>
+      <div class="micro" style="color:var(--brand);">${l.en}</div>
+      <div style="font-family:var(--font-display);font-size:1.7rem;margin:6px 0 4px;">${l.label}</div>
+      <div class="small faint">${l.desc}</div>
+    </div>`).join('');
+
+  initTabs();
+  renderLevelBar();
+  renderCatBar();
+  renderAll();
+  document.getElementById('search').addEventListener('input', e => { query = e.target.value.trim().toLowerCase(); renderAll(); });
+  const h = location.hash.replace('#','');
+  if(h === 'kb' || h === 'strategy') switchTab(h);
+});
+
+function initTabs(){
+  document.querySelectorAll('#courseTabs .tab').forEach(t => {
+    t.addEventListener('click', () => switchTab(t.dataset.p));
+  });
+}
+function switchTab(p){
+  tab = p;
+  document.querySelectorAll('#courseTabs .tab').forEach(t => t.classList.toggle('on', t.dataset.p === p));
+  document.getElementById('panel-course').hidden = p !== 'course';
+  document.getElementById('panel-kb').hidden = p !== 'kb';
+  document.getElementById('panel-strategy').hidden = p !== 'strategy';
+  document.getElementById('catBar').style.display = p === 'course' ? 'none' : 'flex';
+  renderAll();
+}
+function renderLevelBar(){
+  document.getElementById('levelBar').innerHTML =
+    `<button class="chip ${level==='all'?'is-on':''}" data-lv="all">全部难度</button>` +
+    KNOWLEDGE_LEVELS.map(l => `<button class="chip ${level===l.key?'is-on':''}" data-lv="${l.key}">${l.label}</button>`).join('');
+  document.querySelectorAll('#levelBar [data-lv]').forEach(b => b.onclick = () => { level = b.dataset.lv; renderLevelBar(); renderAll(); });
+}
+function renderCatBar(){
+  document.getElementById('catBar').innerHTML =
+    `<button class="chip ${cat==='all'?'is-on':''}" data-cat="all">全部分类</button>` +
+    KNOWLEDGE_CATS.map(c => `<button class="chip ${cat===c.key?'is-on':''}" data-cat="${c.key}">${c.label}</button>`).join('');
+  document.querySelectorAll('#catBar [data-cat]').forEach(b => b.onclick = () => { cat = b.dataset.cat; renderCatBar(); renderAll(); });
+}
+function renderAll(){
+  if(tab === 'course') renderCourse();
+  if(tab === 'kb') renderKB('kb');
+  if(tab === 'strategy') renderKB('strategy');
+}
+
+/* ---------- 系统课程 ---------- */
+function renderCourse(){
+  const box = document.getElementById('courseList');
+  const stages = STAGES.filter(s => {
+    if(level !== 'all' && (STAGE_LEVEL[s.id] || 'basic') !== level) return false;
+    if(!query) return true;
+    return s.title.toLowerCase().includes(query) || s.chapters.some(c => (c.title + ' ' + (c.intro||'')).toLowerCase().includes(query));
+  });
+  box.innerHTML = stages.map(s => {
+    const lv = STAGE_LEVEL[s.id] || 'basic';
+    const chapters = s.chapters.filter(c => !query || (c.title + ' ' + (c.intro||'')).toLowerCase().includes(query));
+    const done = s.chapters.filter(c => progress.chapters[c.id]?.passed).length;
+    return `<section style="margin-bottom:38px;">
+      <div style="display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:12px;padding-bottom:12px;border-bottom:1px solid var(--line-strong);">
+        <div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;">
+          <span class="micro" style="color:var(--brand);">${s.num}</span>
+          <h2 style="font-family:var(--font-display);font-weight:400;font-size:1.7rem;margin:0;">${s.title}</h2>
+          <span class="micro">${s.en}</span>
+          <span class="level-chip" data-lv="${lv}">${LV[lv].label}</span>
+        </div>
+        <span class="micro">${done}/${s.chapters.length} 已学</span>
+      </div>
+      <div class="course-chapters">
+        ${chapters.map(c => {
+          const st = progress.chapters[c.id]?.passed;
+          return `<a class="cc-row" href="chapter.html?id=${encodeURIComponent(c.id)}">
+            <span class="cc-row__idx">${st ? '✓' : '·'}</span>
+            <span class="cc-row__t">${c.title.replace(/^第 \d+ 节：/,'')}<small>${c.intro ? c.intro.slice(0,42)+'…' : ''}</small></span>
+            <span class="cc-row__meta">${c.quiz.length} 题</span>
+            <span class="cc-row__meta">${c.dur.replace('约 ','')}</span>
+            <span class="cc-row__meta" style="color:${st?'var(--pos)':'var(--faint)'}">${st ? '已学' : '未学'}</span>
+          </a>`;
+        }).join('')}
+      </div>
+    </section>`;
+  }).join('') || `<div class="empty">没有匹配的课程。</div>`;
+}
+
+/* ---------- 知识库 / 策略库 ---------- */
+function filtered(pool){
+  return pool.filter(k => {
+    if(level !== 'all' && k.level !== level) return false;
+    if(cat !== 'all' && k.cat !== cat) return false;
+    if(query){
+      const hay = (k.name + ' ' + k.en + ' ' + k.summary + ' ' + (k.use||'') + ' ' + (k.caveat||'')).toLowerCase();
+      if(!hay.includes(query)) return false;
+    }
+    return true;
+  });
+}
+function renderKB(mode){
+  const pool = mode === 'strategy' ? KNOWLEDGE.filter(k => k.cat === 'strategy') : KNOWLEDGE;
+  const list = filtered(pool).sort((a,b) => KNOWLEDGE_LEVELS.findIndex(l=>l.key===a.level) - KNOWLEDGE_LEVELS.findIndex(l=>l.key===b.level));
+  const grid = document.getElementById(mode === 'strategy' ? 'strategyGrid' : 'kbGrid');
+  const empty = document.getElementById('kbEmpty');
+  if(empty) empty.hidden = list.length > 0;
+  grid.innerHTML = list.map(k => `
+    <article class="k-card" data-id="${k.id}" tabindex="0" role="button">
+      <div class="k-card__top">
+        <span class="level-chip" data-lv="${k.level}">${LV[k.level].label}</span>
+        <span class="micro">${CAT[k.cat].label}</span>
+      </div>
+      <h3 class="k-card__name">${k.name}</h3>
+      <div class="k-card__en">${k.en}</div>
+      <p class="k-card__sum">${k.summary}</p>
+      <div class="k-card__foot"><span>${k.chapter ? '关联课程' : '概念卡'}</span><span>详情 →</span></div>
+    </article>`).join('');
+  grid.querySelectorAll('.k-card').forEach(el => {
+    const open = () => openK(KNOWLEDGE.find(k => k.id === el.dataset.id));
+    el.addEventListener('click', open);
+    el.addEventListener('keydown', e => { if(e.key === 'Enter') open(); });
+  });
+}
+
+function openK(k){
+  if(!k) return;
+  openModal(`
+    <div class="k-detail__head">
+      <div>
+        <div class="micro">${CAT[k.cat].label} · ${LV[k.level].label}</div>
+        <h3 class="k-detail__title">${k.name}</h3>
+        <div class="k-detail__en">${k.en}</div>
+      </div>
+    </div>
+    <div class="k-detail__block">
+      <div class="k-detail__label">是什么</div>
+      <p class="k-detail__p">${k.summary}</p>
+    </div>
+    ${k.use ? `<div class="k-detail__block"><div class="k-detail__label">怎么用</div><p class="k-detail__p">${k.use}</p></div>` : ''}
+    ${k.caveat ? `<div class="k-detail__block"><div class="k-detail__label">失效条件 / 误区</div><p class="k-detail__p">${k.caveat}</p></div>` : ''}
+    <div class="k-detail__block" style="display:flex;gap:10px;flex-wrap:wrap;">
+      ${k.chapter ? `<a class="btn btn--primary btn--sm" href="chapter.html?id=${encodeURIComponent(k.chapter)}">阅读关联章节 →</a>` : ''}
+      <a class="btn btn--ghost btn--sm" href="tools.html">去实验室验证</a>
+      <button class="btn btn--quiet btn--sm" style="margin-left:auto;" onclick="closeModal()">关闭</button>
+    </div>`, 'KNOWLEDGE');
+}
+</script>
+</body>
+</html>

@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url><loc>https://lhk20060417-dev.github.io/chain-academy/</loc><changefreq>weekly</changefreq><priority>1.0</priority></url>
-  <url><loc>https://lhk20060417-dev.github.io/chain-academy/roadmap.html</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>
-  <url><loc>https://lhk20060417-dev.github.io/chain-academy/library.html</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>
-  <url><loc>https://lhk20060417-dev.github.io/chain-academy/master.html</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://lhk20060417-dev.github.io/chain-academy/course.html</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://lhk20060417-dev.github.io/chain-academy/news.html</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://lhk20060417-dev.github.io/chain-academy/discipline.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://lhk20060417-dev.github.io/chain-academy/selfcheck.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://lhk20060417-dev.github.io/chain-academy/master.html</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
   <url><loc>https://lhk20060417-dev.github.io/chain-academy/tools.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://lhk20060417-dev.github.io/chain-academy/progress.html</loc><changefreq>monthly</changefreq><priority>0.4</priority></url>
   <url><loc>https://lhk20060417-dev.github.io/chain-academy/errors.html</loc><changefreq>monthly</changefreq><priority>0.4</priority></url>

@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="obsidian">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>交易自检 · Chain Academy</title>
+<meta name="description" content="25 道题，从心态、技术、纪律、仓位与止盈止损五个维度自检；可选接入 DeepSeek 生成个性化训练报告。">
+<meta name="theme-color" content="#08090B">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%2308090B'/%3E%3Cpath d='M16 7l9 9-9 9-9-9z' fill='none' stroke='%23C8A96A' stroke-width='1.4'/%3E%3Ccircle cx='16' cy='16' r='2.2' fill='%23C8A96A'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Noto+Sans+SC:wght@400;500;600&family=Noto+Serif+SC:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/vars.css">
+<link rel="stylesheet" href="css/system.css">
+<link rel="stylesheet" href="css/pages.css">
+<noscript><style>.reveal{opacity:1!important;transform:none!important;}</style></noscript>
+</head>
+<body>
+
+<div id="siteNav"></div>
+
+<main>
+  <header class="page-head wrap">
+    <p class="eyebrow reveal">SELF-CHECK · 交易自检</p>
+    <h1 class="h1 reveal d1" style="margin-top:18px;">先看清自己，<br>再谈方法。</h1>
+    <p class="lede reveal d2">25 道题，覆盖心态、技术、纪律、仓位与止盈止损。你会立刻得到一份本地评分；如果愿意，也可以接入 DeepSeek，生成更具体的优势、风险点与 30 天训练计划。</p>
+    <div class="risk-banner reveal d3" style="margin-top:26px;margin-bottom:0;">
+      <span class="mk">⚠</span>
+      <span>自检结果只用于自我认知，<b>不构成投资建议、能力评价或心理诊断</b>。如果你的交易资金来自借贷或生活必需开支，请先停止交易并寻求专业帮助。</span>
+    </div>
+  </header>
+
+  <div class="wrap sc-wrap" style="padding-bottom:60px;">
+
+    <!-- 介绍 / 设置 -->
+    <section id="intro">
+      <div class="grid" style="grid-template-columns:repeat(2,1fr);gap:16px;margin-bottom:20px;">
+        <div class="panel panel--pad">
+          <div class="micro" style="color:var(--brand);">HOW IT WORKS</div>
+          <h3 class="h3" style="margin:10px 0 8px;">五维自检</h3>
+          <p class="small" style="color:var(--dim);line-height:1.75;margin:0 0 14px;">每题 4 个选项，没有"正确答案"——只有更接近你真实行为的选项。请按最近三个月的实际做法作答，而不是按你希望的样子。</p>
+          <div id="dimList" style="display:flex;flex-direction:column;gap:8px;"></div>
+        </div>
+        <div class="api-panel">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;">
+            <div class="micro" style="color:var(--brand);">DEEPSEEK · 可选</div>
+            <span class="chip" id="keyState">未设置</span>
+          </div>
+          <p class="small" style="color:var(--dim);line-height:1.7;margin:12px 0;">粘贴你的 DeepSeek API Key，即可在本地评分之外生成一份个性化报告。Key 只保存在本机浏览器，直接发送到 <span class="mono">api.deepseek.com</span>，不经过任何中转。</p>
+          <div style="display:flex;gap:8px;">
+            <input class="field" id="keyInput" type="password" placeholder="sk-…" autocomplete="off" spellcheck="false">
+            <button class="btn btn--ghost btn--sm" id="toggleKey" type="button" aria-label="显示或隐藏">显示</button>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;">
+            <button class="btn btn--primary btn--sm" id="saveKey">保存 Key</button>
+            <button class="btn btn--ghost btn--sm" id="testKey">测试连接</button>
+            <button class="btn btn--quiet" id="clearKey" style="color:var(--neg);">清除</button>
+          </div>
+          <p class="f-hint" id="keyHint">没有 Key 也可以完成自检，只是报告由本地规则生成。共享设备上不建议保存 Key。</p>
+        </div>
+      </div>
+
+      <div style="display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;padding-top:8px;">
+        <div class="micro" id="lastResultHint">—</div>
+        <button class="btn btn--primary" id="startBtn" style="min-width:180px;">开始 25 题自检
+          <svg class="arrow" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 12h15M13 6l6 6-6 6"/></svg>
+        </button>
+      </div>
+    </section>
+
+    <!-- 答题 -->
+    <section id="quiz" hidden>
+      <div class="q-progress">
+        <span class="q-count" id="qCount">01 / 25</span>
+        <div class="track"><div class="fill" id="qFill" style="width:0%"></div></div>
+        <button class="btn btn--quiet" id="quitBtn" style="font-size:.75rem;">退出</button>
+      </div>
+      <div class="q-card">
+        <p class="micro" id="qDim" style="color:var(--brand);margin-bottom:12px;">—</p>
+        <h2 class="sc-q" id="qText">—</h2>
+        <div class="sc-opts" id="qOpts"></div>
+        <div class="sc-nav">
+          <button class="btn btn--ghost btn--sm" id="prevBtn">上一题</button>
+          <button class="btn btn--primary btn--sm" id="nextBtn">下一题</button>
+        </div>
+        <p class="f-hint" style="margin-top:14px;">快捷键：1–4 选择，Enter 下一题。</p>
+      </div>
+    </section>
+
+    <!-- 开放题 -->
+    <section id="open" hidden>
+      <div class="q-card">
+        <p class="micro" style="color:var(--brand);margin-bottom:12px;">OPEN · 两道开放题</p>
+        <h2 class="sc-q" style="font-size:1.5rem;">最后两题，写给未来的自己。</h2>
+        <div class="f-group">
+          <label class="f-label" id="open1Label">—</label>
+          <textarea class="field" id="open1" rows="3" placeholder="越具体越好"></textarea>
+        </div>
+        <div class="f-group">
+          <label class="f-label" id="open2Label">—</label>
+          <textarea class="field" id="open2" rows="3" placeholder="越具体越好"></textarea>
+        </div>
+        <div class="sc-nav">
+          <button class="btn btn--ghost btn--sm" id="backQuiz">返回检查</button>
+          <button class="btn btn--primary" id="submitBtn">生成自检报告 →</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 结果 -->
+    <section id="result" hidden>
+      <div class="result-grid">
+        <div class="panel panel--pad">
+          <div class="micro" style="margin-bottom:10px;">SCORE · 本地评分</div>
+          <div style="display:flex;align-items:baseline;gap:8px;">
+            <span style="font-family:var(--font-display);font-size:4rem;line-height:1;" id="scoreNum">0</span>
+            <span class="micro">/ 100</span>
+          </div>
+          <canvas class="radar" id="radar" width="360" height="320" style="margin-top:6px;"></canvas>
+          <div id="dimBars" style="display:flex;flex-direction:column;gap:7px;"></div>
+          <button class="btn btn--ghost btn--sm" id="againBtn" style="margin-top:18px;width:100%;">重新自检</button>
+        </div>
+        <div>
+          <div class="panel panel--pad" style="margin-bottom:14px;">
+            <div class="micro" style="color:var(--brand);">LOCAL · 本地结论</div>
+            <p id="localSummary" style="font-size:.9rem;line-height:1.8;color:var(--txt-2);margin:12px 0 0;"></p>
+            <div id="localPlan" style="margin-top:14px;"></div>
+          </div>
+          <div class="panel panel--pad">
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;">
+              <div class="micro" style="color:var(--brand);">DEEPSEEK · 深度报告</div>
+              <button class="btn btn--primary btn--sm" id="aiBtn">生成 AI 报告</button>
+            </div>
+            <p class="f-hint" id="aiState" style="margin-top:8px;">AI 报告基于你的作答与本地评分生成，仅用于自我反思。</p>
+            <div class="md" id="aiOut" style="margin-top:14px;"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+</main>
+
+<div id="siteFooter"></div>
+
+<script src="js/content.js"></script>
+<script src="js/content-master.js"></script>
+<script src="js/data-selfcheck.js"></script>
+<script src="js/discipline.js"></script>
+<script src="js/storage.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/ai.js"></script>
+<script>
+renderChrome('selfcheck');
+
+let idx = 0;
+let advancing = false;
+const answers = {};
+const openAns = { o1:'', o2:'' };
+let scores = {};
+let result = null;
+
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('dimList').innerHTML = CHECK_DIMS.map(d => `
+    <div style="padding:7px 0;border-bottom:1px solid var(--line);">
+      <div class="small" style="color:var(--txt-2);">${d.label}</div>
+      <div class="micro" style="margin-top:3px;letter-spacing:.04em;text-transform:none;color:var(--faint);">${d.desc}</div>
+    </div>`).join('');
+  refreshKeyUI();
+  showLastHint();
+  bind();
+});
+
+function bind(){
+  document.getElementById('startBtn').addEventListener('click', start);
+  document.getElementById('quitBtn').addEventListener('click', () => { if(confirm('退出自检？已作答内容不会保存。')) location.reload(); });
+  document.getElementById('prevBtn').addEventListener('click', () => { if(idx > 0){ idx--; renderQ(); } });
+  document.getElementById('nextBtn').addEventListener('click', next);
+  document.getElementById('backQuiz').addEventListener('click', () => { show('quiz'); idx = CHECK_QUESTIONS.length - 1; renderQ(); });
+  document.getElementById('submitBtn').addEventListener('click', submit);
+  document.getElementById('againBtn').addEventListener('click', () => location.reload());
+  document.getElementById('aiBtn').addEventListener('click', aiReport);
+  document.addEventListener('keydown', e => {
+    if(document.getElementById('quiz').hidden) return;
+    if(['1','2','3','4'].includes(e.key)){
+      const i = parseInt(e.key,10) - 1;
+      const btn = document.querySelectorAll('#qOpts .sc-opt')[i];
+      if(btn) btn.click();
+    }
+    if(e.key === 'Enter' && !e.isComposing){ e.preventDefault(); next(); }
+  });
+  document.getElementById('saveKey').addEventListener('click', saveKey);
+  document.getElementById('testKey').addEventListener('click', testKey);
+  document.getElementById('clearKey').addEventListener('click', () => { setAIKey(''); refreshKeyUI(); toast('已清除 Key'); });
+  document.getElementById('toggleKey').addEventListener('click', () => {
+    const inp = document.getElementById('keyInput');
+    inp.type = inp.type === 'password' ? 'text' : 'password';
+    document.getElementById('toggleKey').textContent = inp.type === 'password' ? '显示' : '隐藏';
+  });
+  const inp = document.getElementById('keyInput');
+  inp.value = getAIKey();
+  inp.addEventListener('keydown', e => { if(e.key === 'Enter') saveKey(); });
+}
+
+function show(id){
+  ['intro','quiz','open','result'].forEach(k => document.getElementById(k).hidden = k !== id);
+  window.scrollTo({ top:0, behavior:'smooth' });
+}
+
+function start(){
+  idx = 0;
+  Object.keys(answers).forEach(k => delete answers[k]);
+  show('quiz'); renderQ();
+}
+
+function renderQ(){
+  const q = CHECK_QUESTIONS[idx];
+  const dim = CHECK_DIMS.find(d => d.key === q.dim);
+  document.getElementById('qCount').textContent = String(idx+1).padStart(2,'0') + ' / ' + CHECK_QUESTIONS.length;
+  document.getElementById('qFill').style.width = ((idx)/CHECK_QUESTIONS.length*100) + '%';
+  document.getElementById('qDim').textContent = dim.en + ' · ' + dim.label;
+  document.getElementById('qText').textContent = q.q;
+  document.getElementById('qOpts').innerHTML = q.opts.map((o,i) => `
+    <button class="sc-opt ${answers[q.id]===i?'on':''}" data-i="${i}">
+      <span class="sc-opt__k">${String.fromCharCode(65+i)}</span><span>${o.t}</span>
+    </button>`).join('');
+  document.querySelectorAll('#qOpts .sc-opt').forEach(btn => {
+    btn.onclick = () => {
+      if(advancing) return;
+      advancing = true;
+      answers[q.id] = +btn.dataset.i;
+      document.querySelectorAll('#qOpts .sc-opt').forEach(b => b.classList.toggle('on', b === btn));
+      setTimeout(next, 180);
+    };
+  });
+  advancing = false;
+  document.getElementById('prevBtn').disabled = idx === 0;
+  document.getElementById('nextBtn').textContent = idx === CHECK_QUESTIONS.length - 1 ? '完成' : '下一题';
+}
+
+function next(){
+  const q = CHECK_QUESTIONS[idx];
+  if(answers[q.id] == null){ toast('先选一个更接近你的选项'); return; }
+  if(idx < CHECK_QUESTIONS.length - 1){ idx++; renderQ(); }
+  else { document.getElementById('qFill').style.width = '100%'; toOpen(); }
+}
+
+function toOpen(){
+  document.getElementById('open1Label').textContent = CHECK_OPEN[0].q;
+  document.getElementById('open2Label').textContent = CHECK_OPEN[1].q;
+  document.getElementById('open1').placeholder = CHECK_OPEN[0].hint;
+  document.getElementById('open2').placeholder = CHECK_OPEN[1].hint;
+  document.getElementById('open1').value = openAns.o1;
+  document.getElementById('open2').value = openAns.o2;
+  show('open');
+}
+
+function computeScores(){
+  const s = {};
+  CHECK_DIMS.forEach(d => s[d.key] = 0);
+  CHECK_QUESTIONS.forEach(q => { s[q.dim] += (q.opts[answers[q.id]]?.s || 0); });
+  return s;
+}
+
+function submit(){
+  openAns.o1 = document.getElementById('open1').value.trim();
+  openAns.o2 = document.getElementById('open2').value.trim();
+  scores = computeScores();
+  const local = localAssessment(scores, answers);
+  result = {
+    date: todayStr(),
+    scores,
+    overall: local.overall,
+    local,
+    open: { ...openAns },
+    ai: '',
+  };
+  store.set('selfcheck', result);
+  const hist = store.get('selfcheck_history', []);
+  hist.unshift({ date: result.date, overall: result.overall, scores });
+  store.set('selfcheck_history', hist.slice(0, 12));
+  renderResult();
+  show('result');
+}
+
+function renderResult(){
+  document.getElementById('scoreNum').textContent = result.overall;
+  document.getElementById('localSummary').textContent = result.local.summary;
+  document.getElementById('localPlan').innerHTML = result.local.plan.map(p => `<p class="small" style="color:var(--txt-2);line-height:1.7;margin:0 0 6px;">→ ${escapeHtml(p)}</p>`).join('');
+  document.getElementById('dimBars').innerHTML = result.local.dims.map(d => `
+    <div class="self-dim" style="grid-template-columns:76px minmax(0,1fr) 32px;">
+      <span style="color:var(--txt-2);">${d.label}</span>
+      <span class="track"><span class="fill" style="width:${d.pct}%"></span></span>
+      <b style="color:var(--brand);">${d.pct}</b>
+    </div>`).join('');
+  drawRadar(result.scores);
+  document.getElementById('aiState').textContent = hasAIKey()
+    ? '已检测到 Key。点击生成一份包含优势、风险点与 30 天计划的报告。'
+    : '未设置 Key。你仍可使用本地结论；若需要更具体的报告，请在上方保存 Key。';
+  if(result.ai){ document.getElementById('aiOut').innerHTML = mdLite(result.ai); }
+}
+
+function drawRadar(sc){
+  const c = document.getElementById('radar');
+  if(!c) return;
+  const ctx = c.getContext('2d');
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const W = 360, H = 320;
+  c.width = W*dpr; c.height = H*dpr; c.style.width = '100%';
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  const cx = W/2, cy = H/2 + 6, R = Math.min(W,H)*0.34;
+  const n = CHECK_DIMS.length;
+  const css = k => getComputedStyle(document.documentElement).getPropertyValue(k).trim();
+  ctx.clearRect(0,0,W,H);
+  /* 网格 */
+  for(let ring = 1; ring <= 4; ring++){
+    ctx.beginPath();
+    for(let i = 0; i <= n; i++){
+      const a = -Math.PI/2 + i * 2*Math.PI/n;
+      const r = R * ring/4;
+      const x = cx + Math.cos(a)*r, y = cy + Math.sin(a)*r;
+      i ? ctx.lineTo(x,y) : ctx.moveTo(x,y);
+    }
+    ctx.strokeStyle = css('--line'); ctx.lineWidth = 1; ctx.stroke();
+  }
+  /* 轴与标签 */
+  CHECK_DIMS.forEach((d,i) => {
+    const a = -Math.PI/2 + i * 2*Math.PI/n;
+    const x = cx + Math.cos(a)*R, y = cy + Math.sin(a)*R;
+    ctx.beginPath(); ctx.moveTo(cx,cy); ctx.lineTo(x,y); ctx.strokeStyle = css('--line'); ctx.stroke();
+    const lx = cx + Math.cos(a)*(R+30), ly = cy + Math.sin(a)*(R+18);
+    ctx.font = '10px "Noto Sans SC", sans-serif'; ctx.fillStyle = css('--faint');
+    const SHORT = { mind:'心态', tech:'技术', discipline:'纪律', risk:'仓位', exit:'出场' };
+    ctx.textAlign = Math.abs(Math.cos(a)) < 0.2 ? 'center' : (Math.cos(a) > 0 ? 'left' : 'right');
+    ctx.fillText(SHORT[d.key] || d.label, lx, ly);
+  });
+  /* 数据 */
+  ctx.beginPath();
+  CHECK_DIMS.forEach((d,i) => {
+    const v = (sc[d.key] || 0) / 15;
+    const a = -Math.PI/2 + i * 2*Math.PI/n;
+    const x = cx + Math.cos(a)*R*v, y = cy + Math.sin(a)*R*v;
+    i ? ctx.lineTo(x,y) : ctx.moveTo(x,y);
+  });
+  ctx.closePath();
+  ctx.fillStyle = 'rgba(200,169,106,.16)'; ctx.fill();
+  ctx.strokeStyle = css('--brand'); ctx.lineWidth = 1.6; ctx.stroke();
+  CHECK_DIMS.forEach((d,i) => {
+    const v = (sc[d.key] || 0) / 15;
+    const a = -Math.PI/2 + i * 2*Math.PI/n;
+    ctx.beginPath(); ctx.arc(cx + Math.cos(a)*R*v, cy + Math.sin(a)*R*v, 2.5, 0, Math.PI*2);
+    ctx.fillStyle = css('--brand'); ctx.fill();
+  });
+}
+
+/* ---------- AI ---------- */
+function refreshKeyUI(){
+  const has = hasAIKey();
+  document.getElementById('keyState').textContent = has ? '已设置' : '未设置';
+  document.getElementById('keyState').className = 'chip ' + (has ? 'is-on' : '');
+  document.getElementById('keyInput').value = has ? getAIKey() : '';
+  document.getElementById('keyHint').textContent = has
+    ? 'Key 已保存在本机。可在共享设备上随时清除。'
+    : '没有 Key 也可以完成自检，只是报告由本地规则生成。共享设备上不建议保存 Key。';
+}
+function saveKey(){
+  const v = document.getElementById('keyInput').value.trim();
+  if(!v){ toast('先粘贴 Key'); return; }
+  setAIKey(v); refreshKeyUI(); toast('已保存到本机');
+}
+async function testKey(){
+  if(!hasAIKey()){ toast('先保存 Key'); return; }
+  toast('正在测试…');
+  try{
+    const out = await askDeepSeek('只回复两个字：可用', { maxTokens:10, temperature:0 });
+    toast('连接正常：' + (out || 'OK').slice(0,20));
+  }catch(e){
+    toast('连接失败：' + e.message.slice(0,60));
+  }
+}
+async function aiReport(){
+  if(!result){ toast('先完成自检'); return; }
+  if(!hasAIKey()){ toast('请先在本页上方设置 DeepSeek Key'); return; }
+  const btn = document.getElementById('aiBtn');
+  const out = document.getElementById('aiOut');
+  btn.disabled = true; btn.textContent = '生成中…';
+  out.innerHTML = '<p class="faint">正在请求 DeepSeek…（通常 10–30 秒）</p>';
+  try{
+    const text = await askDeepSeek(buildCheckPrompt(scores, answers, openAns), {
+      system:'你是严谨的交易训练教练，只做流程与风险分析，拒绝给出交易建议。',
+      temperature:0.5, maxTokens:1600,
+    });
+    result.ai = text;
+    store.set('selfcheck', result);
+    out.innerHTML = mdLite(text);
+    document.getElementById('aiState').textContent = '报告已生成，并保存在本机。';
+  }catch(e){
+    out.innerHTML = `<p style="color:var(--neg);">生成失败：${escapeHtml(e.message)}</p><p class="faint small">请检查 Key 是否有效、账户余额与网络连接。</p>`;
+  }finally{
+    btn.disabled = false; btn.textContent = '重新生成';
+  }
+}
+
+function showLastHint(){
+  const last = store.get('selfcheck', null);
+  const el = document.getElementById('lastResultHint');
+  if(!last){ el.textContent = '尚未做过自检 · 建议在开始学习前做一次，作为基线。'; return; }
+  el.innerHTML = `最近一次：${last.date} · 综合 ${last.overall}/100　<a href="#" id="viewLast" style="color:var(--brand);">查看报告 →</a>`;
+  document.getElementById('viewLast').addEventListener('click', e => {
+    e.preventDefault();
+    result = last; scores = last.scores; renderResult(); show('result');
+  });
+}
+</script>
+</body>
+</html>

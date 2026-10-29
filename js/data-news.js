@@ -1,0 +1,241 @@
+/* =====================================================================
+ * Chain Academy v5 · 消息面数据层
+ * 结构：IMPACT_LEVELS / NEWS_CATS / EVENT_LIBRARY / SOURCES / WEEKLY_RHYTHM
+ * 说明：事件库是"影响机制"的结构化整理，不是实时新闻，也不构成任何交易建议。
+ * ===================================================================== */
+
+const IMPACT_LEVELS = [
+  { key:'S', label:'系统性', weight:4, desc:'可能改变整个周期或流动性环境，影响持续数周至数月。', tone:'crit' },
+  { key:'A', label:'重大',   weight:3, desc:'足以改变中期定价，影响持续数日至数周。', tone:'warn' },
+  { key:'B', label:'中等',   weight:2, desc:'影响数小时至数日，通常需要与其他因素叠加。', tone:'gold' },
+  { key:'C', label:'轻微',   weight:1, desc:'多为日内情绪与噪音，单独不足以改变趋势。', tone:'calm' },
+];
+
+const NEWS_DIRS = [
+  { key:'bull', label:'偏多', sign:'↑' },
+  { key:'bear', label:'偏空', sign:'↓' },
+  { key:'mixed', label:'双向', sign:'↕' },
+  { key:'neutral', label:'中性', sign:'·' },
+];
+
+const NEWS_CATS = [
+  { key:'macro',     label:'宏观流动性' },
+  { key:'regulation',label:'监管与政策' },
+  { key:'onchain',   label:'链上与供给' },
+  { key:'deriv',     label:'衍生品与杠杆' },
+  { key:'industry',  label:'行业与机构' },
+  { key:'narrative', label:'叙事与板块' },
+];
+
+const EVENT_LIBRARY = [
+/* ---------------- 宏观流动性 ---------------- */
+{ id:'fomc', cat:'macro', level:'S', dir:'mixed', name:'FOMC 利率决议与新闻发布会', window:'决议 → 数周',
+  mechanism:'利率路径改变贴现率与美元流动性，直接影响风险资产估值；声明措辞与点阵图常比决议本身更重要。',
+  watch:'联邦基金利率期货隐含路径、10 年期实际利率、美元指数、声明与上次的措辞差异。' },
+{ id:'cpi', cat:'macro', level:'S', dir:'mixed', name:'美国 CPI / 核心 CPI', window:'公布 → 数日',
+  mechanism:'通胀读数改变降息预期，进而改变实际利率与美元；超预期上行通常压制长久期风险资产。',
+  watch:'核心环比、超级核心服务、数据公布后的利率期货重新定价。' },
+{ id:'nfp', cat:'macro', level:'A', dir:'mixed', name:'非农就业与失业率', window:'公布 → 数日',
+  mechanism:'就业强弱影响增长与利率预期；过强可能引发"紧缩更久"，过弱则引发衰退担忧。',
+  watch:'新增就业、时薪同比、前值修正、失业率与劳动参与率。' },
+{ id:'pce', cat:'macro', level:'A', dir:'mixed', name:'PCE 物价指数', window:'公布 → 数日',
+  mechanism:'美联储偏好的通胀指标，影响政策路径预期。',
+  watch:'核心 PCE 环比与同比、服务通胀分项。' },
+{ id:'dots', cat:'macro', level:'S', dir:'mixed', name:'点阵图与经济预测（SEP）', window:'季度 → 数月',
+  mechanism:'官员利率预期分布改变中期路径，常引发跨资产重定价。',
+  watch:'中位数点位变化、长期利率预期、增长与失业预测。' },
+{ id:'treasury', cat:'macro', level:'A', dir:'mixed', name:'美债拍卖与长端收益率', window:'拍卖 → 数周',
+  mechanism:'长端利率是全球风险资产的贴现锚；拍卖需求疲弱会推高期限溢价。',
+  watch:'投标倍数、间接投标占比、10y/30y 收益率与期限溢价。' },
+{ id:'dxy', cat:'macro', level:'A', dir:'bear', name:'美元指数趋势性走强', window:'数周',
+  mechanism:'美元走强收紧全球美元流动性，通常压制以美元计价的风险资产。',
+  watch:'DXY 关键位、欧元与日元权重、离岸美元融资利差。' },
+{ id:'boj', cat:'macro', level:'A', dir:'mixed', name:'日本央行政策与日元套息交易', window:'数日 → 数周',
+  mechanism:'日元套息是全球杠杆的重要资金来源；日元快速升值会触发去杠杆与跨市场抛售。',
+  watch:'日元汇率、日债收益率、套息头寸规模、波动率指数。' },
+{ id:'cnliquidity', cat:'macro', level:'A', dir:'mixed', name:'中国流动性、汇率与监管环境', window:'数日 → 数周',
+  mechanism:'影响区域风险偏好与场外资金通道；境内对虚拟货币的定性不因市场波动改变。',
+  watch:'MLF/LPR、人民币中间价、社融、以及监管口径的正式表述。' },
+{ id:'geopolitics', cat:'macro', level:'A', dir:'mixed', name:'地缘冲突与能源价格', window:'数日 → 数周',
+  mechanism:'风险偏好与通胀预期同时受影响；避险资产与风险资产的相关性可能短暂反转。',
+  watch:'油价、黄金、VIX、信用利差。' },
+{ id:'debtceiling', cat:'macro', level:'A', dir:'mixed', name:'美国财政与债务上限', window:'数周',
+  mechanism:'财政存款与发债节奏改变市场流动性；违约风险溢价会抬升波动。',
+  watch:'TGA 余额、短端国库券利差、CDS。' },
+{ id:'netliq', cat:'macro', level:'S', dir:'bull', name:'全球净流动性扩张', window:'数周 → 数月',
+  mechanism:'央行资产负债表 − 财政存款 − 隔夜逆回购的净额变化，常与风险资产同向。',
+  watch:'美联储资产、TGA、RRP、主要央行合计资产负债表。' },
+
+/* ---------------- 监管与政策 ---------------- */
+{ id:'etf', cat:'regulation', level:'A', dir:'bull', name:'现货 ETF 审批与资金流', window:'数日 → 数周',
+  mechanism:'合规通道带来增量资金与叙事合法性；持续净流入会改变边际供需。',
+  watch:'日均净流入、管理规模、溢价/折价、申报文件更新。' },
+{ id:'sec', cat:'regulation', level:'A', dir:'bear', name:'SEC / 监管执法与诉讼', window:'数日 → 数周',
+  mechanism:'对交易所、发行方或代币的定性改变合规预期与流动性通道。',
+  watch:'正式起诉/和解文件、被点名的资产、交易所下架公告。' },
+{ id:'stablebill', cat:'regulation', level:'A', dir:'mixed', name:'稳定币立法与储备要求', window:'数周 → 数月',
+  mechanism:'决定稳定币发行方的储备、审计与准入，影响链上美元供给与信任。',
+  watch:'立法文本、储备披露、发行方合规状态。' },
+{ id:'mica', cat:'regulation', level:'B', dir:'mixed', name:'欧盟 MiCA 等区域监管落地', window:'数周',
+  mechanism:'合规成本与牌照门槛改变交易所与发行方的区域布局。',
+  watch:'牌照发放、下架清单、过渡期安排。' },
+{ id:'cnpolicy', cat:'regulation', level:'A', dir:'bear', name:'中国监管口径与执法', window:'即时 → 长期',
+  mechanism:'境内虚拟货币相关业务活动属于非法金融活动；监管表态会改变境内参与者预期与跨境通道。',
+  watch:'央行/互金协会等正式文件、支付与营销整治、案件通报。' },
+{ id:'tax', cat:'regulation', level:'B', dir:'mixed', name:'税收与申报规则变化', window:'数月',
+  mechanism:'改变持有与交易的实际收益与合规成本。',
+  watch:'资本利得税、申报口径、交易所税务报表。' },
+{ id:'license', cat:'regulation', level:'B', dir:'bull', name:'交易所牌照与合规化', window:'数周',
+  mechanism:'持牌经营提升机构参与意愿与托管信任。',
+  watch:'牌照名单、托管审计、保险安排。' },
+{ id:'cbdc', cat:'regulation', level:'C', dir:'neutral', name:'央行数字货币进展', window:'数月',
+  mechanism:'影响支付叙事与隐私讨论，对现有加密资产影响间接。',
+  watch:'试点范围、隐私设计、商业银行接入。' },
+
+/* ---------------- 链上与供给 ---------------- */
+{ id:'whale', cat:'onchain', level:'A', dir:'bear', name:'巨鲸转入交易所 / 大额抛售', window:'数小时 → 数日',
+  mechanism:'大额持仓转入交易所通常被解读为潜在卖压；但归属与意图无法仅凭转账确定。',
+  watch:'交易所净流入、鲸鱼地址标签、OTC 场外动向。' },
+{ id:'stablemint', cat:'onchain', level:'A', dir:'bull', name:'稳定币增发与链上美元扩张', window:'数日 → 数周',
+  mechanism:'稳定币供给增加代表潜在购买力入场；赎回则相反。',
+  watch:'USDT/USDC 总供应、链上净发行、交易所稳定币余额。' },
+{ id:'unlock', cat:'onchain', level:'A', dir:'bear', name:'代币解锁与线性释放', window:'事件日 → 数日',
+  mechanism:'新增流通供给改变供需平衡，尤其当解锁占流通比例较高时。',
+  watch:'解锁比例、接收方（团队/VC）、历史解锁后的价格行为。' },
+{ id:'upgrade', cat:'onchain', level:'B', dir:'mixed', name:'协议升级 / 硬分叉', window:'事件前后',
+  mechanism:'技术变更可能带来费用、通胀率或功能变化，也可能引发分叉与不确定性。',
+  watch:'升级内容、验证者采用率、分叉风险、交易所支持公告。' },
+{ id:'hack', cat:'onchain', level:'A', dir:'bear', name:'黑客攻击 / 合约漏洞', window:'数小时 → 数日',
+  mechanism:'直接造成资金损失与信任冲击；可能引发挤兑与连锁清算。',
+  watch:'链上异常转账、协议暂停公告、攻击者地址、保险覆盖。' },
+{ id:'miner', cat:'onchain', level:'B', dir:'mixed', name:'矿工抛售 / 哈希率变化', window:'数周',
+  mechanism:'矿工是结构性卖方；哈希率下降可能反映关机与盈利压力。',
+  watch:'矿工余额、哈希率、难度调整、矿工持仓指数。' },
+{ id:'valuation', cat:'onchain', level:'A', dir:'mixed', name:'链上估值极值（MVRV / NUPL 等）', window:'数周 → 数月',
+  mechanism:'估值指标反映整体持仓成本与盈亏状态，极端读数提示风险收益比偏移。',
+  watch:'MVRV、NUPL、SOPR、已实现波动率、长期持有者供应。',
+  note:'指标口径依赖地址去重与交易所归类，不同数据商结果不同。' },
+{ id:'exchbal', cat:'onchain', level:'B', dir:'bull', name:'交易所余额下降', window:'数周',
+  mechanism:'通常被解读为提币自托管、卖压减少，但也可能只是托管方案变化。',
+  watch:'交易所余额、净提币、托管机构披露。' },
+{ id:'institutional', cat:'onchain', level:'B', dir:'bull', name:'机构持仓与链上金库披露', window:'季度',
+  mechanism:'上市公司、基金与主权机构的配置改变长期供需叙事。',
+  watch:'13F、季度财报、链上金库地址、ETF 持仓。' },
+{ id:'burn', cat:'onchain', level:'C', dir:'bull', name:'销毁 / 回购机制', window:'事件日',
+  mechanism:'减少流通供给，但影响取决于规模相对总量的大小。',
+  watch:'销毁量占比、机制可持续性、是否只是营销。' },
+
+/* ---------------- 衍生品与杠杆 ---------------- */
+{ id:'expiry', cat:'deriv', level:'B', dir:'mixed', name:'期权大额到期（Max Pain）', window:'到期日前后',
+  mechanism:'做市商对冲会在到期前放大或抑制波动；到期后对冲需求释放。',
+  watch:'未平仓量分布、最大痛点、Gamma 敞口、到期名义规模。' },
+{ id:'fundingext', cat:'deriv', level:'B', dir:'mixed', name:'资金费率极值', window:'数小时 → 数日',
+  mechanism:'反映杠杆多空拥挤；极端正费率常伴随多头拥挤与潜在去杠杆。',
+  watch:'资金费率年化、未平仓量、多空比、清算分布。' },
+{ id:'oi', cat:'deriv', level:'B', dir:'mixed', name:'未平仓量激增', window:'数小时 → 数日',
+  mechanism:'杠杆总量上升会放大双向波动；OI 与价格同向上升通常代表新资金进场。',
+  watch:'OI 变化率、OI/市值、各交易所分布。' },
+{ id:'liq', cat:'deriv', level:'A', dir:'bear', name:'大规模清算 / 去杠杆', window:'数小时 → 数日',
+  mechanism:'强平本身是市价单，会进一步推动价格，形成正反馈的清算瀑布。',
+  watch:'24h 清算额、多空清算比、深度变化、资金费率翻转。' },
+{ id:'basisinv', cat:'deriv', level:'A', dir:'bear', name:'基差倒挂 / 期货贴水', window:'数日 → 数周',
+  mechanism:'常出现在恐慌或强制去杠杆阶段，反映现货需求相对期货更强或套保需求激增。',
+  watch:'年化基差、期限结构、交易所保证金规则。' },
+{ id:'reserve', cat:'deriv', level:'B', dir:'bear', name:'交易所储备与穿仓风险', window:'数日',
+  mechanism:'储备不足或风控失效会引发挤兑与信任危机。',
+  watch:'储备证明、冷钱包余额、提币延迟、保险基金。' },
+
+/* ---------------- 行业与机构 ---------------- */
+{ id:'treasurybuy', cat:'industry', level:'B', dir:'bull', name:'上市公司 / 主权基金增持', window:'数日 → 数周',
+  mechanism:'改变长期供给叙事与市场情绪，但需区分真实买入与公告炒作。',
+  watch:'公告细节、实际持仓、融资方式（现金/发债/增发）。' },
+{ id:'exchangeoutage', cat:'industry', level:'A', dir:'bear', name:'交易所事故 / 宕机 / 提币暂停', window:'数小时 → 数日',
+  mechanism:'流动性碎片化与信任受损；极端行情中宕机会放大损失。',
+  watch:'官方状态页、提币恢复时间、补偿方案、监管介入。' },
+{ id:'mna', cat:'industry', level:'B', dir:'mixed', name:'并购 / IPO / 传统金融入场', window:'数周 → 数月',
+  mechanism:'提升行业合法性与机构参与度，但也可能带来竞争与费用变化。',
+  watch:'交易条款、监管审批、产品上线节奏。' },
+{ id:'payment', cat:'industry', level:'B', dir:'bull', name:'支付与银行渠道接入', window:'数周',
+  mechanism:'扩大真实使用场景与法币入口。',
+  watch:'合作方、覆盖地区、手续费与限额。' },
+{ id:'miningpolicy', cat:'industry', level:'B', dir:'mixed', name:'矿业政策与能源成本', window:'数周 → 数月',
+  mechanism:'影响算力分布与抛压节奏。',
+  watch:'电价、政策文件、算力迁移、矿机价格。' },
+{ id:'brand', cat:'industry', level:'C', dir:'neutral', name:'品牌 / 体育合作', window:'事件日',
+  mechanism:'多为情绪性叙事，对基本面影响有限。',
+  watch:'合作规模、是否涉及代币支付。' },
+
+/* ---------------- 叙事与板块 ---------------- */
+{ id:'ai', cat:'narrative', level:'A', dir:'bull', name:'AI × Crypto 叙事升温', window:'数周 → 数月',
+  mechanism:'资金向"AI 代理 / 算力 / 数据"叙事集中，板块内部相关性上升。',
+  watch:'板块资金流、龙头代币表现、真实收入与用户。' },
+{ id:'rwa', cat:'narrative', level:'B', dir:'bull', name:'RWA（真实资产上链）', window:'数周 → 数月',
+  mechanism:'把国债、基金、商品搬上链，叙事与机构需求共振。',
+  watch:'链上规模、发行方、合规结构、收益率。' },
+{ id:'depin', cat:'narrative', level:'B', dir:'bull', name:'DePIN（去中心化物理网络）', window:'数周',
+  mechanism:'用代币激励硬件网络，叙事依赖真实使用量与现金流。',
+  watch:'设备数、收入、代币排放与通胀。' },
+{ id:'meme', cat:'narrative', level:'B', dir:'mixed', name:'Meme 热潮', window:'数日 → 数周',
+  mechanism:'高波动、高换手、低基本面，常出现在流动性充裕与风险偏好高位。',
+  watch:'新发行数量、交易量占比、持币集中度、rug 风险。' },
+{ id:'l2airdrop', cat:'narrative', level:'B', dir:'mixed', name:'L2 / 空投与积分活动', window:'数周',
+  mechanism:'激励带来短期用户与 TVL，但可能在高排放后快速流失。',
+  watch:'TVL、真实用户、排放速度、解锁时间表。' },
+{ id:'privacy', cat:'narrative', level:'B', dir:'mixed', name:'隐私与合规叙事', window:'数周',
+  mechanism:'监管压力与隐私需求的拉锯，影响特定板块的合规溢价。',
+  watch:'监管表态、协议采用、交易所下架风险。' },
+{ id:'halving', cat:'narrative', level:'A', dir:'bull', name:'减半 / 供给冲击', window:'数月 → 数年',
+  mechanism:'新增供给减半改变矿工卖压与稀缺性叙事；但需求侧变化通常更关键。',
+  watch:'发行率、矿工成本、历史减半后的回撤路径。' },
+{ id:'seasonality', cat:'narrative', level:'C', dir:'neutral', name:'季节性 / 月末资金流', window:'数日',
+  mechanism:'组合再平衡、税务与假期流动性会造成短期偏差。',
+  watch:'月末/季末资金流、假期流动性、期权到期。' },
+];
+
+const SOURCES = [
+  { group:'官方与监管', items:[
+    { name:'美联储（FOMC 声明、SEP）', url:'https://www.federalreserve.gov/newsevents.htm' },
+    { name:'美国劳工统计局（CPI / 非农）', url:'https://www.bls.gov/news.release/' },
+    { name:'美国 SEC', url:'https://www.sec.gov/news/pressreleases' },
+    { name:'CFTC', url:'https://www.cftc.gov/PressRoom' },
+    { name:'欧洲央行', url:'https://www.ecb.europa.eu/press/html/index.en.html' },
+    { name:'中国人民银行', url:'http://www.pbc.gov.cn/' },
+  ]},
+  { group:'行业媒体', items:[
+    { name:'CoinDesk', url:'https://www.coindesk.com/' },
+    { name:'The Block', url:'https://www.theblock.co/' },
+    { name:'Blockworks', url:'https://blockworks.co/' },
+  ]},
+  { group:'链上与衍生品数据', items:[
+    { name:'Glassnode', url:'https://glassnode.com/' },
+    { name:'CryptoQuant', url:'https://cryptoquant.com/' },
+    { name:'DefiLlama', url:'https://defillama.com/' },
+    { name:'L2BEAT', url:'https://l2beat.com/' },
+    { name:'Token Unlocks', url:'https://token.unlocks.app/' },
+    { name:'Deribit Insights', url:'https://insights.deribit.com/' },
+  ]},
+  { group:'情绪与宏观', items:[
+    { name:'Alternative.me 恐惧贪婪指数', url:'https://alternative.me/crypto/fear-and-greed-index/' },
+    { name:'FRED 经济数据', url:'https://fred.stlouisfed.org/' },
+    { name:'TradingView 经济日历', url:'https://www.tradingview.com/economic-calendar/' },
+  ]},
+];
+
+const WEEKLY_RHYTHM = [
+  { day:'周一', note:'亚洲开盘定周内情绪；周末流动性缺口常在此回补。', level:'B' },
+  { day:'周二', note:'宏观数据预热；美股开盘后方向性资金增加。', level:'C' },
+  { day:'周三', note:'FOMC 决议、CPI、EIA 等高频落点；波动率通常最高。', level:'S' },
+  { day:'周四', note:'美国初请失业金；决议次日往往出现趋势延续或反转确认。', level:'B' },
+  { day:'周五', note:'期权到期、非农（每月首个周五）、周末前降杠杆。', level:'A' },
+  { day:'周六', note:'流动性最薄，插针与假突破概率上升。', level:'B' },
+  { day:'周日', note:'周末收盘前的仓位调整；警惕低流动性下的异常波动。', level:'B' },
+];
+
+if (typeof window !== 'undefined') {
+  window.IMPACT_LEVELS = IMPACT_LEVELS;
+  window.NEWS_DIRS = NEWS_DIRS;
+  window.NEWS_CATS = NEWS_CATS;
+  window.EVENT_LIBRARY = EVENT_LIBRARY;
+  window.SOURCES = SOURCES;
+  window.WEEKLY_RHYTHM = WEEKLY_RHYTHM;
+}

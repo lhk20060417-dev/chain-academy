@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="obsidian">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>交易纪律 · Chain Academy</title>
+<meta name="description" content="搭建属于你的交易纪律：风险参数、书面规则、每日流程、违规记录与连续打卡。全部数据只保存在本机。">
+<meta name="theme-color" content="#08090B">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%2308090B'/%3E%3Cpath d='M16 7l9 9-9 9-9-9z' fill='none' stroke='%23C8A96A' stroke-width='1.4'/%3E%3Ccircle cx='16' cy='16' r='2.2' fill='%23C8A96A'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Noto+Sans+SC:wght@400;500;600&family=Noto+Serif+SC:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/vars.css">
+<link rel="stylesheet" href="css/system.css">
+<link rel="stylesheet" href="css/pages.css">
+<noscript><style>.reveal{opacity:1!important;transform:none!important;}</style></noscript>
+</head>
+<body>
+
+<div id="siteNav"></div>
+
+<main>
+  <header class="page-head wrap">
+    <p class="eyebrow reveal">DISCIPLINE · 交易纪律</p>
+    <h1 class="h1 reveal d1" style="margin-top:18px;">把纪律，<br>写成可执行的规则。</h1>
+    <p class="lede reveal d2">纪律不是"忍住不做"，而是把关键决策提前写成文字：风险参数、出场条件、停止条件。盘中只执行，不讨论。</p>
+    <div class="grid" style="grid-template-columns:repeat(4,1fr);gap:14px;margin-top:30px;border-top:1px solid var(--line);padding-top:18px;">
+      <div><div class="micro">连续打卡</div><div style="font-family:var(--font-mono);font-size:1.5rem;margin-top:6px;"><span id="headStreak">0</span> 天</div></div>
+      <div><div class="micro">今日完成</div><div style="font-family:var(--font-mono);font-size:1.5rem;margin-top:6px;"><span id="headRate">0</span>%</div></div>
+      <div><div class="micro">书面规则</div><div style="font-family:var(--font-mono);font-size:1.5rem;margin-top:6px;"><span id="headRules">0</span> 条</div></div>
+      <div><div class="micro">违规记录</div><div style="font-family:var(--font-mono);font-size:1.5rem;margin-top:6px;color:var(--neg);"><span id="headViol">0</span> 次</div></div>
+    </div>
+  </header>
+
+  <div class="wrap disc-wrap" style="padding-bottom:40px;">
+    <!-- 左列 -->
+    <div>
+      <section style="margin-bottom:34px;">
+        <div class="sec-head" style="margin-bottom:12px;">
+          <div><p class="eyebrow" style="font-size:10px;">TODAY · 今日流程</p><h2 class="h3" style="margin-top:8px;">开盘前 / 盘中 / 收盘后</h2></div>
+          <span class="micro" id="todayLabel">—</span>
+        </div>
+        <div class="panel panel--pad">
+          <div class="disc-ring">
+            <div class="ring">
+              <svg viewBox="0 0 80 80">
+                <circle cx="40" cy="40" r="34" fill="none" stroke="var(--line)" stroke-width="3"/>
+                <circle id="todayRing" cx="40" cy="40" r="34" fill="none" stroke="var(--brand)" stroke-width="3" stroke-linecap="round" stroke-dasharray="213.6" stroke-dashoffset="213.6" style="transition:stroke-dashoffset .8s var(--ease-out)"/>
+              </svg>
+              <div class="ring__num" id="todayPct">0%</div>
+            </div>
+            <div class="disc-meta">
+              <div class="disc-streak"><span id="todayDone">0</span> / <span id="todayTotal">5</span> 已完成</div>
+              <div class="micro">完成后自动计入连续打卡</div>
+            </div>
+          </div>
+          <div class="check-list" id="fullChecklist" style="margin-top:14px;"></div>
+        </div>
+      </section>
+
+      <section style="margin-bottom:34px;">
+        <div class="sec-head" style="margin-bottom:12px;">
+          <div><p class="eyebrow" style="font-size:10px;">CHARTER · 纪律契约</p><h2 class="h3" style="margin-top:8px;">写在纸上的才算规则</h2></div>
+          <button class="btn btn--quiet" id="loadPreset">载入保守模板</button>
+        </div>
+        <div id="ruleList"></div>
+        <form id="ruleForm" style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;">
+          <input class="field" id="ruleText" placeholder="新增一条规则，例如：单日亏损 2% 后强制停止" style="flex:1;min-width:220px;font-family:var(--font-sans);">
+          <button class="btn btn--ghost btn--sm" type="submit">添加</button>
+        </form>
+      </section>
+
+      <section>
+        <div class="sec-head" style="margin-bottom:12px;">
+          <div><p class="eyebrow" style="font-size:10px;">VIOLATIONS · 违规记录</p><h2 class="h3" style="margin-top:8px;">违规则不是失败，是数据</h2></div>
+          <span class="micro" id="violCount">0 次</span>
+        </div>
+        <form id="violForm" style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;">
+          <input class="field" id="violText" placeholder="记录一次违规：我当时做了什么？触发条件是什么？" style="flex:1;min-width:240px;font-family:var(--font-sans);">
+          <button class="btn btn--ghost btn--sm" type="submit">记录</button>
+        </form>
+        <div id="violList"></div>
+      </section>
+    </div>
+
+    <!-- 右列 -->
+    <aside>
+      <section class="panel panel--pad" style="margin-bottom:16px;">
+        <div class="micro" style="margin-bottom:14px;">RISK PARAMETERS · 风险参数</div>
+        <div class="risk-params">
+          <div class="param"><div class="param__k">单笔风险 %</div><input class="field" type="number" id="pRisk" step="0.05" style="margin-top:6px;font-size:1.1rem;"></div>
+          <div class="param"><div class="param__k">单日最大亏损 %</div><input class="field" type="number" id="pDaily" step="0.5" style="margin-top:6px;font-size:1.1rem;"></div>
+          <div class="param"><div class="param__k">最大同时持仓</div><input class="field" type="number" id="pMax" step="1" style="margin-top:6px;font-size:1.1rem;"></div>
+          <div class="param"><div class="param__k">杠杆上限 ×</div><input class="field" type="number" id="pLev" step="0.5" style="margin-top:6px;font-size:1.1rem;"></div>
+        </div>
+        <button class="btn btn--primary btn--sm" id="saveParams" style="width:100%;margin-top:14px;">保存参数</button>
+        <p class="f-hint">这些数字会被写进导出的纪律契约，并在每次自检时提醒你。</p>
+      </section>
+
+      <section class="panel panel--pad" style="margin-bottom:16px;">
+        <div class="micro" style="margin-bottom:12px;">STREAK · 最近 14 天</div>
+        <div class="streak-grid" id="streakGrid"></div>
+        <div style="display:flex;justify-content:space-between;margin-top:12px;">
+          <span class="micro">连续 <span id="streakNum" style="color:var(--brand);">0</span> 天</span>
+          <span class="micro" id="streakHint">完成全部流程即点亮</span>
+        </div>
+      </section>
+
+      <section class="panel panel--pad">
+        <div class="micro" style="margin-bottom:12px;">EXPORT · 导出</div>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <button class="btn btn--ghost btn--sm" id="copyCharter">复制纪律契约（Markdown）</button>
+          <button class="btn btn--ghost btn--sm" id="downloadCharter">下载 .md 文件</button>
+          <button class="btn btn--quiet" id="resetDisc" style="color:var(--neg);">恢复默认规则</button>
+        </div>
+        <p class="f-hint">数据只在本机。换设备请先导出。</p>
+      </section>
+    </aside>
+  </div>
+</main>
+
+<div id="siteFooter"></div>
+
+<script src="js/content.js"></script>
+<script src="js/content-master.js"></script>
+<script src="js/discipline.js"></script>
+<script src="js/storage.js"></script>
+<script src="js/ui.js"></script>
+<script>
+renderChrome('discipline');
+let disc = null;
+
+document.addEventListener('DOMContentLoaded', () => {
+  disc = loadDisc();
+  fillParams();
+  renderAll();
+  bind();
+});
+
+function renderAll(){
+  renderChecklist();
+  renderRules();
+  renderViolations();
+  renderStreak();
+  document.getElementById('headStreak').textContent = discStreak(disc);
+  document.getElementById('headRate').textContent = todayRate(disc);
+  document.getElementById('headRules').textContent = disc.rules.length;
+  document.getElementById('headViol').textContent = disc.violations.length;
+  document.getElementById('violCount').textContent = disc.violations.length + ' 次';
+  document.getElementById('todayLabel').textContent = todayStr();
+}
+
+function renderChecklist(){
+  const log = todayLog(disc);
+  const box = document.getElementById('fullChecklist');
+  box.innerHTML = disc.checklist.map(c => `
+    <div class="check-item ${log.done.includes(c.id)?'on':''}" data-id="${c.id}" role="checkbox" aria-checked="${log.done.includes(c.id)}" tabindex="0">
+      <span class="check-box">✓</span><span class="check-txt">${c.text}</span>
+    </div>`).join('');
+  box.querySelectorAll('.check-item').forEach(el => {
+    const t = () => toggleCheck(el.dataset.id);
+    el.addEventListener('click', t);
+    el.addEventListener('keydown', e => { if(e.key===' '||e.key==='Enter'){ e.preventDefault(); t(); } });
+  });
+  const pct = todayRate(disc);
+  document.getElementById('todayPct').textContent = pct + '%';
+  document.getElementById('todayDone').textContent = log.done.length;
+  document.getElementById('todayTotal').textContent = disc.checklist.length;
+  document.getElementById('todayRing').style.strokeDashoffset = 2*Math.PI*34 * (1-pct/100);
+}
+function toggleCheck(id){
+  const log = todayLog(disc);
+  const i = log.done.indexOf(id);
+  if(i >= 0) log.done.splice(i,1); else log.done.push(id);
+  saveDisc(disc);
+  renderAll();
+}
+
+function renderRules(){
+  document.getElementById('ruleList').innerHTML = disc.rules.map((r,i) => `
+    <div class="rule-card">
+      <span class="rule-card__n">${String(i+1).padStart(2,'0')}</span>
+      <span class="rule-card__t">${escapeHtml(r.text)}${r.note ? `<small>${escapeHtml(r.note)}</small>` : ''}</span>
+      <button class="rule-del" data-id="${r.id}" aria-label="删除规则">✕</button>
+    </div>`).join('');
+  document.querySelectorAll('#ruleList [data-id]').forEach(b => b.onclick = () => {
+    disc.rules = disc.rules.filter(r => r.id !== b.dataset.id);
+    saveDisc(disc); renderAll();
+  });
+}
+
+function renderViolations(){
+  const box = document.getElementById('violList');
+  if(!disc.violations.length){ box.innerHTML = `<p class="small faint">还没有记录。违规记录的目的不是自责，而是找出"哪条规则最容易被破坏"。</p>`; return; }
+  box.innerHTML = disc.violations.slice(0, 10).map(v => `
+    <div class="violation">
+      <time>${v.date}</time>
+      <span>${escapeHtml(v.text)}</span>
+      <button class="rule-del" data-vid="${v.id}" aria-label="删除">✕</button>
+    </div>`).join('');
+  box.querySelectorAll('[data-vid]').forEach(b => b.onclick = () => {
+    disc.violations = disc.violations.filter(v => v.id !== b.dataset.vid);
+    saveDisc(disc); renderAll();
+  });
+}
+
+function renderStreak(){
+  const days = last14(disc);
+  document.getElementById('streakGrid').innerHTML = days.map(d => `<i class="${d.full?'on':''} ${d.today?'today':''}" title="${d.date}"></i>`).join('');
+  document.getElementById('streakNum').textContent = discStreak(disc);
+}
+
+function fillParams(){
+  document.getElementById('pRisk').value = disc.params.risk;
+  document.getElementById('pDaily').value = disc.params.dailyLoss;
+  document.getElementById('pMax').value = disc.params.maxPos;
+  document.getElementById('pLev').value = disc.params.leverage;
+}
+
+function bind(){
+  document.getElementById('ruleForm').addEventListener('submit', e => {
+    e.preventDefault();
+    const t = document.getElementById('ruleText').value.trim();
+    if(!t) return;
+    disc.rules.push({ id:'r' + Date.now().toString(36), text:t, note:'' });
+    saveDisc(disc);
+    document.getElementById('ruleText').value = '';
+    renderAll(); toast('规则已加入');
+  });
+  document.getElementById('violForm').addEventListener('submit', e => {
+    e.preventDefault();
+    const t = document.getElementById('violText').value.trim();
+    if(!t) return;
+    disc.violations.unshift({ id:'v' + Date.now().toString(36), date:todayStr(), text:t });
+    saveDisc(disc);
+    document.getElementById('violText').value = '';
+    renderAll(); toast('已记录，接下来找触发条件');
+  });
+  document.getElementById('saveParams').addEventListener('click', () => {
+    disc.params.risk = parseFloat(document.getElementById('pRisk').value) || 0.75;
+    disc.params.dailyLoss = parseFloat(document.getElementById('pDaily').value) || 3;
+    disc.params.maxPos = parseInt(document.getElementById('pMax').value) || 3;
+    disc.params.leverage = parseFloat(document.getElementById('pLev').value) || 1;
+    saveDisc(disc); toast('参数已保存');
+  });
+  document.getElementById('loadPreset').addEventListener('click', () => {
+    disc.rules = [
+      { id:'r1', text:'单笔风险不超过账户的 0.5%', note:'仓位 = 风险金额 / 止损距离' },
+      { id:'r2', text:'只在日线趋势明确时持仓过夜', note:'震荡结构只做日内，不留隔夜风险' },
+      { id:'r3', text:'单日亏损达到 2% 立即停止', note:'关闭行情软件，24 小时内不做新开仓' },
+      { id:'r4', text:'不使用杠杆，或杠杆不超过 2 倍', note:'并提前计算强平价' },
+      { id:'r5', text:'每笔交易必须写下失效条件', note:'写不出来就不做' },
+      { id:'r6', text:'连续 3 次亏损后降低一半仓位', note:'直到重新出现按规则执行的盈利' },
+    ];
+    disc.params = { risk:0.5, dailyLoss:2, maxPos:2, leverage:1 };
+    saveDisc(disc); fillParams(); renderAll(); toast('已载入保守模板');
+  });
+  document.getElementById('resetDisc').addEventListener('click', () => {
+    if(!confirm('恢复默认规则？你的自定义规则与违规记录会被清除。')) return;
+    disc = JSON.parse(JSON.stringify(DISC_DEFAULT));
+    saveDisc(disc); fillParams(); renderAll(); toast('已恢复默认');
+  });
+  document.getElementById('copyCharter').addEventListener('click', async () => {
+    const text = charterText();
+    try{ await navigator.clipboard.writeText(text); toast('已复制到剪贴板'); }
+    catch(e){
+      const ta = document.createElement('textarea');
+      ta.value = text; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); ta.remove();
+      toast('已复制');
+    }
+  });
+  document.getElementById('downloadCharter').addEventListener('click', () => {
+    const blob = new Blob([charterText()], { type:'text/markdown;charset=utf-8' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'trading-charter.md';
+    a.click(); URL.revokeObjectURL(a.href);
+    toast('已下载');
+  });
+}
+
+function charterText(){
+  const p = disc.params;
+  return `# 我的交易纪律契约
+
+生成日期：${todayStr()}
+
+## 风险参数
+- 单笔风险：${p.risk}% 权益
+- 单日最大亏损：${p.dailyLoss}%
+- 最大同时持仓：${p.maxPos} 个
+- 杠杆上限：${p.leverage}×
+
+## 书面规则
+${disc.rules.map((r,i) => `${i+1}. ${r.text}${r.note ? `（${r.note}）` : ''}`).join('\n')}
+
+## 每日流程
+${disc.checklist.map(c => `- [ ] ${c.text}`).join('\n')}
+
+## 停止条件
+- 触发单日最大亏损后，当日不再开新仓。
+- 连续 3 次未按规则执行，暂停交易一天并复盘。
+
+> 本契约仅用于个人纪律训练，不构成投资建议。虚拟货币相关业务活动在中国境内属于非法金融活动。
+`;
+}
+</script>
+</body>
+</html>

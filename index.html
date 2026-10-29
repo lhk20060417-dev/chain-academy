@@ -3,12 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Chain Academy · 读懂链上世界，再谈交易</title>
-<meta name="description" content="一套从货币史、密码学、市场微结构与风险数学出发的区块链与交易自学体系：七大学段、73 节课、全程自测与复盘。仅用于技术理论学习，不构成投资建议。">
+<title>控制台 · Chain Academy</title>
+<meta name="description" content="Chain Academy 控制台：今日情绪、消息影响雷达、交易纪律打卡、学习进度与自检。全部数据保存在本机浏览器。仅用于理论学习。">
 <meta name="theme-color" content="#08090B">
-<meta property="og:type" content="website">
-<meta property="og:title" content="Chain Academy · 读懂链上世界，再谈交易">
-<meta property="og:description" content="七大学段 · 73 节课 · 风险数学与市场结构。仅用于技术理论学习。">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%2308090B'/%3E%3Cpath d='M16 7l9 9-9 9-9-9z' fill='none' stroke='%23C8A96A' stroke-width='1.4'/%3E%3Ccircle cx='16' cy='16' r='2.2' fill='%23C8A96A'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -16,286 +13,436 @@
 <link rel="stylesheet" href="css/vars.css">
 <link rel="stylesheet" href="css/system.css">
 <link rel="stylesheet" href="css/pages.css">
-<script type="application/ld+json">
-{
-  "@context":"https://schema.org",
-  "@type":"Course",
-  "name":"Chain Academy 区块链与市场结构通识课程",
-  "description":"从货币史、密码学、市场微结构到风险数学与交易系统的自学课程，含自测与复盘。仅用于理论学习。",
-  "provider":{"@type":"Organization","name":"Chain Academy"},
-  "inLanguage":"zh-CN",
-  "isAccessibleForFree":true
-}
-</script>
 <noscript><style>.reveal{opacity:1!important;transform:none!important;}</style></noscript>
 </head>
 <body>
 
 <div id="siteNav"></div>
 
-<main>
-  <!-- ================= HERO ================= -->
-  <section class="hero">
-    <div class="hero__glow" aria-hidden="true"></div>
-    <div class="wrap hero__inner">
-      <div class="hero__copy">
-        <p class="eyebrow reveal">CHAIN ACADEMY · 区块链与市场结构</p>
-        <h1 class="display reveal d1">读懂链上世界<br><em>再谈交易。</em></h1>
-        <p class="lede reveal d2">从货币史、密码学与市场微结构出发，一路走到风险数学、订单流与交易系统。七大学段、<span id="chCount">73</span> 节课，每节自测校验，错题自动归档。</p>
-        <div class="cluster hero__cta reveal d3">
-          <a class="btn btn--primary btn--lg" href="roadmap.html">进入课程图谱
-            <svg class="arrow" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 12h15M13 6l6 6-6 6"/></svg>
-          </a>
-          <a class="btn btn--ghost btn--lg" href="master.html">顶级交易思维</a>
-        </div>
-        <div class="hero__meta reveal d4">
-          <div><span class="n" id="statCh">—</span><span class="l">节课</span></div>
-          <div><span class="n" id="statQ">—</span><span class="l">道自测</span></div>
-          <div><span class="n" id="statS">—</span><span class="l">大学段</span></div>
-          <div><span class="n">100<span style="font-size:.62em">%</span></span><span class="l">本地存储</span></div>
-        </div>
-      </div>
-
-      <figure class="hero__figure reveal d2">
-        <canvas id="heroChart" aria-label="合成的行情结构示意图：K 线、均线、支撑阻力与成交量分布"></canvas>
-        <figcaption class="hero__figcap">
-          <span>合成数据 · 非实时行情 · 仅作示意</span>
-          <span class="tags"><span class="live-dot" aria-hidden="true"></span>SIMULATED SERIES</span>
-        </figcaption>
-      </figure>
+<main class="dash wrap">
+  <header class="dash-head">
+    <div class="dash-head__greet">
+      <p class="dash-date" id="dashDate">—</p>
+      <h1 class="h1" id="greeting">你好。</h1>
+      <p class="copy small" style="margin:0;color:var(--faint);" id="dashSub">—</p>
     </div>
-  </section>
-
-  <!-- ================= 引语 ================= -->
-  <section class="epigraph">
-    <div class="wrap">
-      <blockquote class="reveal">市场不会奖励情绪，它只把不确定性<em>重新定价</em>给愿意为认知付费的人。</blockquote>
-      <cite class="reveal d1">CHAIN ACADEMY · 学习纲领</cite>
+    <div style="display:flex;flex-direction:column;gap:10px;align-items:flex-end;">
+      <div class="dash-sessions" id="sessions"></div>
+      <a class="btn btn--primary btn--sm" id="continueBtn" href="course.html">继续学习
+        <svg class="arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 12h15M13 6l6 6-6 6"/></svg>
+      </a>
     </div>
-  </section>
+  </header>
 
-  <!-- ================= 01 方法 ================= -->
-  <section class="section" id="method">
-    <div class="wrap">
-      <div class="sec-head">
-        <div>
-          <p class="eyebrow reveal">01 / 方法 METHOD</p>
-          <h2 class="h2 reveal d1" style="margin-top:18px;">把学习，<br>当成一门工程。</h2>
-        </div>
-        <p class="copy reveal d2" style="max-width:360px;font-size:.9rem;">不靠"看完就懂"的错觉，而靠四个可检验的机制：顺序、自测、复盘、出处。</p>
+  <div class="dash-tabs" id="dashTabs">
+    <button class="dash-tab on" data-tab="env">环境</button>
+    <button class="dash-tab" data-tab="disc">纪律</button>
+    <button class="dash-tab" data-tab="news">雷达</button>
+    <button class="dash-tab" data-tab="learn">学习</button>
+    <button class="dash-tab" data-tab="self">自检</button>
+  </div>
+
+  <div class="dash-grid">
+    <!-- 环境 -->
+    <section class="module module--env" data-m="env">
+      <div class="module__head">
+        <span class="module__title">环境 · ENVIRONMENT</span>
+        <a class="module__link" href="news.html">消息面 →</a>
       </div>
-
-      <div class="grid grid-4" style="gap:clamp(20px,3vw,36px);">
-        <div class="method-card reveal">
-          <div class="method-card__n">01 — SEQUENCED</div>
-          <h3 class="method-card__t">顺序解锁</h3>
-          <p class="method-card__d">前一节的自测没过，下一节不会打开。知识有依赖关系，学习顺序不该由心情决定。</p>
+      <div class="module__body">
+        <div class="env-top">
+          <div class="gauge-wrap">
+            <canvas id="fngGauge" aria-label="恐惧与贪婪指数仪表"></canvas>
+            <div class="gauge-center">
+              <div class="gauge-value" id="fngValue">—</div>
+              <div class="gauge-label" id="fngLabel">读取中</div>
+            </div>
+          </div>
+          <div class="env-side">
+            <div class="env-row"><span class="env-k">BTC 区块高度</span><span class="env-v" id="btcBlocks">—</span></div>
+            <div class="env-row"><span class="env-k">24h 链上交易</span><span class="env-v" id="btcTx">—</span></div>
+            <div class="env-row"><span class="env-k">内存池最快费率</span><span class="env-v" id="btcFee">—</span></div>
+            <div class="env-row"><span class="env-k">昨日情绪</span><span class="env-v" id="fngPrev">—</span></div>
+          </div>
         </div>
-        <div class="method-card reveal d1">
-          <div class="method-card__n">02 — TESTED</div>
-          <h3 class="method-card__t">自测校验</h3>
-          <p class="method-card__d">每节 3–5 题，即时判分并给出解析。看懂是错觉，做对才是证据。</p>
+        <div class="env-bars" id="fngBars" aria-hidden="true"></div>
+        <div class="env-week">
+          <div class="module__title" style="margin-bottom:8px;">本周节奏 · RHYTHM</div>
+          <div id="weekRhythm" class="env-week__list"></div>
         </div>
-        <div class="method-card reveal d2">
-          <div class="method-card__n">03 — REVIEWED</div>
-          <h3 class="method-card__t">错题归档</h3>
-          <p class="method-card__d">错题进入复盘队列，隔一段时间回来重练。真正的掌握发生在第二次。</p>
-        </div>
-        <div class="method-card reveal d3">
-          <div class="method-card__n">04 — SOURCED</div>
-          <h3 class="method-card__t">标注出处</h3>
-          <p class="method-card__d">关键结论注明假设、数据口径与反例。没有出处的"经验"，一律当作假设。</p>
-        </div>
+        <p class="env-note" id="envNote">公开数据 · 仅信息展示 · 不构成投资建议</p>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- ================= 02 课程 ================= -->
-  <section class="section section--tight" id="curriculum" style="padding-top:0;">
-    <div class="wrap">
-      <div class="sec-head">
-        <div>
-          <p class="eyebrow reveal">02 / 课程 CURRICULUM</p>
-          <h2 class="h2 reveal d1" style="margin-top:18px;">七大学段，<br>一条上升曲线。</h2>
-        </div>
-        <a href="roadmap.html" class="btn btn--quiet reveal d2">查看完整图谱
-          <svg class="arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 12h15M13 6l6 6-6 6"/></svg>
-        </a>
+    <!-- 纪律 -->
+    <section class="module module--disc" data-m="disc">
+      <div class="module__head">
+        <span class="module__title">纪律 · DISCIPLINE</span>
+        <a class="module__link" href="discipline.html">设置 →</a>
       </div>
-      <div class="index-list" id="stageIndex"></div>
-    </div>
-  </section>
-
-  <!-- ================= 03 思维体系 ================= -->
-  <section class="master-band section">
-    <div class="wrap">
-      <div class="master-band__head">
-        <div>
-          <p class="eyebrow reveal">03 / 思维体系 MASTERY</p>
-          <h2 class="h2 reveal d1" style="margin-top:18px;">顶级交易思维，<br>不是一套"战法"。</h2>
+      <div class="module__body">
+        <div class="disc-ring">
+          <div class="ring">
+            <svg viewBox="0 0 80 80">
+              <circle cx="40" cy="40" r="34" fill="none" stroke="var(--line)" stroke-width="3"/>
+              <circle id="discRingFill" cx="40" cy="40" r="34" fill="none" stroke="var(--brand)" stroke-width="3"
+                stroke-linecap="round" stroke-dasharray="213.6" stroke-dashoffset="213.6" style="transition:stroke-dashoffset .8s var(--ease-out)"/>
+            </svg>
+            <div class="ring__num" id="discPct">0%</div>
+          </div>
+          <div class="disc-meta">
+            <div class="disc-streak"><span id="discStreak">0</span> 天连续</div>
+            <div class="micro">今日流程完成度</div>
+          </div>
         </div>
-        <div class="reveal d2">
-          <p class="copy">真正决定长期结果的，是期望值的符号、破产概率的大小、以及你对市场结构的理解深度——而不是某个指标组合。</p>
-          <a href="master.html" class="btn btn--ghost btn--sm" style="margin-top:22px;">进入 12 节思维体系
-            <svg class="arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 12h15M13 6l6 6-6 6"/></svg>
-          </a>
-        </div>
+        <div class="check-list" id="dashChecklist"></div>
       </div>
+    </section>
 
-      <div class="grid grid-3" style="margin-top:clamp(36px,5vw,64px);">
-        <div class="act-card reveal">
-          <div class="act-card__k">ACT I</div>
-          <h3 class="act-card__t">数学地基</h3>
-          <p class="act-card__l"><b>期望值 · 赔率 · 凯利 · 破产概率</b><br>先证明自己有 edge，再讨论怎么下注。没有数学，仓位管理只是玄学。</p>
-        </div>
-        <div class="act-card reveal d1">
-          <div class="act-card__k">ACT II</div>
-          <h3 class="act-card__t">市场结构</h3>
-          <p class="act-card__l"><b>订单簿 · 流动性 · 拍卖 · 周期</b><br>价格不是图表画出来的，是订单撮合出来的。理解谁在成交、为什么成交。</p>
-        </div>
-        <div class="act-card reveal d2">
-          <div class="act-card__k">ACT III</div>
-          <h3 class="act-card__t">系统与执行</h3>
-          <p class="act-card__l"><b>回测 · 成本 · 组合 · 决策日志</b><br>把判断写成流程，把流程变成可复盘、可迭代的系统。</p>
-        </div>
+    <!-- 消息雷达 -->
+    <section class="module module--news" data-m="news">
+      <div class="module__head">
+        <span class="module__title">影响雷达 · SIGNALS</span>
+        <a class="module__link" href="news.html">全部 →</a>
       </div>
+      <div class="module__body">
+        <div class="news-mini" id="dashNews"></div>
+      </div>
+    </section>
 
-      <div class="grid" style="grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(24px,4vw,56px);margin-top:clamp(36px,5vw,64px);align-items:start;">
-        <div class="formula formula--hero reveal">
-          <span class="formula__name">EXPECTANCY</span>
-          <span class="big">E[R] = p·W − (1−p)·L</span>
-          <span style="color:var(--dim);">其中 p 为胜率，W 为平均盈利，L 为平均亏损（以 R 计）。</span>
-          <span class="note">只要 E[R] &gt; 0 且样本足够，重复本身就是策略。反之，任何"感觉很好"的交易都只是在向市场支付学费。</span>
+    <!-- 学习 -->
+    <section class="module module--learn" data-m="learn">
+      <div class="module__head">
+        <span class="module__title">学习 · COURSE</span>
+        <a class="module__link" href="course.html">课程库 →</a>
+      </div>
+      <div class="module__body">
+        <div class="learn-next">
+          <span class="micro" id="learnStage">—</span>
+          <a class="learn-title" id="learnTitle" href="course.html">—</a>
         </div>
-        <div class="reveal d1">
-          <p class="copy" style="margin-bottom:16px;">12 节课程覆盖：期望值与 R 倍数、凯利公式与分数凯利、破产概率与蒙特卡洛、订单簿与冲击成本、拍卖与价值区间、威科夫与"聪明钱"的可证伪部分、Regime 识别、永续资金费率与波动率曲面、组合相关性、回测陷阱与 Deflated Sharpe、执行算法与 MEV、决策日志与心理账户。</p>
-          <div class="cluster">
-            <a class="btn btn--primary btn--sm" href="master.html">开始阅读</a>
-            <a class="btn btn--ghost btn--sm" href="tools.html">先用计算器验证</a>
+        <div id="learnNext" class="learn-nextlist"></div>
+        <div class="learn-bar">
+          <div class="track track--thick"><div class="fill" id="learnFill" style="width:0%"></div></div>
+          <div class="learn-stats">
+            <span>已学 <b id="learnDone">0</b>/<b id="learnTotal">0</b></span>
+            <span>题库 <b id="learnQuiz">0</b></span>
+            <span>知识库 <b id="learnKB">0</b></span>
           </div>
         </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- ================= 04 实验室 ================= -->
-  <section class="section" id="lab">
-    <div class="wrap">
-      <div class="sec-head">
-        <div>
-          <p class="eyebrow reveal">04 / 实验室 LABORATORY</p>
-          <h2 class="h2 reveal d1" style="margin-top:18px;">把直觉，<br>放上解剖台。</h2>
-        </div>
-        <p class="copy reveal d2" style="max-width:360px;font-size:.9rem;">六个可交互的数学工具，全部在你的浏览器里计算，不上传任何数据。</p>
+    <!-- 自检 -->
+    <section class="module module--self" data-m="self">
+      <div class="module__head">
+        <span class="module__title">自检 · SELF-CHECK</span>
+        <a class="module__link" href="selfcheck.html">开始 →</a>
       </div>
+      <div class="module__body" id="selfBody"></div>
+    </section>
+  </div>
 
-      <div class="grid grid-3">
-        <a class="lab-card reveal" href="tools.html#sizing">
-          <div class="lab-card__top"><h3 class="lab-card__t">仓位与风险</h3><span class="lab-card__n">01</span></div>
-          <p class="lab-card__d">给定风险预算与止损距离，反推仓位、名义价值与实际杠杆。</p>
-          <canvas data-spark="11" aria-hidden="true"></canvas>
-          <div class="lab-card__foot"><span>POSITION SIZING</span><span>→</span></div>
-        </a>
-        <a class="lab-card reveal d1" href="tools.html#ruin">
-          <div class="lab-card__top"><h3 class="lab-card__t">破产概率模拟</h3><span class="lab-card__n">02</span></div>
-          <p class="lab-card__d">2000 条蒙特卡洛权益曲线，看同一个正期望策略如何被仓位杀死。</p>
-          <canvas data-spark="27" aria-hidden="true"></canvas>
-          <div class="lab-card__foot"><span>MONTE CARLO</span><span>→</span></div>
-        </a>
-        <a class="lab-card reveal d2" href="tools.html#perp">
-          <div class="lab-card__top"><h3 class="lab-card__t">永续与资金费率</h3><span class="lab-card__n">03</span></div>
-          <p class="lab-card__d">资金费、基差年化与强平价估算——把合约的成本结构算清楚。</p>
-          <canvas data-spark="43" aria-hidden="true"></canvas>
-          <div class="lab-card__foot"><span>PERPETUALS</span><span>→</span></div>
-        </a>
-      </div>
-    </div>
-  </section>
-
-  <!-- ================= 05 边界 ================= -->
-  <section class="boundary section">
-    <div class="wrap">
-      <div class="boundary__grid">
-        <div>
-          <p class="eyebrow reveal">05 / 边界 BOUNDARIES</p>
-          <h2 class="h2 reveal d1" style="margin-top:18px;">在这些问题上，<br><em>我们选择克制。</em></h2>
-          <p class="copy reveal d2" style="margin-top:24px;">本站是一个"理解工具"，不是一个"交易入口"。我们相信：把风险讲清楚，比承诺收益更有价值。</p>
-          <button class="btn btn--ghost btn--sm reveal d3" style="margin-top:24px;" onclick="openRiskModal()">阅读完整监管说明</button>
-        </div>
-        <ul class="boundary__list reveal d1">
-          <li><span class="mk">01</span><span><b>不提供信号，不带单。</b>课程只解释机制与概率，不给任何标的、点位或方向判断。</span></li>
-          <li><span class="mk">02</span><span><b>不鼓励杠杆与合约。</b>衍生品章节只讨论定价、资金费与风险结构，不构成参与建议。</span></li>
-          <li><span class="mk">03</span><span><b>不夸大历史。</b>所有案例标注时间与来源；历史有效不等于未来有效。</span></li>
-          <li><span class="mk">04</span><span><b>不淡化法律风险。</b>虚拟货币相关业务活动在中国境内属于非法金融活动，不受法律保护。</span></li>
-        </ul>
-      </div>
-    </div>
-  </section>
+  <div class="dash-foot">
+    <span>仅用于理论学习 · 不构成投资建议 · 虚拟货币相关业务活动在中国境内属于非法金融活动</span>
+    <span id="footClock">—</span>
+  </div>
 </main>
-
-<div id="siteFooter"></div>
 
 <script src="js/content.js"></script>
 <script src="js/content-master.js"></script>
+<script src="js/data-knowledge.js"></script>
+<script src="js/data-news.js"></script>
+<script src="js/data-selfcheck.js"></script>
+<script src="js/discipline.js"></script>
 <script src="js/storage.js"></script>
 <script src="js/ui.js"></script>
-<script src="js/chart.js"></script>
 <script>
-const STAGE_META = {
-  s1:{desc:'货币、密码学、比特币、以太坊、钱包与安全——把名词还原成机制。'},
-  s2:{desc:'现货、K 线、支撑阻力、指标、仓位、风控与心理——建立讨论市场所需的共同语言。'},
-  s3:{desc:'趋势、突破、网格、套利、对冲、海龟与量化——弄清每种策略靠什么活着、又死于什么。'},
-  s4:{desc:'DeFi、Layer 2、跨链、稳定币、监管与代币经济学——看懂协议、激励与风险传导。'},
-  s5:{desc:'模拟盘、小资金、日志、复盘与迭代——把方法变成流程，把流程变成习惯。'},
-  s6:{desc:'22 个指标体系与经典理论：从道氏、江恩到缠论，理解每种工具的假设与失效条件。'},
-  s7:{desc:'12 节顶级交易思维：期望值、破产概率、市场微结构、订单流、波动率、组合、研究与执行。'}
-};
+renderChrome('home');
+
+function fmt(n){ return Number(n).toLocaleString('en-US', { maximumFractionDigits:0 }); }
+function greeting(){
+  const h = new Date().getHours();
+  if(h < 5) return '夜还长。';
+  if(h < 11) return '早上好。';
+  if(h < 14) return '中午好。';
+  if(h < 18) return '下午好。';
+  return '晚上好。';
+}
 
 document.addEventListener('DOMContentLoaded', () => {
-  renderChrome('home');
+  const d = new Date();
+  document.getElementById('dashDate').textContent =
+    `${d.getFullYear()} / ${String(d.getMonth()+1).padStart(2,'0')} / ${String(d.getDate()).padStart(2,'0')} · ${['周日','周一','周二','周三','周四','周五','周六'][d.getDay()]}`;
+  document.getElementById('greeting').textContent = greeting();
 
-  const totalCh = STAGES.reduce((a,s)=>a+s.chapters.length,0);
-  const totalQ  = STAGES.reduce((a,s)=>a+s.chapters.reduce((b,c)=>b+(c.quiz?c.quiz.length:0),0),0)
-                + EXAMS.reduce((a,e)=>a+e.questions.length,0);
-  document.getElementById('chCount').textContent = totalCh;
-  document.getElementById('statCh').textContent = totalCh;
-  document.getElementById('statS').textContent = STAGES.length;
-  document.getElementById('statQ').textContent = totalQ;
+  const disc = loadDisc();
+  const doneCh = ORDER.filter(o => progress.chapters[o.ch.id]?.passed).length;
+  document.getElementById('dashSub').textContent =
+    `已完成 ${doneCh} 节 · 连续 ${discStreak(disc)} 天纪律打卡 · 全部数据只保存在本机`;
 
-  document.getElementById('stageIndex').innerHTML = STAGES.map((s, i) => {
-    const done = s.chapters.filter(c => progress.chapters[c.id] && progress.chapters[c.id].passed).length;
-    const pct = Math.round(done / s.chapters.length * 100);
-    const meta = STAGE_META[s.id] || { desc:s.desc || '' };
-    return `<a class="index-row reveal d${Math.min(i,3)}" href="roadmap.html#${s.id}">
-      <span class="index-row__num">${s.num}</span>
-      <span>
-        <span class="index-row__title">${s.title}</span>
-        <span class="index-row__en">${s.en}</span>
-      </span>
-      <span class="index-row__desc">${meta.desc}</span>
-      <span class="index-row__prog">
-        <span class="track"><span class="fill" style="width:${pct}%"></span></span>
-        <span class="pct">${done}/${s.chapters.length} · ${pct}%</span>
-      </span>
-      <span class="index-row__arrow">→</span>
-    </a>`;
-  }).join('');
+  renderSessions(); setInterval(renderSessions, 1000);
+  renderContinue();
+  renderChecklist(disc);
+  renderNews();
+  renderLearn(doneCh);
+  renderSelf(disc);
+  renderWeekRhythm();
+  drawGaugeFrame();
+  loadEnv();
 
-  initHeroChart(document.getElementById('heroChart'), { count:78, seed:20260317 });
-  document.querySelectorAll('[data-spark]').forEach(c => initSpark(c, +c.dataset.spark));
-  observeNew(document);
+  initMobileTabs();
+
+  const tick = () => document.getElementById('footClock').textContent = 'LOCAL ' + new Date().toLocaleTimeString('zh-CN', { hour12:false });
+  tick(); setInterval(tick, 1000);
 });
 
-function openRiskModal(){
-  openModal(`
-    <h3 class="h3" style="margin-bottom:16px;">监管与风险说明</h3>
-    <div class="article" style="font-size:.88rem;">
-      <p>本站（Chain Academy）是个人用于整理与学习区块链技术、市场结构及风险管理理论的非商业页面。全部内容仅用于技术理论学习与自测，不构成任何投资建议、要约、招揽或推荐。</p>
-      <p>依据中国人民银行等部门发布的《关于进一步防范和处置虚拟货币交易炒作风险的通知》（2021 年 9 月），虚拟货币不具有与法定货币等同的法律地位，不具有法偿性；虚拟货币相关业务活动属于非法金融活动。参与虚拟货币投资交易活动存在法律风险，由此引发的损失需自行承担。</p>
-      <p>本站不提供任何形式的行情报价、交易入口、代币发行、钱包托管、资金划转或收益承诺；不推荐任何平台、项目、标的与买卖点位；不诱导任何人参与杠杆、合约或借贷。</p>
-      <p>课程中出现的价格图、案例与统计数据，均为历史资料或合成数据，用于说明机制，不代表当下市场，也不预示未来结果。任何策略都存在失效的可能，历史回测无法消除过拟合、幸存者偏差与制度变化带来的风险。</p>
-      <p>如果你尚未成年，或所在司法辖区限制此类内容，请立即停止浏览。如果你正在因交易承受较大的情绪压力，请优先寻求专业心理支持，并远离任何形式的借贷与杠杆。</p>
-    </div>`);
+/* ---------------- 移动端模块切换 ---------------- */
+function initMobileTabs(){
+  const tabs = [...document.querySelectorAll('.dash-tab')];
+  const mods = [...document.querySelectorAll('.module[data-m]')];
+  const apply = key => {
+    tabs.forEach(t => t.classList.toggle('on', t.dataset.tab === key));
+    mods.forEach(m => m.classList.toggle('is-mobile-active', m.dataset.m === key));
+  };
+  tabs.forEach(t => t.addEventListener('click', () => apply(t.dataset.tab)));
+  apply('env');
+}
+
+/* ---------------- 交易时段 ---------------- */
+const SESSIONS = [
+  { k:'亚盘', tz:'Asia/Shanghai', from:0, to:9 },
+  { k:'欧盘', tz:'Europe/London', from:7, to:16 },
+  { k:'美盘', tz:'America/New_York', from:12, to:21 },
+];
+function renderSessions(){
+  const now = new Date();
+  const utc = now.getUTCHours() + now.getUTCMinutes()/60;
+  document.getElementById('sessions').innerHTML = SESSIONS.map(s => {
+    const open = utc >= s.from && utc < s.to;
+    const local = new Intl.DateTimeFormat('zh-CN', { timeZone:s.tz, hour:'2-digit', minute:'2-digit', hour12:false }).format(now);
+    return `<span class="session ${open?'is-open':''}"><i class="dot"></i>${s.k} ${local}${open?' · 交易中':''}</span>`;
+  }).join('');
+}
+
+/* ---------------- 继续学习 ---------------- */
+function renderContinue(){
+  const next = ORDER.find(o => !(progress.chapters[o.ch.id]?.passed)) || ORDER[0];
+  const btn = document.getElementById('continueBtn');
+  const last = progress.lastStudy ? ORDER.find(o => o.ch.id === progress.lastStudy) : null;
+  const target = last || next;
+  btn.href = `chapter.html?id=${encodeURIComponent(target.ch.id)}`;
+  if(last){
+    const short = last.ch.title.replace(/^第 \d+ 节：/,'').slice(0,10);
+    btn.innerHTML = `继续：${short} <svg class="arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 12h15M13 6l6 6-6 6"/></svg>`;
+  }
+}
+
+/* ---------------- 纪律打卡 ---------------- */
+function renderChecklist(disc){
+  const log = todayLog(disc);
+  const box = document.getElementById('dashChecklist');
+  box.innerHTML = disc.checklist.map(c => {
+    const on = log.done.includes(c.id);
+    return `<div class="check-item ${on?'on':''}" data-id="${c.id}" role="checkbox" aria-checked="${on}" tabindex="0">
+      <span class="check-box">✓</span><span class="check-txt">${c.text}</span>
+    </div>`;
+  }).join('');
+  function toggle(el){
+    const log2 = todayLog(disc);
+    const i = log2.done.indexOf(el.dataset.id);
+    if(i >= 0) log2.done.splice(i,1); else log2.done.push(el.dataset.id);
+    saveDisc(disc);
+    renderChecklist(disc);
+  }
+  box.querySelectorAll('.check-item').forEach(el => {
+    el.addEventListener('click', () => toggle(el));
+    el.addEventListener('keydown', e => { if(e.key === ' ' || e.key === 'Enter'){ e.preventDefault(); toggle(el); } });
+  });
+  updateRing(disc);
+}
+function updateRing(disc){
+  const pct = todayRate(disc);
+  document.getElementById('discPct').textContent = pct + '%';
+  document.getElementById('discStreak').textContent = discStreak(disc);
+  const C = 2 * Math.PI * 34;
+  document.getElementById('discRingFill').style.strokeDashoffset = C * (1 - pct/100);
+}
+
+/* ---------------- 消息雷达 ---------------- */
+let newsFocus = 0;
+function renderNews(){
+  const list = EVENT_LIBRARY.filter(e => e.level === 'S' || e.level === 'A').slice(0, 7);
+  const box = document.getElementById('dashNews');
+  box.innerHTML = list.map((e,i) => `
+    <div class="news-mini__item ${i===0?'is-focus':''}" data-i="${i}" data-id="${e.id}" role="link" tabindex="0">
+      <span class="news-mini__lv impact" data-lv="${e.level}"><i class="impact__dot"></i>${e.level}</span>
+      <span class="news-mini__t">${e.name}</span>
+      <span class="dir" data-d="${e.dir}">${NEWS_DIRS.find(x=>x.key===e.dir).sign}</span>
+    </div>`).join('');
+  const items = [...box.children];
+  items.forEach((el, i) => {
+    const go = () => location.href = 'news.html#' + el.dataset.id;
+    el.addEventListener('click', go);
+    el.addEventListener('keydown', e => { if(e.key === 'Enter') go(); });
+    el.addEventListener('mouseenter', () => { newsFocus = i; items.forEach((x,j)=>x.classList.toggle('is-focus', j===i)); });
+  });
+  setInterval(() => {
+    if(document.hidden || box.matches(':hover')) return;
+    newsFocus = (newsFocus + 1) % items.length;
+    items.forEach((x,i) => x.classList.toggle('is-focus', i === newsFocus));
+  }, 4200);
+}
+
+/* ---------------- 学习进度 ---------------- */
+function renderLearn(doneCh){
+  const next = ORDER.find(o => !(progress.chapters[o.ch.id]?.passed)) || ORDER[0];
+  document.getElementById('learnStage').textContent = `${next.stage.num} · ${next.stage.title}`;
+  const a = document.getElementById('learnTitle');
+  a.textContent = next.ch.title.replace(/^第 \d+ 节：/,'');
+  a.href = `chapter.html?id=${encodeURIComponent(next.ch.id)}`;
+  const upcoming = ORDER.filter(o => !(progress.chapters[o.ch.id]?.passed)).slice(1,4);
+  document.getElementById('learnNext').innerHTML = upcoming.map(o => `
+    <a href="chapter.html?id=${encodeURIComponent(o.ch.id)}">
+      <span>${o.ch.title.replace(/^第 \d+ 节：/,'')}</span>
+      <span>${o.ch.dur.replace('约 ','')}</span>
+    </a>`).join('') || '<span class="micro">全部章节已标记完成</span>';
+  document.getElementById('learnFill').style.width = Math.round(doneCh/ORDER.length*100) + '%';
+  document.getElementById('learnDone').textContent = doneCh;
+  document.getElementById('learnTotal').textContent = ORDER.length;
+  document.getElementById('learnQuiz').textContent = ORDER.reduce((s,o)=>s+o.ch.quiz.length,0) + EXAMS.reduce((s,e)=>s+e.questions.length,0);
+  document.getElementById('learnKB').textContent = (typeof KNOWLEDGE !== 'undefined') ? KNOWLEDGE.length : 0;
+}
+
+/* ---------------- 自检 ---------------- */
+const SELF_SHORT = { mind:'心态', tech:'技术', discipline:'纪律', risk:'仓位', exit:'出场' };
+function renderSelf(){
+  const box = document.getElementById('selfBody');
+  const last = store.get('selfcheck', null);
+  if(!last){
+    box.innerHTML = `
+      <p class="copy small" style="color:var(--dim);line-height:1.6;margin:0 0 12px;">25 道题，覆盖五个维度。可接入 DeepSeek 生成个性化报告。</p>
+      <div class="self-dims">${CHECK_DIMS.map(d => `<div class="self-dim"><span>${SELF_SHORT[d.key]}</span><span class="track"><span class="fill" style="width:0%"></span></span><b>—</b></div>`).join('')}</div>
+      <a class="btn btn--ghost btn--sm" href="selfcheck.html" style="align-self:flex-start;margin-top:auto;">开始自检 →</a>`;
+    return;
+  }
+  const dims = CHECK_DIMS.map(d => {
+    const v = last.scores?.[d.key] || 0;
+    return `<div class="self-dim"><span>${SELF_SHORT[d.key]}</span><span class="track"><span class="fill" style="width:${Math.round(v/15*100)}%"></span></span><b>${Math.round(v/15*100)}</b></div>`;
+  }).join('');
+  box.innerHTML = `
+    <div class="self-score"><span class="n">${last.overall ?? '—'}</span><span class="micro">/ 100 · 最近一次</span></div>
+    <div class="self-dims">${dims}</div>
+    <a class="module__link" href="selfcheck.html" style="margin-top:auto;padding-top:12px;">重新自检 →</a>`;
+}
+
+/* ---------------- 本周节奏 ---------------- */
+function renderWeekRhythm(){
+  const box = document.getElementById('weekRhythm');
+  if(!box) return;
+  box.innerHTML = WEEKLY_RHYTHM.map(d => `
+    <div class="env-week__row">
+      <span class="env-week__d">${d.day}</span>
+      <span class="env-week__n">${d.note}</span>
+      <span class="impact" data-lv="${d.level}"><i class="impact__dot"></i></span>
+    </div>`).join('');
+}
+
+/* ---------------- 环境数据 ---------------- */
+let currentFng = 50;
+function css(n){ return getComputedStyle(document.documentElement).getPropertyValue(n).trim(); }
+function drawGaugeFrame(){
+  const c = document.getElementById('fngGauge');
+  if(!c) return;
+  const draw = () => {
+    const rect = c.getBoundingClientRect();
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    c.width = rect.width * dpr; c.height = rect.width * 0.56 * dpr;
+    c.style.height = (rect.width * 0.56) + 'px';
+    drawGauge(c, currentFng);
+  };
+  draw();
+  new ResizeObserver(draw).observe(c);
+}
+function drawGauge(canvas, value){
+  const ctx = canvas.getContext('2d');
+  if(!ctx) return;
+  const W = canvas.width, H = canvas.height, dpr = Math.min(window.devicePixelRatio || 1, 2);
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  const w = W/dpr, h = H/dpr;
+  const cx = w/2, cy = h*0.92, r = Math.min(w*0.44, h*0.86);
+  ctx.clearRect(0,0,w,h);
+  const segs = [
+    { a:0, b:20, c:css('--neg') },
+    { a:20, b:40, c:'#C99A6C' },
+    { a:40, b:60, c:css('--brand') },
+    { a:60, b:80, c:'#9FB68C' },
+    { a:80, b:100, c:css('--pos') },
+  ];
+  segs.forEach(s => {
+    ctx.beginPath();
+    ctx.arc(cx, cy, r, Math.PI + s.a/100*Math.PI, Math.PI + s.b/100*Math.PI);
+    ctx.strokeStyle = s.c; ctx.lineWidth = 8; ctx.lineCap = 'butt';
+    ctx.globalAlpha = .75; ctx.stroke();
+  });
+  ctx.globalAlpha = 1;
+  ctx.font = '9px "JetBrains Mono", monospace';
+  ctx.fillStyle = css('--faint'); ctx.textAlign = 'center';
+  [0,25,50,75,100].forEach(v => {
+    const ang = Math.PI + v/100*Math.PI;
+    ctx.fillText(String(v), cx + Math.cos(ang)*(r+16), cy + Math.sin(ang)*(r+16) + 2);
+  });
+  const ang = Math.PI + Math.max(0, Math.min(100, value))/100 * Math.PI;
+  const mx = cx + Math.cos(ang)*r, my = cy + Math.sin(ang)*r;
+  ctx.beginPath(); ctx.arc(mx, my, 8, 0, Math.PI*2); ctx.fillStyle = css('--brand'); ctx.globalAlpha = .18; ctx.fill();
+  ctx.globalAlpha = 1;
+  ctx.beginPath(); ctx.arc(mx, my, 3, 0, Math.PI*2); ctx.fillStyle = css('--brand'); ctx.fill();
+}
+async function loadEnv(){
+  /* 先渲染上次缓存，避免网络失败时出现空白 */
+  const cache = store.get('env_cache', null);
+  if(cache){
+    if(cache.blocks) document.getElementById('btcBlocks').textContent = fmt(cache.blocks);
+    if(cache.tx) document.getElementById('btcTx').textContent = fmt(cache.tx);
+    if(cache.fee) document.getElementById('btcFee').textContent = cache.fee;
+  }
+  try{
+    const r = await fetch('https://api.alternative.me/fng/?limit=14');
+    if(!r.ok) throw 0;
+    const j = await r.json();
+    const v = parseInt(j.data[0].value, 10);
+    const map = { 'Extreme Fear':'极度恐惧', Fear:'恐惧', Neutral:'中性', Greed:'贪婪', 'Extreme Greed':'极度贪婪' };
+    currentFng = isNaN(v) ? 50 : v;
+    document.getElementById('fngValue').textContent = currentFng;
+    document.getElementById('fngLabel').textContent = map[j.data[0].value_classification] || j.data[0].value_classification;
+    const hist = j.data.slice(0, 14).reverse();
+    document.getElementById('fngBars').innerHTML = hist.map(x => {
+      const val = parseInt(x.value, 10);
+      const hpx = 6 + val/100 * 26;
+      const col = val < 40 ? 'var(--neg)' : val > 60 ? 'var(--pos)' : 'var(--brand)';
+      return `<i title="${x.value} · ${x.value_classification}" style="height:${hpx}px;background:${col};opacity:${0.35 + val/160};"></i>`;
+    }).join('');
+    if(j.data[1]) document.getElementById('fngPrev').textContent = j.data[1].value + ' · ' + (map[j.data[1].value_classification] || '');
+    drawGaugeFrame();
+  }catch(e){
+    document.getElementById('fngLabel').textContent = '数据不可用';
+    document.getElementById('envNote').textContent = '情绪数据读取失败 · 其余内容不受影响';
+  }
+  const envCache = store.get('env_cache', {}) || {};
+  try{
+    const r = await fetch('https://api.blockchair.com/bitcoin/stats');
+    const j = await r.json(); const dd = j.data || {};
+    if(dd.blocks){ document.getElementById('btcBlocks').textContent = fmt(dd.blocks); envCache.blocks = dd.blocks; }
+    if(dd.transactions_24h){ document.getElementById('btcTx').textContent = fmt(dd.transactions_24h); envCache.tx = dd.transactions_24h; }
+    store.set('env_cache', envCache);
+  }catch(e){
+    if(envCache.blocks) document.getElementById('envNote').textContent = '链上数据暂不可用 · 显示上次读取结果 · 仅信息展示';
+  }
+  try{
+    const r = await fetch('https://mempool.space/api/v1/fees/recommended');
+    const j = await r.json();
+    if(j.fastestFee){ document.getElementById('btcFee').textContent = j.fastestFee + ' sat/vB'; envCache.fee = j.fastestFee + ' sat/vB'; store.set('env_cache', envCache); }
+  }catch(e){}
 }
 </script>
 </body>
