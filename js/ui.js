@@ -179,7 +179,7 @@ function initNavScroll(){
 }
 
 /* ---------------- 进入视口 ---------------- */
-let io;
+let io, revealBound = false;
 function initReveals(){
   if(!('IntersectionObserver' in window)){
     document.querySelectorAll('.reveal').forEach(n => n.classList.add('in'));
@@ -191,6 +191,23 @@ function initReveals(){
     });
   }, { threshold:.08, rootMargin:'0px 0px -8% 0px' });
   document.querySelectorAll('.reveal:not(.in)').forEach(n => io.observe(n));
+  /* 兜底：程序化跳转、锚点直达、快速滚动时，IO 可能漏掉中间区块 */
+  if(!revealBound){
+    revealBound = true;
+    let queued = false;
+    const sweep = () => {
+      queued = false;
+      const limit = window.innerHeight * 0.98;
+      document.querySelectorAll('.reveal:not(.in)').forEach(n => {
+        if(n.getBoundingClientRect().top < limit) n.classList.add('in');
+      });
+    };
+    const onScroll = () => { if(!queued){ queued = true; requestAnimationFrame(sweep); } };
+    window.addEventListener('scroll', onScroll, { passive:true });
+    window.addEventListener('resize', onScroll);
+    window.addEventListener('hashchange', () => setTimeout(sweep, 260));
+    setTimeout(sweep, 320);
+  }
 }
 function observeNew(root){
   if(!io) return;
