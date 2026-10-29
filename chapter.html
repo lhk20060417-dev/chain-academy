@@ -1,221 +1,250 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh-CN" data-theme="obsidian">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>章节 · Chain Academy</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<meta name="description" content="Chain Academy 章节阅读与自测。仅用于区块链与市场结构的理论学习。">
+<meta name="theme-color" content="#08090B">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%2308090B'/%3E%3Cpath d='M16 7l9 9-9 9-9-9z' fill='none' stroke='%23C8A96A' stroke-width='1.4'/%3E%3Ccircle cx='16' cy='16' r='2.2' fill='%23C8A96A'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Noto+Sans+SC:wght@400;500;600&family=Noto+Serif+SC:wght@400;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/vars.css">
-<style>
-.opt{border:1px solid var(--line-strong); border-radius:var(--r); padding:12px 16px; cursor:pointer; transition:all .25s; color:var(--dim); font-size:.88rem;}
-.opt:hover{border-color:rgba(56,189,248,.55); color:var(--txt); background:rgba(56,189,248,.06);}
-.opt.correct{border-color:var(--ok); color:var(--ok); background:rgba(52,211,153,.08);}
-.opt.wrong{border-color:var(--danger); color:var(--danger); background:rgba(248,113,113,.08);}
-.opt.picked:not(.correct):not(.wrong){border-color:var(--brand-2); color:var(--txt);}
-.q-num{width:26px;height:26px; border-radius:var(--r); background:rgba(148,163,184,.1); color:var(--dim); font-size:12px; display:inline-flex; align-items:center; justify-content:center; font-weight:600;}
-.toc-link{display:block; padding:6px 12px; font-size:.8rem; border-radius:var(--r); color:var(--faint); transition:all .25s; border-left:2px solid transparent;}
-.toc-link:hover{color:var(--txt); background:rgba(56,189,248,.06);}
-.toc-link.on{color:var(--brand); border-left-color:var(--brand);}
-</style>
+<link rel="stylesheet" href="css/system.css">
+<link rel="stylesheet" href="css/pages.css">
+<noscript><style>.reveal{opacity:1!important;transform:none!important;}</style></noscript>
 </head>
 <body>
 
-<nav class="site-nav solid">
-  <div class="nav-inner">
-    <a href="index.html" class="flex items-center gap-2 shrink-0">
-      <span class="w-7 h-7 rounded-md flex items-center justify-center text-white font-extrabold text-sm" style="background:linear-gradient(135deg,#0C4A6E,#38BDF8)">C</span>
-      <span class="font-bold tracking-wide text-sm">Chain<span style="color:var(--brand)">Academy</span></span>
-    </a>
-    <div class="nav-links-slot hidden lg:flex items-center gap-6 flex-1 justify-center"></div>
-    <div class="flex items-center gap-2 shrink-0">
-      <button class="lang-sw chip !py-1.5" data-lang="zh">中文</button>
-      <button class="lang-sw chip !py-1.5" data-lang="en">EN</button>
-      <button class="cta-continue btn-primary !py-2 !px-4 !text-xs">继续上次学习</button>
-    </div>
-  </div>
-</nav>
+<div id="siteNav"></div>
 
-<div class="container-x pt-24 pb-10" id="pageRoot">
-  <!-- 骨架屏：数据在本地，加载极快，骨架只为保持体验一致 -->
-  <div id="skel">
+<main id="pageRoot">
+  <div class="wrap" style="padding-top:calc(var(--nav-h) + 56px);">
     <div class="skeleton sk-title"></div>
-    <div class="skeleton sk-line" style="width:30%;"></div>
-    <div class="grid lg:grid-cols-[220px_1fr] gap-10 mt-8">
-      <div class="hidden lg:block space-y-3"><div class="skeleton sk-line"></div><div class="skeleton sk-line"></div><div class="skeleton sk-line"></div><div class="skeleton sk-line"></div></div>
-      <div class="max-w-2xl"><div class="skeleton sk-line"></div><div class="skeleton sk-line" style="width:92%"></div><div class="skeleton sk-line" style="width:96%"></div><div class="skeleton sk-line" style="width:70%"></div><div class="skeleton sk-line" style="width:88%"></div><div class="skeleton sk-line" style="width:50%"></div></div>
-    </div>
+    <div class="skeleton sk-line" style="width:34%;"></div>
+    <div class="skeleton sk-line" style="width:88%;margin-top:36px;"></div>
+    <div class="skeleton sk-line" style="width:96%;"></div>
+    <div class="skeleton sk-line" style="width:72%;"></div>
+    <div class="skeleton sk-line" style="width:90%;"></div>
   </div>
-  <div id="content" class="hidden"></div>
-</div>
+  <div id="content" hidden></div>
+</main>
 
-<div class="footer-slot"></div>
+<div id="siteFooter"></div>
 
 <script src="js/content.js"></script>
+<script src="js/content-master.js"></script>
 <script src="js/storage.js"></script>
-<script src="js/animate.js"></script>
+<script src="js/ui.js"></script>
 <script>
-renderNav('navLibrary');
+renderChrome('library');
 
 const params = new URLSearchParams(location.search);
 const chId = params.get('id');
 const examId = params.get('exam');
 
-if(examId) renderExam(examId);
-else if(chId) renderChapter(chId);
-else location.href = 'library.html';
+document.addEventListener('DOMContentLoaded', () => {
+  if(examId) renderExam(examId);
+  else if(chId) renderChapter(chId);
+  else location.href = 'library.html';
+});
 
-function renderChapter(chId){
-  const o = ORDER.find(x => x.ch.id === chId);
+/* ---------------- 章节 ---------------- */
+function renderChapter(id){
+  const o = ORDER.find(x => x.ch.id === id);
   if(!o){ location.href = 'library.html'; return; }
-  if(!isUnlocked(chId)){ toast(t('locked')); location.href = 'library.html'; return; }
-  progress.lastStudy = chId; saveProgress();
-  const st = chapterState(chId);
+  if(!isUnlocked(id)){ toast('请先完成上一节的自测'); setTimeout(()=>location.href='library.html', 700); return; }
+
+  progress.lastStudy = id; saveProgress();
+  const st = chapterState(id);
   const prev = ORDER[o.index - 1], next = ORDER[o.index + 1];
-  const prevOk = prev && isUnlocked(prev.ch.id);
-  const nextOk = next && isUnlocked(next.ch.id);
+  const quizN = (o.ch.quiz || []).length;
+  const words = stripHtml(o.ch.content).length;
 
-  setContent(`
-    <div class="flex flex-wrap items-center gap-3 text-[11px] tracking-[.2em]" style="color:var(--faint);">
-      <a href="library.html" style="color:var(--brand);">${t('backLibrary')}</a>
-      <span>/</span><span>${o.stage.num} · ${o.stage.title}</span>
-      ${o.stage.risky ? `<span class="chip !text-[10px]" style="border-color:rgba(251,146,60,.4);color:var(--warn);">⚠ 市场认知 · 理论学习</span>` : ''}
-      <span class="chip !text-[10px]">${st==='done'?'✓ '+t('done'):t('active')}</span>
-    </div>
-    <h1 class="text-2xl md:text-3xl font-extrabold mt-4">${o.ch.title}</h1>
-    <p class="text-sm mt-2" style="color:var(--dim);">${o.ch.intro || ''} · ◷ ${o.ch.dur}</p>
-    <div class="grid lg:grid-cols-[220px_1fr] gap-10 mt-10">
-      <aside class="hidden lg:block">
-        <div class="sticky top-24">
-          <div class="text-[10px] tracking-[.3em] font-semibold mb-3" style="color:var(--faint);">目录</div>
-          <nav id="toc"></nav>
+  document.getElementById('content').innerHTML = `
+    <header class="chapter-head">
+      <div class="wrap">
+        <div class="chapter-kicker">
+          <a href="library.html">← 章节库</a>
+          <span>·</span>
+          <span>${o.stage.num} ${o.stage.title}</span>
+          <span>·</span>
+          <span>${o.stage.en}</span>
+          ${st==='done' ? '<span class="chip is-on">已通过</span>' : '<span class="chip">进行中</span>'}
         </div>
-      </aside>
-      <div class="prose-wrap">
-        ${o.stage.risky ? `<div class="rounded-md border px-4 py-3 text-xs leading-relaxed mb-8" style="border-color:rgba(251,146,60,.35);background:rgba(67,32,8,.3);color:#FDBA74;">⚠ 本章节属于市场认知类知识，仅作理论学习。请始终牢记：虚拟货币相关业务在国内属于非法金融活动，不受法律保护，本站不引导任何交易行为。</div>` : ''}
-        <div class="article" id="articleBody">${o.ch.content}</div>
-        <div class="hr-fade my-8"></div>
+        <h1 class="chapter-title">${o.ch.title.replace(/^第 \d+ 节：/, '')}</h1>
+        <p class="chapter-lede">${o.ch.intro || ''}</p>
+        <div class="chapter-meta">
+          <span>阅读时长 <b>${o.ch.dur}</b></span>
+          <span>正文字数 <b>${words}</b></span>
+          <span>自测 <b>${quizN} 题</b></span>
+          <span>阶段 <b>${o.stage.title}</b></span>
+        </div>
+      </div>
+    </header>
+
+    <div class="wrap reader-wrap">
+      <div class="reader__body">
+        ${o.stage.risky ? `<div class="risk-banner"><span class="mk">⚠</span><span>本节属于市场认知与交易理论内容，仅作理论学习。<b>虚拟货币相关业务活动在中国境内属于非法金融活动，不受法律保护</b>；本站不提供任何交易建议，也不引导任何交易行为。</span></div>` : ''}
+        <article class="article" id="articleBody">${o.ch.content}</article>
         <div id="quizZone"></div>
-        <div class="hr-fade my-8"></div>
-        <div class="flex flex-wrap gap-3">
-          <button class="btn-ghost !text-xs" ${prevOk?`onclick="location.href='chapter.html?id=${encodeURIComponent(prev.ch.id)}'"`:'disabled'}>${t('prevCh')}${prev?` · ${prev.ch.title}`:''}</button>
-          <button class="btn-ghost !text-xs" ${nextOk?`onclick="location.href='chapter.html?id=${encodeURIComponent(next.ch.id)}'"`:'disabled'}>${t('nextCh')}${next?` · ${next.ch.title}`:''}</button>
+        <nav class="chapter-nav">
+          ${prev ? `<a href="chapter.html?id=${encodeURIComponent(prev.ch.id)}"><span class="dir">← 上一节</span><span>${prev.ch.title.replace(/^第 \d+ 节：/,'')}</span></a>` : '<span></span>'}
+          ${next ? `<a href="chapter.html?id=${encodeURIComponent(next.ch.id)}" style="text-align:right;align-self:flex-end;"><span class="dir">下一节 →</span><span>${next.ch.title.replace(/^第 \d+ 节：/,'')}</span></a>` : '<span></span>'}
+        </nav>
+      </div>
+
+      <aside class="reader__aside">
+        <div class="toc" id="toc"></div>
+        <div class="aside-card">
+          <div class="aside-card__t">本章</div>
+          <div class="aside-card__v">${o.stage.num} · ${o.stage.title}<br>${o.stage.chapters.findIndex(c=>c.id===o.ch.id)+1} / ${o.stage.chapters.length} 节</div>
         </div>
-      </div>
-    </div>`);
+        <div class="aside-card">
+          <div class="aside-card__t">阅读模式</div>
+          <button class="btn btn--ghost btn--sm" style="width:100%;margin-top:6px;" onclick="document.querySelector('[data-theme-toggle]')?.click()">切换黑曜石 / 纸本</button>
+        </div>
+        ${next ? `<div class="aside-card"><div class="aside-card__t">下一节</div><a class="aside-card__v" href="chapter.html?id=${encodeURIComponent(next.ch.id)}" style="color:var(--brand);">${next.ch.title.replace(/^第 \d+ 节：/,'')} →</a></div>` : ''}
+      </aside>
+    </div>`;
 
+  document.querySelector('.skeleton')?.parentElement?.remove();
+  const content = document.getElementById('content');
+  content.hidden = false;
+
+  sanitizeArticle(document.getElementById('articleBody'));
   buildToc();
-  if(o.ch.quiz.length) buildQuizZone(o.ch, 'quiz');
-  else {
-    document.getElementById('quizZone').innerHTML = `
-      <div class="card p-6 text-center">
-        <p class="text-sm mb-5" style="color:var(--dim);">本节为知识阅读章节，没有配套自测题。阅读完成后点击下方按钮记录进度。</p>
-        <button class="btn-primary" onclick="markRead()">${t('markRead')}</button>
-        <div id="quizResult" class="mt-4 text-sm font-semibold"></div>
-      </div>`;
-  }
+  initReadProgress(document.getElementById('articleBody'));
+  if(quizN) buildQuiz(o.ch, 'quiz');
+  else buildReadOnly(o.ch);
+  observeNew(content);
 }
 
-function renderExam(stageId){
-  const exam = EXAMS.find(e => e.stageId === stageId);
-  const s = STAGES.find(x => x.id === stageId);
-  if(!exam || !s){ location.href = 'roadmap.html'; return; }
-  if(examState(exam) === 'locked'){ toast(t('examLocked')); location.href = 'roadmap.html'; return; }
-  const st = examState(exam);
-  setContent(`
-    <div class="flex flex-wrap items-center gap-3 text-[11px] tracking-[.2em]" style="color:var(--faint);">
-      <a href="roadmap.html" style="color:var(--brand);">← ${t('navRoadmap')}</a>
-      <span>/</span><span>STAGE ${s.num} · ${s.en}</span>
-      <span class="chip !text-[10px]">${st==='done'?'✓ '+t('done'):t('active')}</span>
-    </div>
-    <h1 class="text-2xl md:text-3xl font-extrabold mt-4">${s.title} · ${t('stageExam')}</h1>
-    <p class="text-sm mt-2" style="color:var(--dim);">${exam.questions.length} 题 · 70 ${t('pass')}</p>
-    <div class="prose-wrap mt-10">
-      <div id="quizZone"></div>
-      <div class="flex flex-wrap gap-3 mt-8">
-        <a class="btn-ghost !text-xs" href="roadmap.html">← ${t('navRoadmap')}</a>
-      </div>
-    </div>`);
-  buildQuizZone({ id:'exam-'+stageId, quiz: exam.questions.map(x => x.q), _exam: exam }, 'exam');
+/* 去掉旧内容中的硬编码内联样式，交给设计系统统一渲染 */
+function sanitizeArticle(root){
+  root.querySelectorAll('[style]').forEach(el => el.removeAttribute('style'));
+  root.querySelectorAll('font').forEach(el => { el.replaceWith(...el.childNodes); });
 }
 
+function stripHtml(html){
+  const d = document.createElement('div'); d.innerHTML = html;
+  return (d.textContent || '').replace(/\s+/g, '');
+}
+
+/* ---------------- 目录 ---------------- */
 function buildToc(){
   const body = document.getElementById('articleBody');
-  const heads = [...body.querySelectorAll('h4,h3')];
+  const heads = [...body.querySelectorAll('h4, h3')];
+  heads.forEach((h, i) => { h.id = 'h-' + i; });
   const toc = document.getElementById('toc');
-  if(!heads.length){ toc.innerHTML = '<div class="text-xs" style="color:var(--faint);">—</div>'; return; }
-  toc.innerHTML = heads.map((h,i) => `<a class="toc-link" data-i="${i}" onclick="document.getElementById('${h.id}').scrollIntoView({behavior:'smooth',block:'start'})">${esc(h.textContent)}</a>`).join('');
-  heads.forEach((h,i) => { h.id = 'h-'+i; });
+  if(!heads.length){ toc.innerHTML = ''; return; }
+  toc.innerHTML = `<div class="toc__label">目录</div>` + heads.map((h,i) =>
+    `<a href="#h-${i}" class="lv-${h.tagName.toLowerCase()}" data-i="${i}">${h.textContent}</a>`).join('');
+
+  const links = [...toc.querySelectorAll('a')];
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(en => {
+      if(en.isIntersecting){
+        links.forEach(l => l.classList.toggle('on', l.dataset.i === en.target.id.replace('h-','')));
+      }
+    });
+  }, { rootMargin:'-15% 0px -70% 0px' });
+  heads.forEach(h => obs.observe(h));
 }
 
-let quizMode = 'quiz';
-function buildQuizZone(ch, mode){
-  quizMode = mode;
+/* ---------------- 自测 ---------------- */
+function buildQuiz(ch, mode){
   const box = document.getElementById('quizZone');
+  const pass = mode === 'exam' ? 70 : 60;
   box.innerHTML = `
-    <h3 class="font-bold text-lg mb-1">✎ ${t('quizTitle')}</h3>
-    <p class="text-xs mb-5" style="color:var(--faint);">${ch.quiz.length} 题 · ${mode==='exam'?'70':'60'} ${t('pass')}</p>
-    <div class="space-y-6">${ch.quiz.map((q,qi) => `
-      <div class="card p-5">
-        <div class="flex items-start gap-3"><span class="q-num shrink-0">${qi+1}</span><div class="font-medium text-[15px] leading-relaxed">${esc(q.q)}</div></div>
-        <div class="grid gap-2.5 mt-4" id="opts-${qi}">
-          ${q.opts.map((op,oi) => `<div class="opt" data-qi="${qi}" data-oi="${oi}" onclick="pickOpt(this)">${String.fromCharCode(65+oi)}. ${esc(op)}</div>`).join('')}
+    <section class="quiz" style="margin-top:64px;">
+      <div class="quiz__head">
+        <div>
+          <p class="eyebrow eyebrow--plain">${mode==='exam' ? '阶段考核' : '章节自测'}</p>
+          <h2 class="h3" style="margin-top:8px;">${mode==='exam' ? '综合考核' : '检验一下，而不只是读完'}</h2>
         </div>
-        <div class="hidden mt-3 text-xs leading-relaxed pl-3" style="color:var(--dim);border-left:2px solid rgba(56,189,248,.4);" id="exp-${qi}"></div>
-      </div>`).join('')}
-    </div>
-    <div class="mt-7 flex flex-wrap gap-3 items-center">
-      <button class="btn-primary" onclick="grade(${mode==='exam'?70:60})">${t('submitQuiz')}</button>
-      <button class="btn-ghost" onclick="buildQuizZone(chCache, '${mode}');document.getElementById('quizResult')&&(document.getElementById('quizResult').textContent='')">↺</button>
-      <span id="quizResult" class="text-sm font-semibold"></span>
-    </div>`;
+        <div class="micro">${ch.quiz.length} 题 · ${pass} 分通过</div>
+      </div>
+      <div id="quizList">
+        ${ch.quiz.map((q,qi) => `
+        <div class="q" data-qi="${qi}">
+          <div class="q__title"><span class="q__n">${String(qi+1).padStart(2,'0')}</span><span>${esc(q.q)}</span></div>
+          <div class="opts" data-qi="${qi}">
+            ${q.opts.map((op,oi) => `
+              <button class="opt" data-oi="${oi}" onclick="pick(this)">
+                <span class="opt__k">${String.fromCharCode(65+oi)}</span><span>${esc(op)}</span>
+              </button>`).join('')}
+          </div>
+          <div class="q__exp" id="exp-${qi}"></div>
+        </div>`).join('')}
+      </div>
+      <div class="quiz__foot">
+        <button class="btn btn--primary" onclick="grade(${pass})">提交并判分</button>
+        <button class="btn btn--ghost" onclick="retake()">重新作答</button>
+        <span id="quizResult" class="score-line"></span>
+      </div>
+    </section>`;
   window.chCache = ch;
+  window.chMode = mode;
 }
-function pickOpt(elm){
-  if(elm.parentNode.dataset.graded === '1') return;
-  elm.parentNode.querySelectorAll('.opt').forEach(o => o.classList.remove('picked'));
-  elm.classList.add('picked');
+
+function pick(btn){
+  const group = btn.parentElement;
+  if(group.dataset.graded === '1') return;
+  group.querySelectorAll('.opt').forEach(o => o.classList.remove('picked'));
+  btn.classList.add('picked');
 }
+
 function grade(passLine){
   const ch = window.chCache;
   const isExam = !!ch._exam;
   let correct = 0;
   ch.quiz.forEach((q, qi) => {
-    const box = document.getElementById('opts-'+qi); box.dataset.graded = '1';
-    box.querySelectorAll('.opt').forEach(op => { if(+op.dataset.oi === q.a) op.classList.add('correct'); });
-    const picked = box.querySelector('.opt.picked');
+    const group = document.querySelector(`.opts[data-qi="${qi}"]`);
+    group.dataset.graded = '1';
+    const picked = group.querySelector('.opt.picked');
     const pIdx = picked ? +picked.dataset.oi : null;
+    group.querySelectorAll('.opt').forEach(op => {
+      const oi = +op.dataset.oi;
+      if(oi === q.a) op.classList.add('correct');
+      else if(oi === pIdx) op.classList.add('wrong');
+    });
+    const qEl = group.closest('.q');
+    qEl.classList.add(pIdx === q.a ? 'is-right' : 'is-wrong');
     if(pIdx === q.a) correct++;
-    else { if(picked) picked.classList.add('wrong');
-      const ref = isExam ? ch._exam.questions[qi] : null;
-      addWrong(ref ? ref.chId : ch.id, ref ? (ref.qIdx!=null?ref.qIdx:0) : qi, q.q, pIdx); }
-    const exp = document.getElementById('exp-'+qi);
-    exp.innerHTML = `<strong style="color:${pIdx===q.a?'var(--ok)':'var(--danger)'}">${pIdx===q.a?'✓':'✗'}</strong> ${esc(q.exp||'')}`;
-    exp.classList.remove('hidden');
+    else addWrong(isExam ? ch._exam.questions[qi].chId : ch.id, qi, q.q, pIdx);
+    const exp = document.getElementById('exp-' + qi);
+    exp.innerHTML = `<strong style="color:${pIdx===q.a?'var(--pos)':'var(--neg)'}">${pIdx===q.a?'✓ 正确':'✗ 再想想'}</strong>　${esc(q.exp || '')}`;
+    exp.classList.add('show');
   });
+
   const score = Math.round(correct / ch.quiz.length * 100);
   const res = document.getElementById('quizResult');
-  res.textContent = `${t('yourScore')} ${score} · ${score >= passLine ? (isExam?t('examPass'):t('quizPass')) : (isExam?t('examFail'):t('quizFail'))}`;
-  res.style.color = score >= passLine ? 'var(--ok)' : 'var(--danger)';
+  res.textContent = `得分 ${score} / 100 · ${score >= passLine ? (isExam ? '通过' : '通过，已解锁下一节') : `未达 ${passLine} 分，建议回看解析后重试`}`;
+  res.style.color = score >= passLine ? 'var(--pos)' : 'var(--neg)';
+
   if(isExam){
     if(score >= passLine) progress.exams[ch._exam.stageId] = { passed:true, score, date:new Date().toISOString().slice(0,10) };
   } else if(score >= passLine && !(progress.chapters[ch.id] && progress.chapters[ch.id].passed)){
     progress.chapters[ch.id] = { passed:true, score, date:new Date().toISOString().slice(0,10) };
   }
-  progress.answers += ch.quiz.length; saveProgress();
+  progress.answers = (progress.answers || 0) + ch.quiz.length;
+  saveProgress();
   toast(res.textContent);
+  setTimeout(() => document.querySelector('.quiz__foot').scrollIntoView({behavior:'smooth', block:'center'}), 200);
 }
-function markRead(){
-  const o = ORDER.find(x => x.ch.id === chId);
-  if(!(progress.chapters[o.ch.id] && progress.chapters[o.ch.id].passed)){
-    progress.chapters[o.ch.id] = { passed:true, score:null, date:new Date().toISOString().slice(0,10) };
-    saveProgress();
-  }
-  document.getElementById('quizResult').textContent = t('readDone');
-  document.getElementById('quizResult').style.color = 'var(--ok)';
-  toast(t('readDone'));
+
+function retake(){
+  const ch = window.chCache;
+  document.querySelectorAll('.opts').forEach(g => { g.dataset.graded = '0'; });
+  document.querySelectorAll('.opt').forEach(o => o.classList.remove('picked','correct','wrong'));
+  document.querySelectorAll('.q').forEach(q => q.classList.remove('is-right','is-wrong'));
+  document.querySelectorAll('.q__exp').forEach(e => { e.classList.remove('show'); e.innerHTML = ''; });
+  document.getElementById('quizResult').textContent = '';
+  buildQuiz(ch, window.chMode);
 }
-/* 错题：记录用户当时的错误选择，供错题复盘页展示 */
+
 function addWrong(chId, qIdx, qText, picked){
   if(picked == null) return;
   const exist = progress.wrong.find(w => w.chId === chId && w.qIdx === qIdx);
@@ -224,11 +253,53 @@ function addWrong(chId, qIdx, qText, picked){
   saveProgress();
 }
 
-function setContent(html){
-  document.getElementById('skel').style.display = 'none';
-  const c = document.getElementById('content');
-  c.innerHTML = html; c.classList.remove('hidden');
-  window.scrollTo(0,0);
+function buildReadOnly(ch){
+  document.getElementById('quizZone').innerHTML = `
+    <section class="quiz" style="margin-top:64px;">
+      <p class="copy">本节为阅读型章节，没有配套自测。完成后点击下方按钮记录进度。</p>
+      <button class="btn btn--primary" style="margin-top:18px;" onclick="markRead('${ch.id}')">标记为已学完</button>
+    </section>`;
+}
+function markRead(id){
+  if(!(progress.chapters[id] && progress.chapters[id].passed)){
+    progress.chapters[id] = { passed:true, score:null, date:new Date().toISOString().slice(0,10) };
+    saveProgress();
+  }
+  toast('已记录，下一节已解锁');
+}
+
+/* ---------------- 阶段考核 ---------------- */
+function renderExam(stageId){
+  const exam = EXAMS.find(e => e.stageId === stageId);
+  const s = STAGES.find(x => x.id === stageId);
+  if(!exam || !s){ location.href = 'roadmap.html'; return; }
+  if(examState(exam) === 'locked'){ toast('请先完成本阶段全部章节'); setTimeout(()=>location.href='roadmap.html',700); return; }
+  const st = examState(exam);
+  document.getElementById('content').innerHTML = `
+    <header class="chapter-head">
+      <div class="wrap">
+        <div class="chapter-kicker">
+          <a href="roadmap.html">← 课程图谱</a><span>·</span><span>STAGE ${s.num}</span><span>·</span><span>${s.en}</span>
+          ${st==='done' ? '<span class="chip is-on">已通过</span>' : '<span class="chip">待考核</span>'}
+        </div>
+        <h1 class="chapter-title">${s.title} · 阶段综合考核</h1>
+        <p class="chapter-lede">覆盖本阶段全部章节的关键概念。${exam.questions.length} 题，70 分通过。考核不计时，但建议一次完成，避免边查边做。</p>
+      </div>
+    </header>
+    <div class="wrap reader-wrap">
+      <div class="reader__body" id="quizZone" style="margin-top:0;"></div>
+      <aside class="reader__aside">
+        <div class="aside-card">
+          <div class="aside-card__t">考核范围</div>
+          <div class="aside-card__v">${s.chapters.map(c=>c.title.replace(/^第 \d+ 节：/,'')).join('<br>')}</div>
+        </div>
+      </aside>
+    </div>`;
+  document.querySelector('.skeleton')?.parentElement?.remove();
+  document.getElementById('content').hidden = false;
+  const box = document.getElementById('quizZone');
+  box.innerHTML = '';
+  buildQuiz({ id:'exam-'+stageId, quiz: exam.questions.map(x => x.q), _exam: exam }, 'exam');
 }
 </script>
 </body>

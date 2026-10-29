@@ -5,15 +5,19 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>实操复盘实验室 · Chain Academy</title>
 <script src="https://cdn.tailwindcss.com"></script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Noto+Sans+SC:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%2308090B'/%3E%3Cpath d='M16 7l9 9-9 9-9-9z' fill='none' stroke='%23C8A96A' stroke-width='1.4'/%3E%3Ccircle cx='16' cy='16' r='2.2' fill='%23C8A96A'/%3E%3C/svg%3E">
 <link rel="stylesheet" href="css/vars.css">
+<link rel="stylesheet" href="css/system.css">
+<link rel="stylesheet" href="css/pages.css">
 <style>
 /* 标签 chip：可点选的心理行为标签 */
 .tag-chip{border:1px solid var(--line-strong); border-radius:var(--r-full); font-size:11px; padding:4px 12px; color:var(--dim); transition:all .2s; user-select:none; cursor:pointer; background:transparent;}
-.tag-chip:hover{border-color:rgba(56,189,248,.6); color:var(--txt);}
-.tag-chip.on-neg{border-color:rgba(251,146,60,.65); color:var(--warn); background:rgba(251,146,60,.1);}
+.tag-chip:hover{border-color:rgba(200,169,106,.6); color:var(--txt);}
+.tag-chip.on-neg{border-color:rgba(210,160,92,.65); color:var(--warn); background:rgba(210,160,92,.1);}
 .tag-chip.on-pos{border-color:rgba(52,211,153,.65); color:var(--ok); background:rgba(52,211,153,.1);}
-.tag-chip.on-pos,.tag-chip.on-neg{box-shadow:0 0 10px rgba(56,189,248,.06);}
+.tag-chip.on-pos,.tag-chip.on-neg{box-shadow:0 0 10px rgba(200,169,106,.06);}
 /* 记录行折叠展开 */
 .trx-body{overflow:hidden; transition:max-height .4s cubic-bezier(.2,.8,.3,1), opacity .3s; max-height:0; opacity:0;}
 .trx-open .trx-body{max-height:640px; opacity:1;}
@@ -24,40 +28,29 @@
 .fold-open .fold-body{max-height:1200px; opacity:1;}
 /* 录入方式切换 */
 .tab-btn{border:1px solid var(--line-strong); border-radius:var(--r-btn); font-size:12px; padding:8px 18px; color:var(--dim); transition:all .25s;}
-.tab-btn.on{border-color:var(--brand); color:var(--brand); background:rgba(56,189,248,.08); box-shadow:0 0 14px rgba(56,189,248,.12);}
+.tab-btn.on{border-color:var(--brand); color:var(--brand); background:rgba(200,169,106,.08); box-shadow:0 0 14px rgba(200,169,106,.12);}
 </style>
+<noscript><style>.reveal{opacity:1!important;transform:none!important;}</style></noscript>
 </head>
 <body>
 
-<!-- 置顶强风险横幅（本页专属，不可关闭） -->
-<div class="fixed top-0 left-0 right-0 z-[60] px-4 py-2 text-center" style="background:linear-gradient(90deg,#432008,#33190a);border-bottom:1px solid rgba(251,146,60,.4);">
-  <span class="text-[11px] font-semibold tracking-wide" style="color:#FDBA74;">⚠ 本板块仅用于历史记录复盘练习，不作为任何投资参考。虚拟货币相关业务活动在国内属于非法金融活动，请远离炒作。</span>
-</div>
+<div id="siteNav"></div>
 
-<nav class="site-nav solid" style="top:33px;">
-  <div class="nav-inner">
-    <a href="index.html" class="flex items-center gap-2 shrink-0">
-      <span class="w-7 h-7 rounded-md flex items-center justify-center text-white font-extrabold text-sm" style="background:linear-gradient(135deg,#0C4A6E,#38BDF8)">C</span>
-      <span class="font-bold tracking-wide text-sm">Chain<span style="color:var(--brand)">Academy</span></span>
-    </a>
-    <div class="nav-links-slot hidden lg:flex items-center gap-6 flex-1 justify-center"></div>
-    <div class="flex items-center gap-2 shrink-0">
-      <button class="lang-sw chip !py-1.5" data-lang="zh">中文</button>
-      <button class="lang-sw chip !py-1.5" data-lang="en">EN</button>
-      <button class="cta-continue btn-primary !py-2 !px-4 !text-xs">继续上次学习</button>
-    </div>
+<div class="read-progress" id="labRiskLine" style="width:100%;background:var(--warn);opacity:.55;"></div>
+
+<div class="container-x" style="max-width:var(--page-max);padding:calc(var(--nav-h) + 48px) var(--gutter) 40px;">
+  <div class="risk-banner">
+    <span class="mk">⚠</span>
+    <span><b>本板块仅用于历史记录复盘练习</b>，不作为任何投资参考，也不引导任何交易行为。虚拟货币相关业务活动在中国境内属于非法金融活动，请远离炒作。</span>
   </div>
-</nav>
-
-<div class="container-x pt-32 pb-10">
-  <p class="sec-tag" style="color:var(--warn);">TRADE LAB · 隔离模块 · 仅历史复盘</p>
-  <h1 class="sec-title">实操复盘实验室</h1>
+  <p class="eyebrow" style="color:var(--warn);">TRADE LAB · 隔离模块 · 仅历史复盘</p>
+  <h1 class="h1" style="margin-top:18px;">实操复盘实验室</h1>
   <p class="sec-desc">记录历史操作、回看当时的主观想法与情绪、打上心理行为标签，让 TradeBrain 累积出属于你的复盘画像。所有数据只保存在你的浏览器里，不上传任何服务器。</p>
 
   <!-- 01 行情预览：默认折叠，主动点击才加载 -->
   <div class="mt-14 reveal card overflow-hidden" id="mktPanel" style="border-radius:var(--r-lg);">
     <button class="w-full flex items-center gap-4 p-6 text-left" onclick="toggleMarket()">
-      <span class="w-9 h-9 flex items-center justify-center shrink-0" style="background:rgba(56,189,248,.1);color:var(--brand);border-radius:var(--r);">◷</span>
+      <span class="w-9 h-9 flex items-center justify-center shrink-0" style="background:rgba(200,169,106,.1);color:var(--brand);border-radius:var(--r);">◷</span>
       <span class="flex-1 min-w-0">
         <span class="tag-brand block">01 · MARKET WATCH</span>
         <span class="font-bold mt-0.5 block">实时行情预览</span>
@@ -77,7 +70,7 @@
 
   <!-- 02 录入交易记录 -->
   <div class="mt-14 reveal">
-    <div class="flex items-baseline gap-3 mb-5"><span class="text-[#334155] text-xs tracking-[.3em] font-semibold">02</span><h3 class="font-bold text-lg tracking-wide">录入交易记录</h3><span class="text-[#475569] text-[10px] tracking-[.3em]">JOURNAL</span></div>
+    <div class="flex items-baseline gap-3 mb-5"><span class="text-[#6C6963] text-xs tracking-[.3em] font-semibold">02</span><h3 class="font-bold text-lg tracking-wide">录入交易记录</h3><span class="text-[#57544E] text-[10px] tracking-[.3em]">JOURNAL</span></div>
 
     <div class="flex gap-2 mb-5">
       <button class="tab-btn on" id="tabManual" onclick="switchTab('manual')">✎ 单条手动录入</button>
@@ -111,12 +104,12 @@
 
     <!-- CSV 批量 -->
     <div class="card p-7 hidden" id="paneCsv">
-      <div id="labDrop" class="border-[1.5px] border-dashed cursor-pointer px-6 py-10 text-center transition-colors" style="border-color:rgba(56,189,248,.3);border-radius:var(--r-lg);background:var(--bg-2);">
+      <div id="labDrop" class="border-[1.5px] border-dashed cursor-pointer px-6 py-10 text-center transition-colors" style="border-color:rgba(200,169,106,.3);border-radius:var(--r-lg);background:var(--bg-2);">
         <div class="text-sm" style="color:var(--dim);">把 CSV / JSON 文件拖到这里，或点击选择文件</div>
         <div class="text-xs mt-2" style="color:var(--faint);">支持列：日期, 币种, 方向, 价格, 数量, 盈亏, 备注（中英文表头均可）</div>
         <input type="file" id="labFile" accept=".csv,.json,.txt" class="hidden">
       </div>
-      <div class="text-[#475569] text-[10px] tracking-[.3em] text-center my-4">—— 或直接粘贴 ——</div>
+      <div class="text-[#57544E] text-[10px] tracking-[.3em] text-center my-4">—— 或直接粘贴 ——</div>
       <textarea id="labPaste" class="field font-mono text-xs" rows="4" placeholder="日期,币种,方向,价格,数量,盈亏,备注&#10;2026-09-30,BTC,买,62000,0.01,120,突破回踩买入&#10;2026-10-02,ETH,卖,2450,0.5,-80,止损离场"></textarea>
       <div class="flex flex-wrap gap-3 mt-4">
         <button class="btn-primary !text-sm" id="labAnalyze">导入并分析</button>
@@ -130,7 +123,7 @@
   <!-- 03 交易记录列表：每条可折叠展开查看主观笔记 -->
   <div class="mt-16 reveal">
     <div class="flex items-baseline gap-3 mb-5 flex-wrap">
-      <span class="text-[#334155] text-xs tracking-[.3em] font-semibold">03</span><h3 class="font-bold text-lg tracking-wide">交易记录</h3><span class="text-[#475569] text-[10px] tracking-[.3em]">RECORDS</span>
+      <span class="text-[#6C6963] text-xs tracking-[.3em] font-semibold">03</span><h3 class="font-bold text-lg tracking-wide">交易记录</h3><span class="text-[#57544E] text-[10px] tracking-[.3em]">RECORDS</span>
       <span class="chip ml-auto" id="trCount">0 笔</span>
       <button class="btn-ghost !text-xs !py-1.5 !px-3" id="btnClearTrades">清空全部记录</button>
     </div>
@@ -140,39 +133,40 @@
 
   <!-- 04 心理行为标签统计 -->
   <div class="mt-16 reveal">
-    <div class="flex items-baseline gap-3 mb-5"><span class="text-[#334155] text-xs tracking-[.3em] font-semibold">04</span><h3 class="font-bold text-lg tracking-wide">高频行为模式</h3><span class="text-[#475569] text-[10px] tracking-[.3em]">BEHAVIOR PATTERNS</span></div>
+    <div class="flex items-baseline gap-3 mb-5"><span class="text-[#6C6963] text-xs tracking-[.3em] font-semibold">04</span><h3 class="font-bold text-lg tracking-wide">高频行为模式</h3><span class="text-[#57544E] text-[10px] tracking-[.3em]">BEHAVIOR PATTERNS</span></div>
     <div class="card p-7" id="tagStats"></div>
   </div>
 
   <!-- 05 复盘统计面板 -->
   <div class="mt-16 reveal">
-    <div class="flex items-baseline gap-3 mb-5"><span class="text-[#334155] text-xs tracking-[.3em] font-semibold">05</span><h3 class="font-bold text-lg tracking-wide">复盘统计</h3><span class="text-[#475569] text-[10px] tracking-[.3em]">STATISTICS</span></div>
+    <div class="flex items-baseline gap-3 mb-5"><span class="text-[#6C6963] text-xs tracking-[.3em] font-semibold">05</span><h3 class="font-bold text-lg tracking-wide">复盘统计</h3><span class="text-[#57544E] text-[10px] tracking-[.3em]">STATISTICS</span></div>
     <div id="labKpi" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3"></div>
     <div id="labKpiEmpty"></div>
   </div>
 
   <!-- 06 TradeBrain 画像 + AI 四段复盘 -->
   <div class="mt-16 reveal">
-    <div class="flex items-baseline gap-3 mb-5"><span class="text-[#334155] text-xs tracking-[.3em] font-semibold">06</span><h3 class="font-bold text-lg tracking-wide">我的交易画像 · AI 复盘</h3><span class="text-[#475569] text-[10px] tracking-[.3em]">TRADEBRAIN</span></div>
+    <div class="flex items-baseline gap-3 mb-5"><span class="text-[#6C6963] text-xs tracking-[.3em] font-semibold">06</span><h3 class="font-bold text-lg tracking-wide">我的交易画像 · AI 复盘</h3><span class="text-[#57544E] text-[10px] tracking-[.3em]">TRADEBRAIN</span></div>
     <div id="labBrain" class="card p-7" style="background:linear-gradient(150deg,rgba(24,31,43,.92),rgba(15,20,28,.8));"></div>
     <div class="flex flex-wrap gap-3 mt-5">
       <button class="btn-primary !text-sm" id="labAi" disabled>🧠 AI 深度复盘（DeepSeek）</button>
       <button class="btn-ghost !text-sm" id="labReset">清空画像</button>
     </div>
     <div id="labOk" class="text-xs mt-4 min-h-[1rem]" style="color:var(--ok);"></div>
-    <p class="text-xs leading-[1.9] pl-4 mt-6" style="color:var(--faint);border-left:2px solid rgba(56,189,248,.3);">
+    <p class="text-xs leading-[1.9] pl-4 mt-6" style="color:var(--faint);border-left:2px solid rgba(200,169,106,.3);">
       画像与记录只保存在你自己的浏览器里（localStorage），不会上传到任何地方；只有你点击「AI 深度复盘」时，画像摘要、客观统计与带情绪标签的主观笔记才会通过 GitHub Issue 发给 DeepSeek，点评以评论形式出现在 Issue 里。AI 分析按 ① 交易优点 ② 缺点与心理模式 ③ 客观数据统计 ④ 可落地建议 四段结构化输出，仅供学习参考，不构成投资建议。
     </p>
   </div>
 </div>
 
-<div class="footer-slot"></div>
+<div id="siteFooter"></div>
 
 <script src="js/content.js"></script>
+<script src="js/content-master.js"></script>
 <script src="js/storage.js"></script>
-<script src="js/animate.js"></script>
+<script src="js/ui.js"></script>
 <script>
-renderNav('navLab');
+renderChrome('tools');
 
 /* ================= 心理行为标签体系（neg=负面模式 / pos=正面模式） ================= */
 const TAGS=[
@@ -322,9 +316,9 @@ document.getElementById('labSample').onclick=()=>{ document.getElementById('labP
 document.getElementById('labClear').onclick=()=>{ document.getElementById('labPaste').value=''; document.getElementById('labMsg').textContent=''; };
 const drop=document.getElementById('labDrop'), file=document.getElementById('labFile');
 drop.onclick=()=>file.click();
-drop.ondragover=e=>{ e.preventDefault(); drop.style.borderColor='rgba(56,189,248,.8)'; };
-drop.ondragleave=()=>drop.style.borderColor='rgba(56,189,248,.3)';
-drop.ondrop=e=>{ e.preventDefault(); drop.style.borderColor='rgba(56,189,248,.3)'; const f=e.dataTransfer.files[0]; if(f)readF(f); };
+drop.ondragover=e=>{ e.preventDefault(); drop.style.borderColor='rgba(200,169,106,.8)'; };
+drop.ondragleave=()=>drop.style.borderColor='rgba(200,169,106,.3)';
+drop.ondrop=e=>{ e.preventDefault(); drop.style.borderColor='rgba(200,169,106,.3)'; const f=e.dataTransfer.files[0]; if(f)readF(f); };
 file.onchange=()=>{ if(file.files[0])readF(file.files[0]); };
 function readF(f){ const r=new FileReader(); r.onload=()=>{ document.getElementById('labPaste').value=r.result; importCsv(); }; r.readAsText(f); }
 
@@ -412,7 +406,7 @@ function renderTagStats(){
   const pos=entries.filter(x=>!x.t.neg).reduce((s,x)=>s+x.n,0);
   box.innerHTML=`
     <div class="flex flex-wrap gap-3 mb-6 text-[11px]">
-      <span class="chip" style="border-color:rgba(251,146,60,.5);color:var(--warn);">负面模式 ${neg} 次</span>
+      <span class="chip" style="border-color:rgba(210,160,92,.5);color:var(--warn);">负面模式 ${neg} 次</span>
       <span class="chip" style="border-color:rgba(52,211,153,.5);color:var(--ok);">正面模式 ${pos} 次</span>
       <span class="chip">模式比 ${pos}:${neg}</span>
     </div>
@@ -481,7 +475,7 @@ function renderBrain(){
   const c=brainCalc(b);
   card.innerHTML=`
     <div class="flex flex-wrap items-center gap-6">
-      <div class="w-24 h-24 rounded-full flex flex-col items-center justify-center shrink-0" style="border:2px solid rgba(56,189,248,.55);box-shadow:0 0 24px rgba(56,189,248,.28),inset 0 0 18px rgba(56,189,248,.1);">
+      <div class="w-24 h-24 rounded-full flex flex-col items-center justify-center shrink-0" style="border:2px solid rgba(200,169,106,.55);box-shadow:0 0 24px rgba(200,169,106,.28),inset 0 0 18px rgba(200,169,106,.1);">
         <div class="text-2xl font-extrabold">Lv.${c.lv}</div><div class="text-[9px] tracking-[.2em] mt-1" style="color:var(--brand);">TRADER</div>
       </div>
       <div>

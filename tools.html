@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="obsidian">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>交易数学实验室 · Chain Academy</title>
+<meta name="description" content="六个可交互的交易数学工具：仓位、期望值、凯利、蒙特卡洛破产模拟、回撤恢复、永续资金费与强平价、波动率目标。全部在浏览器本地计算。">
+<meta name="theme-color" content="#08090B">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%2308090B'/%3E%3Cpath d='M16 7l9 9-9 9-9-9z' fill='none' stroke='%23C8A96A' stroke-width='1.4'/%3E%3Ccircle cx='16' cy='16' r='2.2' fill='%23C8A96A'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Noto+Sans+SC:wght@400;500;600&family=Noto+Serif+SC:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/vars.css">
+<link rel="stylesheet" href="css/system.css">
+<link rel="stylesheet" href="css/pages.css">
+<noscript><style>.reveal{opacity:1!important;transform:none!important;}</style></noscript>
+</head>
+<body>
+
+<div id="siteNav"></div>
+
+<main>
+  <header class="page-head" style="padding-bottom:24px;">
+    <div class="wrap">
+      <p class="eyebrow reveal">LABORATORY · 交易数学</p>
+      <h1 class="h1 reveal d1" style="margin-top:20px;max-width:16ch;">把直觉，<br>放上解剖台。</h1>
+      <p class="lede reveal d2">六个工具，全部在你的浏览器本地计算，不上传、不请求任何接口。它们不预测价格，只把"风险、成本、概率"之间的关系摊开给你看。</p>
+      <div class="risk-banner reveal d3" style="margin-top:28px;margin-bottom:0;">
+        <span class="mk">⚠</span>
+        <span><b>仅用于理解数学关系。</b>所有输入都是假设值，输出不构成任何投资建议；工具不判断方向、不推荐标的、不评估平台。虚拟货币相关业务活动在中国境内属于非法金融活动。</span>
+      </div>
+    </div>
+  </header>
+
+  <div class="tool-tabs-wrap">
+    <div class="wrap">
+      <div class="tabs" id="tabs" style="margin-bottom:0;border-bottom:0;">
+        <button class="tab on" data-t="sizing">01 仓位</button>
+        <button class="tab" data-t="expectancy">02 期望值 / 凯利</button>
+        <button class="tab" data-t="ruin">03 破产模拟</button>
+        <button class="tab" data-t="drawdown">04 回撤恢复</button>
+        <button class="tab" data-t="perp">05 永续成本</button>
+        <button class="tab" data-t="voltarget">06 波动率目标</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="wrap" style="padding-top:clamp(32px,5vw,56px);padding-bottom:80px;">
+
+    <!-- 01 SIZING -->
+    <section class="tool-panel on" id="p-sizing">
+      <div class="tool__title"><span class="micro">01</span><h2>仓位与风险</h2></div>
+      <p class="tool__desc">给定账户权益与可承受的单笔风险，反推仓位数量、名义价值与实际杠杆。核心原则：先确定"愿意亏多少"，再决定"买多少"。</p>
+      <div class="tool-grid">
+        <div class="panel panel--pad">
+          <div class="f-group"><label class="f-label">账户权益</label><input class="field" type="number" id="szEquity" value="10000" step="100"></div>
+          <div class="f-group"><label class="f-label">单笔风险 (%)</label><input class="field" type="number" id="szRisk" value="0.75" step="0.05"></div>
+          <div class="f-group"><label class="f-label">入场价</label><input class="field" type="number" id="szEntry" value="100" step="0.1"></div>
+          <div class="f-group"><label class="f-label">止损价</label><input class="field" type="number" id="szStop" value="96" step="0.1"></div>
+          <p class="f-hint">止损距离 = |入场 − 止损| / 入场。距离越远，仓位越小。</p>
+        </div>
+        <div class="tool-out">
+          <div class="tool-out__row"><span class="tool-out__k">风险金额</span><span class="tool-out__v" id="szRiskAmt">—</span></div>
+          <div class="tool-out__row"><span class="tool-out__k">止损距离</span><span class="tool-out__v" id="szDist">—</span></div>
+          <div class="tool-out__row"><span class="tool-out__k">仓位数量</span><span class="tool-out__v gold" id="szUnits">—</span></div>
+          <div class="tool-out__row"><span class="tool-out__k">名义价值</span><span class="tool-out__v" id="szNotional">—</span></div>
+          <div class="tool-out__row"><span class="tool-out__k">实际杠杆</span><span class="tool-out__v" id="szLev">—</span></div>
+          <div class="footnote" style="margin-top:24px;">计算式：数量 = 风险金额 / 止损距离。若名义价值超过权益，杠杆 &gt; 1×，你的最大损失将不止于止损位（跳空、滑点、强平）。</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 02 EXPECTANCY -->
+    <section class="tool-panel" id="p-expectancy">
+      <div class="tool__title"><span class="micro">02</span><h2>期望值与凯利</h2></div>
+      <p class="tool__desc">把胜率、盈亏比与成本放在一起，看这套方法在长期是否为正；再用凯利公式估算"理论最优下注比例"，并打上实务折扣。</p>
+      <div class="tool-grid">
+        <div class="panel panel--pad">
+          <div class="f-group"><label class="f-label">胜率 (%)</label><input class="field" type="number" id="exP" value="45" step="1"></div>
+          <div class="f-group"><label class="f-label">平均盈利 (R)</label><input class="field" type="number" id="exW" value="2" step="0.1"></div>
+          <div class="f-group"><label class="f-label">平均亏损 (R，含成本)</label><input class="field" type="number" id="exL" value="1.05" step="0.05"></div>
+          <p class="f-hint">把手续费与滑点折算进平均亏损，结果会更接近真实。</p>
+        </div>
+        <div class="tool-out">
+          <div class="tool-out__row"><span class="tool-out__k">单笔期望值</span><span class="tool-out__v gold" id="exE">—</span></div>
+          <div class="tool-out__row"><span class="tool-out__k">盈亏平衡胜率</span><span class="tool-out__v" id="exBe">—</span></div>
+          <div class="tool-out__row"><span class="tool-out__k">盈利因子</span><span class="tool-out__v" id="exPf">—</span></div>
+          <div class="tool-out__row"><span class="tool-out__k">理论全凯利 f*</span><span class="tool-out__v" id="exKelly">—</span></div>
+          <div class="tool-out__row"><span class="tool-out__k">1/4 凯利（实务建议上限）</span><span class="tool-out__v" id="exQuarter">—</span></div>
+          <div class="footnote" style="margin-top:24px;">E = p·W − (1−p)·L；f* = p − (1−p)/(W/L)。<b>f* 是风险预算比例，不是杠杆倍数</b>；参数估计误差会让全凯利变成过度下注。</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 03 RUIN -->
+    <section class="tool-panel" id="p-ruin">
+      <div class="tool__title"><span class="micro">03</span><h2>蒙特卡洛破产模拟</h2></div>
+      <p class="tool__desc">同一套正期望方法，换一个仓位，结局可能完全不同。模拟 2,000 条权益路径，统计破产概率、最大回撤与最差 5% 的结局。</p>
+      <div class="tool-grid">
+        <div class="panel panel--pad">
+          <div class="f-group"><label class="f-label">胜率 (%)</label><input class="field" type="number" id="ruP" value="45" step="1"></div>
+          <div class="f-group"><label class="f-label">平均盈利 (R)</label><input class="field" type="number" id="ruW" value="2" step="0.1"></div>
+          <div class="f-group"><label class="f-label">平均亏损 (R)</label><input class="field" type="number" id="ruL" value="1" step="0.05"></div>
+          <div class="f-group"><label class="f-label">每笔风险 (% 权益)</label><input class="field" type="number" id="ruF" value="2" step="0.25"></div>
+          <div class="f-group"><label class="f-label">交易笔数</label><input class="field" type="number" id="ruN" value="200" step="10"></div>
+          <div class="f-group"><label class="f-label">生存线（权益比例 %）</label><input class="field" type="number" id="ruRuin" value="50" step="5"></div>
+          <button class="btn btn--primary btn--sm" id="ruRun" style="width:100%;margin-top:6px;">运行 2,000 次模拟</button>
+        </div>
+        <div>
+          <div class="tool-out" style="margin-bottom:16px;">
+            <div class="tool-out__row"><span class="tool-out__k">单笔期望值</span><span class="tool-out__v" id="ruE">—</span></div>
+            <div class="tool-out__row"><span class="tool-out__k">破产概率</span><span class="tool-out__v neg" id="ruRuinP">—</span></div>
+            <div class="tool-out__row"><span class="tool-out__k">最大回撤中位数</span><span class="tool-out__v" id="ruDD">—</span></div>
+            <div class="tool-out__row"><span class="tool-out__k">期末权益中位数</span><span class="tool-out__v" id="ruMed">—</span></div>
+            <div class="tool-out__row"><span class="tool-out__k">最差 5% 结局</span><span class="tool-out__v neg" id="ruP5">—</span></div>
+          </div>
+          <div class="spark-wrap"><canvas id="ruChart"></canvas></div>
+          <div class="legend"><span class="k"><span class="sw" style="background:var(--faint);"></span>随机路径（抽样 80 条）</span><span class="k"><span class="sw" style="background:var(--brand);"></span>中位数路径</span><span class="k"><span class="sw" style="background:var(--neg);"></span>生存线</span></div>
+          <div class="footnote">模型假设：每笔交易独立、盈亏按固定 R 倍数、无滑点与资金费。真实市场的序列相关与尾部事件会让结果更差。</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 04 DRAWDOWN -->
+    <section class="tool-panel" id="p-drawdown">
+      <div class="tool__title"><span class="micro">04</span><h2>回撤与恢复</h2></div>
+      <p class="tool__desc">亏损与恢复从来不对称。输入一个回撤幅度，看回到原点需要多少涨幅——数字通常比直觉更残酷。</p>
+      <div class="tool-grid">
+        <div class="panel panel--pad">
+          <div class="f-group"><label class="f-label">当前回撤 (%)</label><input class="field" type="number" id="ddIn" value="30" step="1" min="0" max="95"></div>
+          <div class="spark-wrap" style="height:120px;margin-top:8px;">
+            <div style="padding:18px;display:flex;justify-content:space-between;align-items:flex-end;height:100%;" id="ddBars"></div>
+          </div>
+          <p class="f-hint">柱状图：不同回撤幅度下的恢复难度。</p>
+        </div>
+        <div class="tool-out">
+          <div class="tool-out__row"><span class="tool-out__k">需要上涨</span><span class="tool-out__v gold" id="ddNeed">—</span></div>
+          <div class="tool-out__row"><span class="tool-out__k">若年化 15%，约需</span><span class="tool-out__v" id="ddTime">—</span></div>
+          <div class="tool-out__row"><span class="tool-out__k">若年化 30%，约需</span><span class="tool-out__v" id="ddTime2">—</span></div>
+          <div class="footnote">恢复涨幅 = DD / (1 − DD)。时间 = ln(1+所需涨幅) / ln(1+年化收益)，仅作量级参考。</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 05 PERP -->
+    <section class="tool-panel" id="p-perp">
+      <div class="tool__title"><span class="micro">05</span><h2>永续成本与强平价</h2></div>
+      <p class="tool__desc">永续合约的隐性成本来自资金费与强平距离。计算持有成本与理论强平价，理解"杠杆改变的不是期望值，而是破产时间"。</p>
+      <div class="tool-grid">
+        <div class="panel panel--pad">
+          <div class="grid grid-2" style="gap:14px;">
+            <div class="f-group"><label class="f-label">入场价</label><input class="field" type="number" id="ppEntry" value="100" step="0.1"></div>
+            <div class="f-group"><label class="f-label">杠杆 (×)</label><input class="field" type="number" id="ppLev" value="5" step="1"></div>
+            <div class="f-group"><label class="f-label">维持保证金率 (%)</label><input class="field" type="number" id="ppMmr" value="0.5" step="0.1"></div>
+            <div class="f-group"><label class="f-label">资金费率 (% / 8h)</label><input class="field" type="number" id="ppRate" value="0.01" step="0.001"></div>
+            <div class="f-group"><label class="f-label">名义价值</label><input class="field" type="number" id="ppNotional" value="10000" step="100"></div>
+            <div class="f-group"><label class="f-label">持有小时</label><input class="field" type="number" id="ppHours" value="72" step="8"></div>
+          </div>
+          <div class="f-group" style="margin-top:6px;"><label class="f-label">方向</label>
+            <select class="field" id="ppSide"><option value="long">做多（支付正资金费）</option><option value="short">做空（收取正资金费）</option></select>
+          </div>
+        </div>
+        <div class="tool-out">
+          <div class="tool-out__row"><span class="tool-out__k">理论强平价（逐仓近似）</span><span class="tool-out__v neg" id="ppLiq">—</span></div>
+          <div class="tool-out__row"><span class="tool-out__k">距入场</span><span class="tool-out__v" id="ppLiqDist">—</span></div>
+          <div class="tool-out__row"><span class="tool-out__k">本次持有资金费</span><span class="tool-out__v" id="ppFund">—</span></div>
+          <div class="tool-out__row"><span class="tool-out__k">资金费年化</span><span class="tool-out__v" id="ppFundYear">—</span></div>
+          <div class="footnote">强平价 ≈ 入场 × (1 − 1/杠杆 + MMR)（多单）。未计入手续费、滑点、分层保证金与自动减仓；实际强平价以交易所规则为准。</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 06 VOLTARGET -->
+    <section class="tool-panel" id="p-voltarget">
+      <div class="tool__title"><span class="micro">06</span><h2>波动率目标与 ATR 止损</h2></div>
+      <p class="tool__desc">让风险保持恒定，而不是让金额保持恒定。按目标波动率缩放暴露，或用 ATR 标准化止损距离。</p>
+      <div class="tool-grid">
+        <div class="panel panel--pad">
+          <div class="grid grid-2" style="gap:14px;">
+            <div class="f-group"><label class="f-label">目标年化波动 (%)</label><input class="field" type="number" id="vtTarget" value="15" step="1"></div>
+            <div class="f-group"><label class="f-label">当前已实现波动 (%)</label><input class="field" type="number" id="vtReal" value="60" step="1"></div>
+            <div class="f-group"><label class="f-label">账户权益</label><input class="field" type="number" id="vtEquity" value="10000" step="100"></div>
+            <div class="f-group"><label class="f-label">当前价格</label><input class="field" type="number" id="vtPrice" value="100" step="0.1"></div>
+            <div class="f-group"><label class="f-label">ATR</label><input class="field" type="number" id="vtAtr" value="3" step="0.1"></div>
+            <div class="f-group"><label class="f-label">ATR 倍数 k</label><input class="field" type="number" id="vtK" value="2" step="0.1"></div>
+          </div>
+          <div class="f-group"><label class="f-label">单笔风险 (%)</label><input class="field" type="number" id="vtRisk" value="0.75" step="0.05"></div>
+        </div>
+        <div class="tool-out">
+          <div class="tool-out__row"><span class="tool-out__k">暴露系数（目标/已实现）</span><span class="tool-out__v gold" id="vtScale">—</span></div>
+          <div class="tool-out__row"><span class="tool-out__k">建议名义敞口</span><span class="tool-out__v" id="vtNotional">—</span></div>
+          <div class="tool-out__row"><span class="tool-out__k">对应数量</span><span class="tool-out__v" id="vtUnits">—</span></div>
+          <div class="tool-out__row"><span class="tool-out__k">ATR 止损距离</span><span class="tool-out__v" id="vtStop">—</span></div>
+          <div class="tool-out__row"><span class="tool-out__k">按 ATR 止损的仓位</span><span class="tool-out__v" id="vtAtrUnits">—</span></div>
+          <div class="footnote">暴露系数 &lt; 1 表示减仓。波动率目标会顺周期减仓，在极端行情中可能放大跌幅；ATR 止损需与流动性匹配。</div>
+        </div>
+      </div>
+    </section>
+
+    <div class="callout callout--note" style="margin-top:56px;">
+      <span class="callout__label">这些数字能做什么，不能做什么</span>
+      它们能告诉你：同样的方法，仓位重一点会不会死；成本高一点期望值会不会翻负；强平价离入场有多远。它们不能告诉你：明天涨还是跌，该买哪个标的，什么时候进场。前者是数学，后者是预测——本站只做前者。
+    </div>
+  </div>
+</main>
+
+<div id="siteFooter"></div>
+
+<script src="js/content.js"></script>
+<script src="js/content-master.js"></script>
+<script src="js/storage.js"></script>
+<script src="js/ui.js"></script>
+<script>
+renderChrome('tools');
+
+const $ = id => document.getElementById(id);
+const num = id => parseFloat($(id).value) || 0;
+const money = v => (Math.abs(v) >= 1000 ? v.toLocaleString('en-US',{maximumFractionDigits:0}) : v.toLocaleString('en-US',{maximumFractionDigits:2}));
+const pct = v => (v*100).toFixed(1) + '%';
+
+document.addEventListener('DOMContentLoaded', () => {
+  initTabs();
+  bind('szEquity szRisk szEntry szStop', calcSizing);
+  bind('exP exW exL', calcExpectancy);
+  bind('ruP ruW ruL ruF ruN ruRuin', calcRuin);
+  $('ruRun').addEventListener('click', calcRuin);
+  bind('ddIn', calcDrawdown);
+  bind('ppEntry ppLev ppMmr ppRate ppNotional ppHours ppSide', calcPerp);
+  bind('vtTarget vtReal vtEquity vtPrice vtAtr vtK vtRisk', calcVolTarget);
+  calcSizing(); calcExpectancy(); calcRuin(); calcDrawdown(); calcPerp(); calcVolTarget();
+  observeNew(document);
+});
+
+function bind(ids, fn){
+  ids.split(' ').forEach(id => {
+    const el = $(id); if(!el) return;
+    el.addEventListener('input', fn);
+    el.addEventListener('change', fn);
+  });
+}
+
+/* ---------- tabs ---------- */
+function initTabs(){
+  const tabs = [...document.querySelectorAll('#tabs .tab')];
+  function show(key, push){
+    tabs.forEach(t => t.classList.toggle('on', t.dataset.t === key));
+    document.querySelectorAll('.tool-panel').forEach(p => p.classList.toggle('on', p.id === 'p-' + key));
+    if(push && location.hash !== '#' + key) history.replaceState(null, '', '#' + key);
+  }
+  tabs.forEach(t => t.addEventListener('click', () => show(t.dataset.t, true)));
+  const h = location.hash.replace('#','');
+  const valid = ['sizing','expectancy','ruin','drawdown','perp','voltarget'];
+  if(valid.includes(h)) show(h, false);
+  window.addEventListener('hashchange', () => {
+    const k = location.hash.replace('#','');
+    if(valid.includes(k)) show(k, false);
+  });
+  if(h === 'ruin') setTimeout(calcRuin, 60);
+}
+
+/* ---------- 01 sizing ---------- */
+function calcSizing(){
+  const eq = num('szEquity'), riskPct = num('szRisk')/100;
+  const entry = num('szEntry'), stop = num('szStop');
+  const riskAmt = eq * riskPct;
+  const perUnit = Math.abs(entry - stop);
+  const units = perUnit > 0 ? riskAmt / perUnit : 0;
+  const notional = units * entry;
+  $('szRiskAmt').textContent = money(riskAmt);
+  $('szDist').textContent = entry ? ((perUnit/entry)*100).toFixed(2) + '%' : '—';
+  $('szUnits').textContent = units.toLocaleString('en-US',{maximumFractionDigits:2});
+  $('szNotional').textContent = money(notional);
+  $('szLev').textContent = (notional/eq).toFixed(2) + '×';
+  $('szLev').className = 'tool-out__v ' + (notional/eq > 1 ? 'neg' : '');
+}
+
+/* ---------- 02 expectancy ---------- */
+function calcExpectancy(){
+  const p = num('exP')/100, W = num('exW'), L = num('exL');
+  const E = p*W - (1-p)*L;
+  const be = (W+L) > 0 ? L/(W+L) : 0;
+  const pf = (1-p)*L > 0 ? (p*W)/((1-p)*L) : Infinity;
+  const kelly = W > 0 ? p - (1-p)*(L/W) : 0;
+  $('exE').textContent = (E>=0?'+':'') + E.toFixed(2) + ' R';
+  $('exE').className = 'tool-out__v ' + (E>0?'gold':'neg');
+  $('exBe').textContent = pct(be);
+  $('exPf').textContent = isFinite(pf) ? pf.toFixed(2) : '∞';
+  $('exKelly').textContent = kelly > 0 ? pct(kelly) : '负期望，不应下注';
+  $('exQuarter').textContent = kelly > 0 ? pct(kelly/4) : '—';
+}
+
+/* ---------- 03 ruin ---------- */
+function calcRuin(){
+  const p = num('ruP')/100, W = num('ruW'), L = num('ruL');
+  const f = num('ruF')/100, N = Math.max(1, num('ruN'));
+  const ruinLevel = num('ruRuin')/100;
+  const E = p*W - (1-p)*L;
+  $('ruE').textContent = (E>=0?'+':'') + E.toFixed(2) + ' R';
+  $('ruE').className = 'tool-out__v ' + (E>0?'gold':'neg');
+
+  const PATHS = 2000, SAMPLE = 80;
+  const finals = [], dds = [], samples = [];
+  let ruined = 0;
+  for(let k=0;k<PATHS;k++){
+    let eq = 1, peak = 1, dd = 0;
+    const path = [1];
+    let dead = false;
+    for(let i=0;i<N;i++){
+      if(!dead){
+        if(Math.random() < p) eq *= (1 + f*W);
+        else eq *= (1 - f*L);
+        if(eq <= 0){ eq = 0; dead = true; }
+      }
+      peak = Math.max(peak, eq);
+      dd = Math.max(dd, 1 - eq/peak);
+      if(k < SAMPLE) path.push(eq);
+    }
+    if(eq <= ruinLevel || dead) ruined++;
+    finals.push(eq); dds.push(dd);
+    if(k < SAMPLE) samples.push(path);
+  }
+  finals.sort((a,b)=>a-b);
+  const median = finals[Math.floor(finals.length/2)];
+  const p5 = finals[Math.floor(finals.length*0.05)];
+  dds.sort((a,b)=>a-b);
+  const medDD = dds[Math.floor(dds.length/2)];
+
+  $('ruRuinP').textContent = (ruined/PATHS*100).toFixed(1) + '%';
+  $('ruRuinP').className = 'tool-out__v ' + (ruined/PATHS > 0.1 ? 'neg' : 'pos');
+  $('ruDD').textContent = (medDD*100).toFixed(1) + '%';
+  $('ruMed').textContent = (median*100 - 100).toFixed(0) + '%';
+  $('ruP5').textContent = (p5*100 - 100).toFixed(0) + '%';
+  drawRuin(samples, ruinLevel, N);
+}
+
+function drawRuin(paths, ruinLevel, N){
+  const c = $('ruChart'); if(!c) return;
+  const ctx = c.getContext('2d');
+  const rect = c.getBoundingClientRect();
+  const dpr = Math.min(window.devicePixelRatio||1, 2);
+  c.width = rect.width*dpr; c.height = rect.height*dpr;
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  const W = rect.width, H = rect.height;
+  const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+  ctx.clearRect(0,0,W,H);
+  const all = paths.flat().filter(v => isFinite(v));
+  const sorted = [...all].sort((a,b)=>a-b);
+  const p98 = sorted[Math.floor(sorted.length*0.98)] || 2;
+  const lo = Math.min(ruinLevel*0.9, 0.2);
+  const hi = Math.max(p98*1.02, 1.35);
+  const X = i => 8 + i/(N) * (W-16);
+  const Y = v => H - 10 - (v-lo)/(hi-lo) * (H-20);
+
+  /* 生存线 */
+  ctx.setLineDash([4,4]); ctx.strokeStyle = css('--neg'); ctx.globalAlpha = .6;
+  ctx.beginPath(); ctx.moveTo(0, Y(ruinLevel)); ctx.lineTo(W, Y(ruinLevel)); ctx.stroke();
+  ctx.setLineDash([]); ctx.globalAlpha = 1;
+
+  /* 起始权益线 */
+  ctx.strokeStyle = css('--line-strong'); ctx.globalAlpha = 1; ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(0, Y(1)); ctx.lineTo(W, Y(1)); ctx.stroke();
+
+  paths.forEach((path, k) => {
+    ctx.beginPath();
+    path.forEach((v,i) => { const y = Y(Math.min(v, hi)); i ? ctx.lineTo(X(i), y) : ctx.moveTo(X(i), y); });
+    ctx.strokeStyle = css('--faint'); ctx.globalAlpha = k === 0 ? .5 : .16; ctx.lineWidth = 1; ctx.stroke();
+  });
+
+  /* 中位数路径 */
+  const med = [];
+  for(let i=0;i<=N;i++){
+    const vals = paths.map(p => p[i] ?? p[p.length-1]).sort((a,b)=>a-b);
+    med.push(vals[Math.floor(vals.length/2)]);
+  }
+  ctx.beginPath();
+  med.forEach((v,i) => i ? ctx.lineTo(X(i), Y(v)) : ctx.moveTo(X(i), Y(v)));
+  ctx.strokeStyle = css('--brand'); ctx.globalAlpha = 1; ctx.lineWidth = 1.8; ctx.stroke();
+  ctx.globalAlpha = 1;
+}
+
+/* ---------- 04 drawdown ---------- */
+function calcDrawdown(){
+  let d = num('ddIn')/100;
+  d = Math.min(Math.max(d, 0.001), 0.95);
+  const need = d/(1-d);
+  $('ddNeed').textContent = '+' + (need*100).toFixed(1) + '%';
+  const yrs = r => Math.log(1+need)/Math.log(1+r);
+  $('ddTime').textContent = yrs(0.15).toFixed(1) + ' 年';
+  $('ddTime2').textContent = yrs(0.30).toFixed(1) + ' 年';
+
+  const marks = [0.1,0.2,0.3,0.4,0.5,0.6,0.7];
+  const max = 4;
+  $('ddBars').innerHTML = marks.map(m => {
+    const h = Math.min(1, (m/(1-m))/max);
+    return `<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;height:100%;justify-content:flex-end;">
+      <span class="micro" style="font-size:8px;letter-spacing:.05em;color:${Math.abs(m-d)<0.001?'var(--brand)':'var(--faint)'};">${((m/(1-m))*100).toFixed(0)}%</span>
+      <div style="width:100%;max-width:34px;height:${Math.max(4,h*70)}px;background:${Math.abs(m-d)<0.001?'var(--brand)':'var(--line-strong)'};"></div>
+      <span class="micro" style="font-size:8px;letter-spacing:.05em;">−${(m*100).toFixed(0)}%</span>
+    </div>`;
+  }).join('');
+}
+
+/* ---------- 05 perp ---------- */
+function calcPerp(){
+  const entry = num('ppEntry'), lev = Math.max(1, num('ppLev')), mmr = num('ppMmr')/100;
+  const rate = num('ppRate')/100, notional = num('ppNotional'), hours = num('ppHours');
+  const long = $('ppSide').value === 'long';
+  const liq = long ? entry*(1 - 1/lev + mmr) : entry*(1 + 1/lev - mmr);
+  const dist = Math.abs(liq - entry)/entry;
+  const fund = notional * rate * (hours/8) * (long ? 1 : -1);
+  const year = rate * 3 * 365;
+  $('ppLiq').textContent = liq.toFixed(2);
+  $('ppLiqDist').textContent = (dist*100).toFixed(2) + '%';
+  $('ppFund').textContent = (fund>=0?'−':'+') + Math.abs(fund).toFixed(2);
+  $('ppFund').className = 'tool-out__v ' + (long ? 'neg' : 'pos');
+  $('ppFundYear').textContent = (year*100).toFixed(1) + '%';
+}
+
+/* ---------- 06 vol target ---------- */
+function calcVolTarget(){
+  const target = num('vtTarget')/100, real = Math.max(0.01, num('vtReal')/100);
+  const eq = num('vtEquity'), price = Math.max(0.01, num('vtPrice'));
+  const atr = num('vtAtr'), k = num('vtK'), riskPct = num('vtRisk')/100;
+  const scale = target/real;
+  const notional = eq*scale;
+  const units = notional/price;
+  const stop = k*atr;
+  const atrUnits = stop > 0 ? (eq*riskPct)/stop : 0;
+  $('vtScale').textContent = scale.toFixed(2) + '×';
+  $('vtNotional').textContent = money(notional);
+  $('vtUnits').textContent = units.toLocaleString('en-US',{maximumFractionDigits:2});
+  $('vtStop').textContent = stop.toFixed(2) + ' (' + ((stop/price)*100).toFixed(1) + '%)';
+  $('vtAtrUnits').textContent = atrUnits.toLocaleString('en-US',{maximumFractionDigits:2});
+}
+</script>
+</body>
+</html>

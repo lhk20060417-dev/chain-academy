@@ -20,6 +20,12 @@ function chapterState(chId){
   if(progress.chapters[chId] && progress.chapters[chId].passed) return 'done';
   const idx = ORDER.findIndex(o => o.ch.id === chId);
   if(idx === 0) return 'active';
+  const cur = ORDER[idx];
+  /* 标注 open 的学段（如第七学段「顶级交易思维」）可独立进入：本学段第一节默认开放 */
+  if(cur.stage.open){
+    const firstOfStage = ORDER.findIndex(o => o.stage.id === cur.stage.id);
+    if(idx === firstOfStage) return 'active';
+  }
   const prev = ORDER[idx-1];
   return (progress.chapters[prev.ch.id] && progress.chapters[prev.ch.id].passed) ? 'active' : 'locked';
 }

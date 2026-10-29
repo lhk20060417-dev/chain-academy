@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="obsidian">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>顶级交易思维 · Chain Academy</title>
+<meta name="description" content="12 节顶级交易思维：期望值、破产概率、凯利公式、市场微结构、订单流、周期识别、衍生品定价、组合构建、研究纪律与执行系统。仅用于理论学习。">
+<meta name="theme-color" content="#08090B">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%2308090B'/%3E%3Cpath d='M16 7l9 9-9 9-9-9z' fill='none' stroke='%23C8A96A' stroke-width='1.4'/%3E%3Ccircle cx='16' cy='16' r='2.2' fill='%23C8A96A'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Noto+Sans+SC:wght@400;500;600&family=Noto+Serif+SC:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/vars.css">
+<link rel="stylesheet" href="css/system.css">
+<link rel="stylesheet" href="css/pages.css">
+<noscript><style>.reveal{opacity:1!important;transform:none!important;}</style></noscript>
+</head>
+<body>
+
+<div id="siteNav"></div>
+
+<main>
+  <!-- HERO -->
+  <header class="master-hero">
+    <div class="wrap">
+      <div class="grid grid-12" style="align-items:end;">
+        <div class="span-8">
+          <p class="eyebrow reveal">MASTER CLASS · 第七学段</p>
+          <h1 class="display reveal d1" style="font-size:clamp(2.9rem,6vw,5.6rem);margin-top:26px;">交易不是预测，<br>是在不确定中<br><em>生存并下注。</em></h1>
+          <p class="lede reveal d2" style="margin-top:28px;">12 节课程，从期望值的符号一路走到执行系统。没有"战法"，没有点位，只有可以被检验、被证伪、被复盘的思考框架。</p>
+          <div class="cluster reveal d3" style="margin-top:34px;">
+            <a class="btn btn--primary btn--lg" href="chapter.html?id=s7-01-expectancy">从第 1 节开始
+              <svg class="arrow" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 12h15M13 6l6 6-6 6"/></svg>
+            </a>
+            <a class="btn btn--ghost btn--lg" href="tools.html">打开数学实验室</a>
+          </div>
+        </div>
+        <div class="span-4 reveal d2">
+          <div class="metric-row" style="grid-template-columns:1fr;border:1px solid var(--line);border-radius:var(--r);padding:6px 20px;background:var(--surface);">
+            <div style="border-right:0;display:flex;justify-content:space-between;align-items:baseline;">
+              <span class="micro">章节</span><span class="num" style="font-size:1.5rem;">12</span>
+            </div>
+            <div style="border-right:0;display:flex;justify-content:space-between;align-items:baseline;">
+              <span class="micro">自测题</span><span class="num" style="font-size:1.5rem;">36</span>
+            </div>
+            <div style="border-right:0;display:flex;justify-content:space-between;align-items:baseline;">
+              <span class="micro">结业考核</span><span class="num" style="font-size:1.5rem;">12</span>
+            </div>
+            <div style="border-right:0;border-bottom:0;display:flex;justify-content:space-between;align-items:baseline;">
+              <span class="micro">预计学时</span><span class="num" style="font-size:1.5rem;">12h</span>
+            </div>
+          </div>
+          <p class="micro" style="margin-top:14px;line-height:1.8;letter-spacing:.08em;">仅作理论研习 · 不构成投资建议<br>不提供任何标的、点位与方向判断</p>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- 三条铁律 -->
+  <section class="section section--tight">
+    <div class="wrap">
+      <div class="grid grid-3" style="gap:clamp(20px,3vw,36px);">
+        <div class="method-card reveal">
+          <div class="method-card__n">LAW 01</div>
+          <h3 class="method-card__t">先求生存，<br>再求收益</h3>
+          <p class="method-card__d">破产是吸收壁。任何忽略破产概率的"高收益策略"，都只是把风险推迟到某个具体的日子。</p>
+        </div>
+        <div class="method-card reveal d1">
+          <div class="method-card__n">LAW 02</div>
+          <h3 class="method-card__t">可证伪，<br>才叫方法</h3>
+          <p class="method-card__d">写不出失效条件的形态、指标与叙事，都只是解释工具，不是可执行的边际。</p>
+        </div>
+        <div class="method-card reveal d2">
+          <div class="method-card__n">LAW 03</div>
+          <h3 class="method-card__t">成本，<br>是策略的一部分</h3>
+          <p class="method-card__d">价差、冲击、资金费、税费与机会成本，会系统性地吃掉看起来为正的期望值。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 三幕 -->
+  <div class="wrap"><hr class="rule rule--fade"></div>
+
+  <section class="act-section">
+    <div class="wrap">
+      <div class="act-head">
+        <div class="act-head__n">ACT I</div>
+        <div>
+          <h2 class="act-head__t">数学地基</h2>
+          <p class="act-head__d">在讨论"怎么赚"之前，先证明"有没有边际"。这一部分建立三个支柱：期望值、破产概率、下注尺度。</p>
+        </div>
+      </div>
+      <div class="mc-list" id="act1"></div>
+    </div>
+  </section>
+
+  <section class="act-section">
+    <div class="wrap">
+      <div class="act-head">
+        <div class="act-head__n">ACT II</div>
+        <div>
+          <h2 class="act-head__t">市场结构</h2>
+          <p class="act-head__d">价格由订单撮合产生，而不是由图形产生。理解流动性、拍卖、供需转换与市场状态，才能真正理解"为什么"。</p>
+        </div>
+      </div>
+      <div class="mc-list" id="act2"></div>
+    </div>
+  </section>
+
+  <section class="act-section">
+    <div class="wrap">
+      <div class="act-head">
+        <div class="act-head__n">ACT III</div>
+        <div>
+          <h2 class="act-head__t">系统与执行</h2>
+          <p class="act-head__d">把前两幕的知识组装成一个可运行的系统：衍生品定价、组合风险、研究纪律与执行闭环。</p>
+        </div>
+      </div>
+      <div class="mc-list" id="act3"></div>
+    </div>
+  </section>
+
+  <!-- 术语速查 -->
+  <section class="section">
+    <div class="wrap">
+      <div class="sec-head">
+        <div>
+          <p class="eyebrow reveal">GLOSSARY · 速查</p>
+          <h2 class="h2 reveal d1" style="margin-top:18px;">十二个词，<br>决定你讨论的水平。</h2>
+        </div>
+        <p class="copy reveal d2" style="max-width:320px;font-size:.88rem;">如果这些词你只能背出定义、说不出适用条件，说明还停留在"术语层"。</p>
+      </div>
+      <div class="grid grid-3" id="glossary" style="gap:0;border-top:1px solid var(--line);"></div>
+    </div>
+  </section>
+
+  <!-- 提醒 -->
+  <section class="boundary section">
+    <div class="wrap">
+      <div class="boundary__grid">
+        <div>
+          <p class="eyebrow reveal">BEFORE YOU START</p>
+          <h2 class="h2 reveal d1" style="margin-top:18px;">阅读前，<br>请确认三件事。</h2>
+        </div>
+        <ul class="boundary__list reveal d1">
+          <li><span class="mk">01</span><span><b>你已经学完前六个学段。</b>本节大量引用 R 倍数、止损、仓位、回测等概念，跳过前置内容只会得到一堆无法执行的名词。</span></li>
+          <li><span class="mk">02</span><span><b>你是为了理解，不是为了找信号。</b>本站不提供、也不会提供任何标的、点位或方向判断。</span></li>
+          <li><span class="mk">03</span><span><b>你清楚法律边界。</b>虚拟货币相关业务活动在中国境内属于非法金融活动；本页内容为理论研习，不构成参与建议。</span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+</main>
+
+<div id="siteFooter"></div>
+
+<script src="js/content.js"></script>
+<script src="js/content-master.js"></script>
+<script src="js/storage.js"></script>
+<script src="js/ui.js"></script>
+<script>
+renderChrome('master');
+
+const GLOSSARY = [
+  ['Edge', '边际', '在足够长的样本中，决策分布相对随机基准的偏移。非常小，只能靠重复显现。'],
+  ['R Multiple', 'R 倍数', '以单笔风险为单位的收益度量。统一记账单位，便于跨仓位比较决策质量。'],
+  ['Expectancy', '期望值', 'p·W − (1−p)·L。决定"值不值得做"，不决定"这次会不会赢"。'],
+  ['Ruin', '破产概率', '在给定仓位与生存线下，权益触及不可恢复水平的概率。'],
+  ['Kelly', '凯利比例', '最大化长期几何增长率的下注比例；实务用 1/4–1/2 以吸收参数误差。'],
+  ['Impact', '冲击成本', '大额订单沿订单簿成交造成的均价劣化，近似与 √(规模) 成正比。'],
+  ['VWAP', '成交量加权均价', '常作为执行基准。跑赢 VWAP 的难度，取决于信息与流动性。'],
+  ['Funding', '资金费率', '永续合约多空之间的周期性支付，用于锚定现货价格。'],
+  ['Basis', '基差', '期货相对现货的溢价，年化后可与持有成本比较。'],
+  ['Skew', '波动率偏斜', '不同行权价隐含波动率的差异；加密市场长期存在下行偏斜。'],
+  ['Regime', '市场状态', '一段时间内稳定的统计特征组合：趋势、波动、相关性与流动性。'],
+  ['Deflated SR', '校正夏普', '对多次试验后的"最优结果"进行选择效应校正的统计方法。'],
+];
+
+document.addEventListener('DOMContentLoaded', () => {
+  const s7 = STAGES.find(s => s.id === 's7');
+  if(!s7) return;
+  const acts = [[0,4],[4,8],[8,12]];
+  acts.forEach(([a,b], ai) => {
+    const box = document.getElementById('act' + (ai+1));
+    if(!box) return;
+    box.innerHTML = s7.chapters.slice(a,b).map((c, i) => {
+      const idx = a + i + 1;
+      const st = chapterState(c.id);
+      const locked = st === 'locked';
+      return `<a class="mc-item ${locked?'is-locked':''}" href="${locked?'javascript:void 0':'chapter.html?id='+encodeURIComponent(c.id)}"
+        ${locked?`onclick="toast('请先完成第七学段的前一节')"`:''}>
+        <span class="mc-item__n">${String(idx).padStart(2,'0')}</span>
+        <span class="mc-item__t">${c.title.replace(/^第 \d+ 节：/,'')}<span>${st==='done'?'已通过':locked?'未解锁':'可阅读'}</span></span>
+        <span class="mc-item__d">${(c.intro||'').slice(0,58)}${(c.intro||'').length>58?'…':''}</span>
+        <span class="mc-item__a">→</span>
+      </a>`;
+    }).join('');
+  });
+
+  document.getElementById('glossary').innerHTML = GLOSSARY.map(([en, zh, def]) => `
+    <div style="padding:22px 20px 22px 0;border-bottom:1px solid var(--line);">
+      <div class="micro" style="color:var(--brand);letter-spacing:.16em;">${en}</div>
+      <div style="font-family:var(--font-display);font-size:1.3rem;margin:8px 0 8px;">${zh}</div>
+      <p class="small" style="color:var(--dim);line-height:1.7;margin:0;">${def}</p>
+    </div>`).join('');
+
+  observeNew(document);
+});
+</script>
+</body>
+</html>

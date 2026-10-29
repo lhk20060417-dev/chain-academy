@@ -1,70 +1,69 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh-CN" data-theme="obsidian">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>错题复盘 · Chain Academy</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<meta name="description" content="自测答错的题目自动归档：查看你的作答、正确答案与解析，重新作答后标记为已掌握。">
+<meta name="theme-color" content="#08090B">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%2308090B'/%3E%3Cpath d='M16 7l9 9-9 9-9-9z' fill='none' stroke='%23C8A96A' stroke-width='1.4'/%3E%3Ccircle cx='16' cy='16' r='2.2' fill='%23C8A96A'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Noto+Sans+SC:wght@400;500;600&family=Noto+Serif+SC:wght@400;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/vars.css">
-<style>
-.opt-sm{border:1px solid var(--line-strong); border-radius:var(--r); padding:8px 12px; cursor:pointer; transition:all .25s; color:var(--dim); font-size:.8rem;}
-.opt-sm:hover{border-color:rgba(56,189,248,.55); color:var(--txt);}
-.opt-sm.correct{border-color:var(--ok); color:var(--ok); background:rgba(52,211,153,.08);}
-.opt-sm.wrong{border-color:var(--danger); color:var(--danger); background:rgba(248,113,113,.08);}
-</style>
+<link rel="stylesheet" href="css/system.css">
+<link rel="stylesheet" href="css/pages.css">
+<noscript><style>.reveal{opacity:1!important;transform:none!important;}</style></noscript>
 </head>
 <body>
 
-<nav class="site-nav solid">
-  <div class="nav-inner">
-    <a href="index.html" class="flex items-center gap-2 shrink-0">
-      <span class="w-7 h-7 rounded-md flex items-center justify-center text-white font-extrabold text-sm" style="background:linear-gradient(135deg,#0C4A6E,#38BDF8)">C</span>
-      <span class="font-bold tracking-wide text-sm">Chain<span style="color:var(--brand)">Academy</span></span>
-    </a>
-    <div class="nav-links-slot hidden lg:flex items-center gap-6 flex-1 justify-center"></div>
-    <div class="flex items-center gap-2 shrink-0">
-      <button class="lang-sw chip !py-1.5" data-lang="zh">中文</button>
-      <button class="lang-sw chip !py-1.5" data-lang="en">EN</button>
-      <button class="cta-continue btn-primary !py-2 !px-4 !text-xs">继续上次学习</button>
+<div id="siteNav"></div>
+
+<main>
+  <header class="page-head">
+    <div class="wrap">
+      <p class="eyebrow reveal">ERROR REVIEW · 错题复盘</p>
+      <h1 class="h1 reveal d1" style="margin-top:20px;">错误比正确<br>更有信息量。</h1>
+      <p class="lede reveal d2">答错的自测题会自动归档到这里。重做一次并答对，才会标记为「已掌握」——因为看懂解析，不等于能独立做对。</p>
     </div>
+  </header>
+
+  <div class="wrap">
+    <div style="display:flex;flex-wrap:wrap;gap:12px;align-items:center;padding-bottom:22px;border-bottom:1px solid var(--line-strong);">
+      <select class="field" id="fStage" style="width:auto;font-family:var(--font-sans);"></select>
+      <button class="chip" id="fPending">只看未掌握</button>
+      <span class="micro" id="erCount" style="margin-left:auto;">0 题</span>
+    </div>
+    <div class="grid grid-2" id="erGrid" style="margin-top:26px;"></div>
+    <div id="erEmpty"></div>
   </div>
-</nav>
+</main>
 
-<div class="container-x pt-28 pb-10">
-  <p class="sec-tag">ERROR REVIEW</p>
-  <h1 class="sec-title">错题复盘专区</h1>
-  <p class="sec-desc">所有自测答错的题目自动汇总到这里。重新作答并答对后，题目会标记为「已掌握」。</p>
-
-  <!-- 筛选控件 -->
-  <div class="flex flex-wrap items-center gap-3 mt-8">
-    <select id="fStage" class="field !w-auto !py-2 !text-xs"></select>
-    <label class="chip cursor-pointer select-none flex items-center gap-2">
-      <input type="checkbox" id="fPending"> <span id="fPendingLabel"></span>
-    </label>
-    <span class="chip" id="erCount">0</span>
-  </div>
-
-  <div class="grid lg:grid-cols-2 gap-4 mt-8" id="erGrid"></div>
-  <div id="erEmpty"></div>
-</div>
-
-<div class="footer-slot"></div>
+<div id="siteFooter"></div>
 
 <script src="js/content.js"></script>
+<script src="js/content-master.js"></script>
 <script src="js/storage.js"></script>
-<script src="js/animate.js"></script>
+<script src="js/ui.js"></script>
 <script>
-renderNav('navErrors');
-document.getElementById('fPendingLabel').textContent = t('filterPending');
+renderChrome('progress');
 
-document.getElementById('fStage').innerHTML =
-  `<option value="all">${t('filterAll')}</option>` + STAGES.map(s => `<option value="${s.id}">${s.num} · ${s.title}</option>`).join('');
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('fStage').innerHTML = `<option value="all">全部学段</option>` +
+    STAGES.map(s => `<option value="${s.id}">${s.num} · ${s.title}</option>`).join('');
+  document.getElementById('fStage').addEventListener('change', renderErrors);
+  document.getElementById('fPending').addEventListener('click', () => {
+    document.getElementById('fPending').classList.toggle('is-on');
+    renderErrors();
+  });
+  renderErrors();
+  observeNew(document);
+});
 
 function renderErrors(){
   const fs = document.getElementById('fStage').value;
-  const onlyPending = document.getElementById('fPending').checked;
-  let list = progress.wrong.filter(w => {
+  const onlyPending = document.getElementById('fPending').classList.contains('is-on');
+  const list = (progress.wrong || []).filter(w => {
     const o = ORDER.find(x => x.ch.id === w.chId);
     const stageId = o ? o.stage.id : null;
     if(fs !== 'all' && stageId !== fs) return false;
@@ -73,64 +72,66 @@ function renderErrors(){
   });
   document.getElementById('erCount').textContent = list.length + ' 题';
   const grid = document.getElementById('erGrid');
+  const empty = document.getElementById('erEmpty');
+
   if(!list.length){
     grid.innerHTML = '';
-    document.getElementById('erEmpty').innerHTML = `<div class="empty mt-4"><span class="empty-icon">✓</span>${t('erEmpty')}</div>`;
+    empty.innerHTML = `<div class="empty" style="margin-top:24px;"><span class="empty__icon">✓</span>暂无待复盘的错题。保持这个状态。</div>`;
     return;
   }
-  document.getElementById('erEmpty').innerHTML = '';
+  empty.innerHTML = '';
   grid.innerHTML = list.map((w, i) => {
     const o = ORDER.find(x => x.ch.id === w.chId);
     const ch = o ? o.ch : null;
     const q = ch ? ch.quiz[w.qIdx] : null;
-    return `<div class="card p-6" id="er-${i}">
-      <div class="flex items-center justify-between gap-2">
-        <span class="tag-brand">${o ? o.stage.num+' · '+o.stage.title : '阶段考核'}</span>
-        ${w.done ? `<span class="chip !text-[10px]" style="border-color:rgba(52,211,153,.5);color:var(--ok);">✓ ${t('mastered')}</span>` : ''}
+    return `<article class="panel panel--pad" id="er-${i}">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;">
+        <span class="micro">${o ? o.stage.num + ' · ' + o.stage.title : '阶段考核'}</span>
+        ${w.done ? '<span class="chip is-on">已掌握</span>' : '<span class="chip chip--warn">待重做</span>'}
       </div>
-      <div class="text-sm font-medium mt-3 leading-relaxed">${esc(w.q)}</div>
-      ${q ? `
-        <div class="mt-3 text-xs space-y-1.5" style="color:var(--dim);">
-          <div>我的作答：<span style="color:var(--danger);">${w.picked!=null && q.opts[w.picked] != null ? esc(q.opts[w.picked]) : '未作答'}</span></div>
-          <div>正确答案：<span style="color:var(--ok);">${esc(q.opts[q.a])}</span></div>
-          ${q.exp ? `<div class="pt-2" style="color:var(--faint);">解析：${esc(q.exp)}</div>` : ''}
-        </div>` : `<div class="mt-3 text-xs" style="color:var(--faint);">本题来自阶段考核，可前往对应章节复习。</div>`}
-      <div class="flex flex-wrap items-center gap-3 mt-5">
-        ${!w.done ? `<button class="btn-ghost !text-xs !py-2 !px-4" onclick="retry(${i},'${w.chId}',${w.qIdx})">${t('retry')}</button>` : ''}
-        <span class="text-[11px] ml-auto" style="color:var(--faint);">${ch ? `<a href="chapter.html?id=${encodeURIComponent(w.chId)}" style="color:var(--brand);">${ch.title} →</a>` : ''}</span>
+      <p style="font-size:.95rem;line-height:1.65;color:var(--txt);margin:14px 0 0;">${esc(w.q)}</p>
+      ${q ? `<div style="margin-top:14px;font-size:.83rem;line-height:1.8;color:var(--dim);">
+          <div>你的作答：<span style="color:var(--neg);">${w.picked!=null && q.opts[w.picked]!=null ? esc(q.opts[w.picked]) : '未作答'}</span></div>
+          <div>正确答案：<span style="color:var(--pos);">${esc(q.opts[q.a])}</span></div>
+          ${q.exp ? `<div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--line);color:var(--faint);">${esc(q.exp)}</div>` : ''}
+        </div>` : `<div style="margin-top:12px;font-size:.83rem;color:var(--faint);">本题来自阶段考核，请回到对应章节复习。</div>`}
+      <div style="display:flex;align-items:center;gap:12px;margin-top:18px;">
+        ${!w.done && q ? `<button class="btn btn--ghost btn--sm" onclick="retry(${i},'${w.chId}',${w.qIdx})">重新作答</button>` : ''}
+        ${ch ? `<a class="mono small" href="chapter.html?id=${encodeURIComponent(w.chId)}" style="color:var(--brand);margin-left:auto;">回到本章 →</a>` : ''}
       </div>
-      <div id="erQuiz-${i}" class="mt-4"></div>
-    </div>`;
+      <div id="erQuiz-${i}" style="margin-top:14px;"></div>
+    </article>`;
   }).join('');
+  observeNew(grid);
 }
 
 function retry(i, chId, qIdx){
   const o = ORDER.find(x => x.ch.id === chId);
   const q = o ? o.ch.quiz[qIdx] : null;
   const zone = document.getElementById('erQuiz-'+i);
-  if(!q){ zone.innerHTML = `<div class="text-xs" style="color:var(--faint);">该题来自阶段考核，请在章节中复习对应知识点。</div>`; return; }
-  zone.innerHTML = `<div class="grid gap-2">${q.opts.map((op,oi) => `<div class="opt-sm" data-oi="${oi}" onclick="answer(${i},'${chId}',${qIdx},${oi},this)">${String.fromCharCode(65+oi)}. ${esc(op)}</div>`).join('')}</div>`;
+  if(!q){ zone.innerHTML = `<div class="small faint">该题来自阶段考核，请在章节中复习对应知识点。</div>`; return; }
+  zone.innerHTML = `<div class="opts">${q.opts.map((op,oi) =>
+    `<button class="opt" data-oi="${oi}" onclick="answer(${i},'${chId}',${qIdx},${oi},this)">
+      <span class="opt__k">${String.fromCharCode(65+oi)}</span><span>${esc(op)}</span></button>`).join('')}</div>`;
 }
+
 function answer(i, chId, qIdx, oi, elm){
   const o = ORDER.find(x => x.ch.id === chId);
   const q = o.ch.quiz[qIdx];
-  elm.parentNode.querySelectorAll('.opt-sm').forEach(x => {
+  elm.parentElement.querySelectorAll('.opt').forEach(x => {
     x.style.pointerEvents = 'none';
     if(+x.dataset.oi === q.a) x.classList.add('correct');
   });
   if(oi === q.a){
     const w = progress.wrong.find(x => x.chId === chId && x.qIdx === qIdx);
     if(w) w.done = true;
-    saveProgress(); toast(t('mastered')); renderErrors();
+    saveProgress(); toast('已标记为掌握');
+    setTimeout(renderErrors, 500);
   } else {
     elm.classList.add('wrong');
-    toast(t('quizFail'));
+    toast('还是不对，回看上面的解析');
   }
 }
-
-document.getElementById('fStage').onchange = renderErrors;
-document.getElementById('fPending').onchange = renderErrors;
-renderErrors();
 </script>
 </body>
 </html>

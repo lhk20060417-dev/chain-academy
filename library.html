@@ -1,96 +1,118 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh-CN" data-theme="obsidian">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>章节库 · Chain Academy</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<meta name="description" content="Chain Academy 全部 73 节课的索引：按学段筛选、搜索关键词，查看每节的完成状态与题目数量。">
+<meta name="theme-color" content="#08090B">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%2308090B'/%3E%3Cpath d='M16 7l9 9-9 9-9-9z' fill='none' stroke='%23C8A96A' stroke-width='1.4'/%3E%3Ccircle cx='16' cy='16' r='2.2' fill='%23C8A96A'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Noto+Sans+SC:wght@400;500;600&family=Noto+Serif+SC:wght@400;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/vars.css">
+<link rel="stylesheet" href="css/system.css">
+<link rel="stylesheet" href="css/pages.css">
+<noscript><style>.reveal{opacity:1!important;transform:none!important;}</style></noscript>
 </head>
 <body>
 
-<nav class="site-nav solid">
-  <div class="nav-inner">
-    <a href="index.html" class="flex items-center gap-2 shrink-0">
-      <span class="w-7 h-7 rounded-md flex items-center justify-center text-white font-extrabold text-sm" style="background:linear-gradient(135deg,#0C4A6E,#38BDF8)">C</span>
-      <span class="font-bold tracking-wide text-sm">Chain<span style="color:var(--brand)">Academy</span></span>
-    </a>
-    <div class="nav-links-slot hidden lg:flex items-center gap-6 flex-1 justify-center"></div>
-    <div class="flex items-center gap-2 shrink-0">
-      <button class="lang-sw chip !py-1.5" data-lang="zh">中文</button>
-      <button class="lang-sw chip !py-1.5" data-lang="en">EN</button>
-      <button class="cta-continue btn-primary !py-2 !px-4 !text-xs">继续上次学习</button>
+<div id="siteNav"></div>
+
+<main>
+  <header class="page-head">
+    <div class="wrap">
+      <div class="sec-head" style="margin-bottom:0;">
+        <div>
+          <p class="eyebrow reveal">LIBRARY · 章节库</p>
+          <h1 class="h1 reveal d1" style="margin-top:20px;">73 节课，<br>一张可检索的地图。</h1>
+        </div>
+        <div class="reveal d2" style="text-align:right;">
+          <div class="micro" id="libCount">—</div>
+          <p class="small faint" style="margin:6px 0 0;">灰色卡片尚未解锁</p>
+        </div>
+      </div>
     </div>
-  </div>
-</nav>
+  </header>
 
-<div class="container-x pt-28 pb-10">
-  <div class="flex flex-wrap items-end justify-between gap-4">
-    <div>
-      <p class="sec-tag">CHAPTER LIBRARY</p>
-      <h1 class="sec-title">章节库</h1>
-      <p class="sec-desc">每一章都包含知识点正文与配套自测。灰色卡片尚未解锁，按顺序通过自测即可逐步解锁。</p>
+  <div class="wrap">
+    <div style="display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:space-between;padding-bottom:22px;border-bottom:1px solid var(--line-strong);">
+      <div class="filter-bar" id="filterBar"></div>
+      <div style="position:relative;min-width:220px;flex:0 1 280px;">
+        <input class="field" id="libSearch" placeholder="搜索标题或关键词…" style="font-family:var(--font-sans);" autocomplete="off">
+      </div>
     </div>
-    <div class="chip" id="libChip">0 / 0</div>
+
+    <div class="lib-grid" id="libGrid" style="margin-top:28px;"></div>
+    <div id="libEmpty" class="empty" hidden><span class="empty__icon">◇</span>没有匹配的章节，换个关键词试试。</div>
   </div>
+</main>
 
-  <!-- 筛选栏 -->
-  <div class="flex flex-wrap gap-2 mt-8" id="filterBar"></div>
-
-  <!-- 卡片矩阵 -->
-  <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-8" id="libGrid" style="grid-auto-rows:1fr;"></div>
-  <div id="libEmpty"></div>
-</div>
-
-<div class="footer-slot"></div>
+<div id="siteFooter"></div>
 
 <script src="js/content.js"></script>
+<script src="js/content-master.js"></script>
 <script src="js/storage.js"></script>
-<script src="js/animate.js"></script>
+<script src="js/ui.js"></script>
 <script>
-renderNav('navLibrary');
-let curFilter = 'all';
+renderChrome('library');
+let curStage = 'all', curQuery = '';
 
-function renderFilter(){
-  document.getElementById('filterBar').innerHTML =
-    `<button class="chip" data-f="all" style="${curFilter==='all'?'border-color:var(--brand);color:var(--brand);':''}">${t('filterAll')}</button>`
-    + STAGES.map(s => `<button class="chip" data-f="${s.id}" style="${curFilter===s.id?'border-color:var(--brand);color:var(--brand);':''}">${s.num} · ${s.title}</button>`).join('');
-  document.querySelectorAll('#filterBar [data-f]').forEach(b => b.onclick = () => { curFilter = b.dataset.f; renderFilter(); renderGrid(); });
+document.addEventListener('DOMContentLoaded', () => {
+  renderFilters();
+  renderGrid();
+  document.getElementById('libSearch').addEventListener('input', e => {
+    curQuery = e.target.value.trim().toLowerCase();
+    renderGrid();
+  });
+  observeNew(document);
+});
+
+function renderFilters(){
+  const el = document.getElementById('filterBar');
+  el.innerHTML = `<button class="chip ${curStage==='all'?'is-on':''}" data-f="all">全部</button>` +
+    STAGES.map(s => `<button class="chip ${curStage===s.id?'is-on':''}" data-f="${s.id}">${s.num} ${s.title}</button>`).join('');
+  el.querySelectorAll('[data-f]').forEach(b => b.onclick = () => {
+    curStage = b.dataset.f; renderFilters(); renderGrid();
+  });
 }
 
 function renderGrid(){
-  const list = ORDER.filter(o => curFilter === 'all' || o.stage.id === curFilter);
-  document.getElementById('libChip').textContent =
-    ORDER.filter(o => progress.chapters[o.ch.id] && progress.chapters[o.ch.id].passed).length + ' / ' + ORDER.length;
+  const rows = [];
+  STAGES.forEach(s => {
+    if(curStage !== 'all' && curStage !== s.id) return;
+    s.chapters.forEach(c => {
+      const hay = (c.title + ' ' + (c.intro||'') + ' ' + s.title).toLowerCase();
+      if(curQuery && !hay.includes(curQuery)) return;
+      rows.push({ s, c });
+    });
+  });
+
   const grid = document.getElementById('libGrid');
-  if(!list.length){
-    grid.innerHTML = '';
-    document.getElementById('libEmpty').innerHTML = `<div class="empty mt-6"><span class="empty-icon">◌</span>${t('libEmpty')}</div>`;
-    return;
-  }
-  document.getElementById('libEmpty').innerHTML = '';
-  grid.innerHTML = list.map((o, i) => {
-    const st = chapterState(o.ch.id);
+  document.getElementById('libEmpty').hidden = rows.length > 0;
+  document.getElementById('libCount').textContent = `${ORDER.filter(o=>progress.chapters[o.ch.id]?.passed).length} / ${ORDER.length} 已完成`;
+
+  grid.innerHTML = rows.map(({s,c}, i) => {
+    const st = chapterState(c.id);
     const locked = st === 'locked';
-    const prevTitle = o.index > 0 ? ORDER[o.index-1].ch.title : '';
-    return `<article class="card card-hover relative p-6 flex flex-col ${locked?'locked lock-tip':''} reveal d${i%3+1}"
-      ${locked?`data-tip="通过「${prevTitle}」后解锁"`:''}
-      ${locked?'':`onclick="location.href='chapter.html?id=${encodeURIComponent(o.ch.id)}'"`}>
-      ${locked?`<span class="absolute top-4 right-4 text-[11px]" style="color:var(--faint);">🔒 ${t('locked')}</span>`
-        :(st==='done'?`<span class="absolute top-4 right-4 text-[11px] font-semibold" style="color:var(--ok);">✓ ${t('done')}</span>`:'')}
-      <div class="tag-brand">${o.stage.num} · ${o.stage.title}</div>
-      <h3 class="font-bold mt-2 text-lg">${o.ch.title}</h3>
-      <p class="text-sm mt-2 leading-relaxed flex-1" style="color:var(--dim);">${o.ch.intro || o.stage.en}</p>
-      <div class="flex items-center gap-3 mt-5 text-[11px]" style="color:var(--faint);">
-        <span>◷ ${o.ch.dur}</span><span>◈ ${o.ch.quiz.length ? o.ch.quiz.length+' 题' : t('read')}</span>
-        <span class="ml-auto font-medium" style="color:var(--brand);">${locked?t('locked'):(st==='done'?t('retake'):(o.ch.quiz.length?t('start'):t('read')))} →</span>
+    const done = st === 'done';
+    return `<a class="lib-card is-${st} ${locked?'is-locked':''} reveal d${Math.min(i%4,3)}"
+      href="${locked ? 'javascript:void 0' : 'chapter.html?id='+encodeURIComponent(c.id)}"
+      ${locked ? `onclick="toast('通过上一节自测后解锁')"` : ''}>
+      <div class="lib-card__top">
+        <span>${s.num} · ${s.title}</span>
+        <span style="color:${done?'var(--pos)':locked?'var(--faint)':'var(--brand)'};">${done?'已通过':locked?'未解锁':'可学习'}</span>
       </div>
-    </article>`;
+      <h3 class="lib-card__t">${c.title.replace(/^第 \d+ 节：/,'')}</h3>
+      <p class="lib-card__d">${c.intro || ''}</p>
+      <div class="lib-card__foot">
+        <span>${c.quiz.length} 题 · ${c.dur}</span>
+        <span>${done ? '↺ 复习' : '→'}</span>
+      </div>
+    </a>`;
   }).join('');
-  watchReveals();
+  observeNew(grid);
 }
-renderFilter(); renderGrid();
 </script>
 </body>
 </html>

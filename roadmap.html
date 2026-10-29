@@ -1,163 +1,142 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh-CN" data-theme="obsidian">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>学习路线 · Chain Academy</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<title>课程图谱 · Chain Academy</title>
+<meta name="description" content="七大学段、73 节课的完整学习路线：从认知地基到顶级交易思维，按顺序解锁，配合自测与阶段考核。">
+<meta name="theme-color" content="#08090B">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%2308090B'/%3E%3Cpath d='M16 7l9 9-9 9-9-9z' fill='none' stroke='%23C8A96A' stroke-width='1.4'/%3E%3Ccircle cx='16' cy='16' r='2.2' fill='%23C8A96A'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Noto+Sans+SC:wght@400;500;600&family=Noto+Serif+SC:wght@400;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/vars.css">
-<style>
-.tl{position:relative;}
-.tl::before{content:''; position:absolute; left:19px; top:8px; bottom:8px; width:2px; background:linear-gradient(180deg, rgba(56,189,248,.5), rgba(148,163,184,.08));}
-.tl-dot{position:relative; z-index:1; width:40px; height:40px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; flex-shrink:0; border:2px solid var(--line-strong); background:transparent; color:var(--faint); transition:all .4s;}
-/* 进行中：蓝色微光 */
-.tl-item[data-state="active"] .tl-dot{border-color:var(--brand); color:#062a30; background:var(--brand); box-shadow:0 0 22px rgba(56,189,248,.55),0 0 48px rgba(56,189,248,.18); animation:nodeGlow 3.2s ease-in-out infinite;}
-/* 已完成：绿色微光 */
-.tl-item[data-state="done"] .tl-dot{border-color:rgba(52,211,153,.7); color:#052e22; background:var(--ok); box-shadow:0 0 18px rgba(52,211,153,.5),0 0 40px rgba(52,211,153,.14);}
-/* 未解锁：仅轮廓 */
-@keyframes nodeGlow{0%,100%{box-shadow:0 0 22px rgba(56,189,248,.55),0 0 48px rgba(56,189,248,.18);}50%{box-shadow:0 0 30px rgba(56,189,248,.8),0 0 64px rgba(56,189,248,.28);}}
-.tl-item{opacity:.45; transition:opacity .4s;}
-.tl-item[data-state="active"],.tl-item[data-state="done"]{opacity:1;}
-.ch-row{display:flex; align-items:center; gap:12px; padding:10px 14px; border-radius:var(--r); transition:background .25s; cursor:pointer; font-size:.86rem;}
-.ch-row:hover{background:rgba(56,189,248,.07);}
-.ch-row.locked{cursor:not-allowed;}
-.ch-row.locked:hover{background:none;}
-.ch-children{overflow:hidden; transition:max-height .45s cubic-bezier(.2,.8,.3,1), opacity .35s;}
-</style>
+<link rel="stylesheet" href="css/system.css">
+<link rel="stylesheet" href="css/pages.css">
+<noscript><style>.reveal{opacity:1!important;transform:none!important;}</style></noscript>
 </head>
 <body>
 
-<nav class="site-nav solid">
-  <div class="nav-inner">
-    <a href="index.html" class="flex items-center gap-2 shrink-0">
-      <span class="w-7 h-7 rounded-md flex items-center justify-center text-white font-extrabold text-sm" style="background:linear-gradient(135deg,#0C4A6E,#38BDF8)">C</span>
-      <span class="font-bold tracking-wide text-sm">Chain<span style="color:var(--brand)">Academy</span></span>
-    </a>
-    <div class="nav-links-slot hidden lg:flex items-center gap-6 flex-1 justify-center"></div>
-    <div class="flex items-center gap-2 shrink-0">
-      <button class="lang-sw chip !py-1.5" data-lang="zh">中文</button>
-      <button class="lang-sw chip !py-1.5" data-lang="en">EN</button>
-      <button class="cta-continue btn-primary !py-2 !px-4 !text-xs">继续上次学习</button>
-    </div>
-  </div>
-</nav>
+<div id="siteNav"></div>
 
-<div class="container-x pt-28 pb-10">
-  <p class="sec-tag">LEARNING ROADMAP</p>
-  <h1 class="sec-title">学习路线</h1>
-  <p class="sec-desc">六个阶段按顺序线性解锁：通过当前章节自测（60 分合格）才能解锁下一章；完成阶段全部章节后解锁阶段考核。点击阶段标题可收拢 / 展开小节列表。</p>
-
-  <div class="grid lg:grid-cols-[300px_1fr] gap-10 mt-12">
-    <!-- PC 侧边栏：进度圆环 + 统计 -->
-    <aside class="hidden lg:block">
-      <div class="sticky top-24">
-        <div class="card p-7">
-          <div class="relative w-36 h-36 mx-auto">
-            <svg viewBox="0 0 120 120" class="w-full h-full -rotate-90">
-              <circle cx="60" cy="60" r="52" fill="none" stroke="rgba(148,163,184,.1)" stroke-width="9"/>
-              <circle id="sideDonut" cx="60" cy="60" r="52" fill="none" stroke="url(#sg1)" stroke-width="9" stroke-linecap="round" stroke-dasharray="326.7" stroke-dashoffset="326.7" style="transition:stroke-dashoffset 1.2s cubic-bezier(.2,.8,.3,1)"/>
-              <defs><linearGradient id="sg1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#38BDF8"/><stop offset="1" stop-color="#7DD3FC"/></linearGradient></defs>
-            </svg>
-            <div class="absolute inset-0 flex flex-col items-center justify-center">
-              <div class="text-3xl font-extrabold" id="sidePct">0%</div>
-              <div class="text-[10px] tracking-[.25em] mt-1" style="color:var(--faint);">总体完成率</div>
+<main>
+  <header class="page-head">
+    <div class="wrap">
+      <div class="grid grid-12" style="align-items:end;">
+        <div class="span-7">
+          <p class="eyebrow reveal">CURRICULUM · 课程图谱</p>
+          <h1 class="h1 reveal d1" style="margin-top:20px;">七大学段，<br>一条上升曲线。</h1>
+          <p class="lede reveal d2">线性解锁：通过当前章节的自测（60 分）才会打开下一节；完成一个学段的全部章节后，解锁 70 分及格的阶段考核。学习数据只保存在你的浏览器里。</p>
+        </div>
+        <div class="span-5 reveal d2">
+          <div style="border:1px solid var(--line);border-radius:var(--r);padding:clamp(20px,3vw,30px);background:var(--surface);">
+            <div class="micro">OVERALL PROGRESS · 总完成率</div>
+            <div class="big-pct" style="margin-top:10px;"><span id="pctNum">0</span><span>%</span></div>
+            <div class="track track--thick" style="margin-top:16px;"><div class="fill" id="pctBar" style="width:0%"></div></div>
+            <div class="kv-grid" style="margin-top:20px;">
+              <div><div class="k">已完成章节</div><div class="v" id="kCh">0</div></div>
+              <div><div class="k">通过考核</div><div class="v" id="kExam">0</div></div>
+              <div><div class="k">已作答</div><div class="v" id="kAns">0</div></div>
+              <div><div class="k">待复盘错题</div><div class="v" id="kWrong">0</div></div>
             </div>
           </div>
-          <div class="grid grid-cols-2 gap-3 mt-7 text-center">
-            <div class="rounded-md p-3" style="background:var(--bg-2);"><div class="font-extrabold text-lg" style="color:var(--brand);" id="sideCh">0/0</div><div class="text-[10px] mt-1" style="color:var(--faint);">已完成章节</div></div>
-            <div class="rounded-md p-3" style="background:var(--bg-2);"><div class="font-extrabold text-lg" style="color:var(--brand);" id="sideAns">0</div><div class="text-[10px] mt-1" style="color:var(--faint);">已作答题目</div></div>
-            <div class="rounded-md p-3" style="background:var(--bg-2);"><div class="font-extrabold text-lg" style="color:var(--danger);" id="sideWrong">0</div><div class="text-[10px] mt-1" style="color:var(--faint);">待复盘错题</div></div>
-            <div class="rounded-md p-3" style="background:var(--bg-2);"><div class="font-extrabold text-lg" style="color:var(--ok);" id="sideExam">0/0</div><div class="text-[10px] mt-1" style="color:var(--faint);">考核通过</div></div>
-          </div>
         </div>
       </div>
-    </aside>
+    </div>
+  </header>
 
-    <!-- 纵向时间轴 -->
-    <div class="tl space-y-6" id="timeline"></div>
+  <div class="wrap">
+    <div style="border-top:1px solid var(--line-strong);padding-top:12px;display:flex;gap:18px;flex-wrap:wrap;" id="stageRail"></div>
   </div>
-</div>
 
-<div class="footer-slot"></div>
+  <div class="wrap" id="roadmap"></div>
+
+  <div class="wrap" style="margin-top:48px;">
+    <div class="callout callout--note reveal">
+      <span class="callout__label">怎么用这条路线</span>
+      不要跳过学段 2 与 3 直接进入学段 7。第 7 学段的每一节都默认你已经掌握 R 倍数、止损、仓位与回测的基本概念；跳过前置内容的直接后果，是把"高级概念"当成"高级结论"来背诵。
+    </div>
+  </div>
+</main>
+
+<div id="siteFooter"></div>
 
 <script src="js/content.js"></script>
+<script src="js/content-master.js"></script>
 <script src="js/storage.js"></script>
-<script src="js/animate.js"></script>
+<script src="js/ui.js"></script>
 <script>
-renderNav('navRoadmap');
+renderChrome('roadmap');
 
-function renderTimeline(){
-  document.getElementById('timeline').innerHTML = STAGES.map((s, si) => {
-    const doneN = s.chapters.filter(c => progress.chapters[c.id] && progress.chapters[c.id].passed).length;
-    const stageComplete = stageDone(s);
-    const prevDone = si === 0 || stageDone(STAGES[si-1]);
-    const state = stageComplete ? 'done' : (prevDone || doneN > 0 ? 'active' : 'locked');
+const STAGE_DESC = {
+  s1:'任何关于"值不值钱"的讨论，都要先回到货币、账本与共识。本学段把名词还原成机制：为什么需要区块链、比特币解决了什么、以太坊改变了什么、私钥与地址的关系到底是什么。',
+  s2:'在讨论策略之前，先建立共同语言：现货与杠杆的区别、K 线的信息密度、支撑阻力的心理基础、指标的计算逻辑，以及仓位与风控为什么先于入场。',
+  s3:'十一类策略的完整地图。重点不是"学会所有策略"，而是理解每种策略靠什么边际活着、又死于什么市场状态。',
+  s4:'协议层与现实世界的接口：DeFi 的清算机制、Layer 2 的安全假设、跨链桥的信任模型、稳定币的抵押结构、监管的边界与代币的激励设计。',
+  s5:'把知识变成流程：模拟盘如何设计、小资金如何验证、日志记录什么、复盘看哪些指标、系统如何迭代。',
+  s6:'22 个指标体系与经典理论。学习目标不是"多一个指标"，而是理解每个工具背后的假设，以及在什么条件下它会失效。',
+  s7:'从"知道"走向"职业"：期望值、破产概率、凯利与仓位、市场微结构、拍卖与订单流、周期识别、衍生品定价、组合构建、研究纪律与执行系统。'
+};
+
+document.addEventListener('DOMContentLoaded', () => {
+  const stages = STAGES;
+
+  document.getElementById('stageRail').innerHTML = stages.map(s => {
+    const done = s.chapters.filter(c => progress.chapters[c.id]?.passed).length;
+    return `<a href="#${s.id}" class="micro" style="letter-spacing:.14em;color:var(--faint);padding:6px 0;">${s.num} ${s.title} <span style="color:var(--brand);">${done}/${s.chapters.length}</span></a>`;
+  }).join('');
+
+  document.getElementById('roadmap').innerHTML = stages.map(s => {
+    const done = s.chapters.filter(c => progress.chapters[c.id]?.passed).length;
+    const complete = stageDone(s);
     const exam = EXAMS.find(e => e.stageId === s.id);
     const examSt = exam ? examState(exam) : null;
-    return `<div class="tl-item flex gap-5 reveal d${Math.min(si,3)}" data-state="${state}" id="tl-${s.id}">
-      <div class="tl-dot">${s.num}</div>
-      <div class="card flex-1 overflow-hidden">
-        <div class="p-6 cursor-pointer select-none" onclick="toggleStage('${s.id}')">
-          <div class="flex flex-wrap items-center justify-between gap-2">
-            <h3 class="font-bold text-lg">${s.title} <span class="text-xs font-medium" style="color:var(--faint);letter-spacing:.2em;">${s.en}</span></h3>
-            <span class="chip">${stageComplete ? '✓ '+t('done') : (state==='active' ? t('active') : t('locked'))} · <span id="arr-${s.id}">${t('collapse')}</span> ▾</span>
-          </div>
-          <div class="track mt-4"><div class="fill" style="width:${doneN/s.chapters.length*100}%"></div></div>
-          <div class="text-xs mt-2" style="color:var(--faint);">${doneN} / ${s.chapters.length} · ${s.chapters.map(c=>c.title).join(' → ')}</div>
-        </div>
-        <div class="ch-children" id="ch-${s.id}">
-          <div class="px-4 pb-4">
-            ${s.chapters.map(c => {
-              const st = chapterState(c.id);
-              const lock = st === 'locked';
-              return `<div class="ch-row ${lock?'locked':''}" ${lock?`data-tip="通过上一章自测后解锁" onclick="event.stopPropagation();"`:''}
-                onclick="location.href='chapter.html?id=${encodeURIComponent(c.id)}'">
-                <span style="color:${st==='done'?'var(--ok)':st==='active'?'var(--brand)':'var(--faint)'};">${st==='done'?'✓':st==='active'?'●':'🔒'}</span>
-                <span style="flex:1;${st==='done'?'color:var(--dim);':''}">${c.title}</span>
-                <span class="text-[11px]" style="color:var(--faint);">${c.quiz.length? c.quiz.length+' 题' : t('read')} · ${c.dur}</span>
-              </div>`;
-            }).join('')}
-            ${exam ? `<div class="ch-row" style="border:1px dashed ${examSt==='locked'?'var(--line-strong)':'rgba(56,189,248,.45)'};margin-top:6px;"
-              ${examSt==='locked'?'data-tip="'+t('examLocked')+'" onclick="event.stopPropagation();"':''}
-              onclick="location.href='chapter.html?exam=${s.id}'">
-              <span style="color:${examSt==='done'?'var(--ok)':'var(--brand)'};">${examSt==='done'?'✓':'✎'}</span>
-              <span style="flex:1;font-weight:600;">${t('stageExam')}</span>
-              <span class="text-[11px]" style="color:var(--faint);">${examSt==='done' ? t('done') : examSt==='active' ? t('examStart') : t('examLocked')}</span>
-            </div>` : ''}
+    return `<section class="stage-block reveal" id="${s.id}">
+      <div class="stage-block__num">${s.num}<br><span style="color:var(--brand);">${done}/${s.chapters.length}</span></div>
+      <div>
+        <div class="stage-block__head">
+          <h2 class="stage-block__title">${s.title}<span class="stage-block__en">${s.en}</span></h2>
+          <div class="stage-bar">
+            ${complete ? '<span class="chip is-on">已完成</span>' : (done>0 ? '<span class="chip">进行中</span>' : '<span class="chip">未开始</span>')}
           </div>
         </div>
+        <p class="stage-block__desc">${STAGE_DESC[s.id] || s.desc || ''}</p>
+        <div class="track" style="margin-bottom:22px;"><div class="fill" style="width:${Math.round(done/s.chapters.length*100)}%"></div></div>
+        <div class="ch-list">
+          ${s.chapters.map(c => {
+            const st = chapterState(c.id);
+            const locked = st === 'locked';
+            const label = st === 'done' ? '已通过' : st === 'active' ? (c.quiz.length + ' 题') : '未解锁';
+            return `<a class="ch-item is-${st}" href="${locked ? 'javascript:void 0' : 'chapter.html?id='+encodeURIComponent(c.id)}" ${locked ? 'aria-disabled="true" onclick="toast(\'通过上一节自测后解锁\')"' : ''}>
+              <span class="ch-item__mk">${st==='done' ? ICON.check : st==='active' ? ICON.dot : ICON.lock}</span>
+              <span class="ch-item__t">${c.title}</span>
+              <span class="ch-item__m">${label}</span>
+              <span class="ch-item__dur">${c.dur}</span>
+            </a>`;
+          }).join('')}
+        </div>
+        ${exam ? `<a class="exam-item ${examSt==='locked'?'exam-item--locked':''}" href="chapter.html?exam=${s.id}">
+          <span style="display:flex;align-items:center;gap:10px;">${examSt==='done' ? ICON.check : '✎'} <b style="font-weight:500;color:var(--txt);">阶段综合考核</b> · ${exam.questions.length} 题 · 70 分通过</span>
+          <span class="micro" style="color:${examSt==='done'?'var(--pos)':'var(--brand)'};">${examSt==='done' ? '已通过' : examSt==='active' ? '开始考核 →' : '完成全部章节后解锁'}</span>
+        </a>` : ''}
       </div>
-    </div>`;
+    </section>`;
   }).join('');
-  /* 滚动时对应阶段节点自动高亮 */
-  const io = new IntersectionObserver(es => es.forEach(en => {
-    const dot = en.target.querySelector('.tl-dot');
-    if(dot && en.isIntersecting) dot.style.transform = 'scale(1.12)';
-    else if(dot) dot.style.transform = '';
-  }), { threshold:.55 });
-  document.querySelectorAll('.tl-item').forEach(n => io.observe(n));
-}
-function toggleStage(id){
-  const box = document.getElementById('ch-'+id);
-  const arr = document.getElementById('arr-'+id);
-  const open = box.style.maxHeight && box.style.maxHeight !== '0px';
-  box.style.maxHeight = open ? '0px' : box.scrollHeight + 'px';
-  box.style.opacity = open ? '0' : '1';
-  arr.textContent = open ? t('expand') : t('collapse');
-}
-function renderSide(){
+
   const pct = overallPct();
-  document.getElementById('sidePct').textContent = pct + '%';
-  document.getElementById('sideDonut').style.strokeDashoffset = 326.7 * (1 - pct/100);
-  const doneCh = ORDER.filter(o => progress.chapters[o.ch.id] && progress.chapters[o.ch.id].passed).length;
-  document.getElementById('sideCh').textContent = doneCh + '/' + ORDER.length;
-  document.getElementById('sideAns').textContent = progress.answers;
-  document.getElementById('sideWrong').textContent = progress.wrong.length;
-  document.getElementById('sideExam').textContent = EXAMS.filter(e => progress.exams[e.stageId] && progress.exams[e.stageId].passed).length + '/' + EXAMS.length;
-}
-renderTimeline(); renderSide();
-setTimeout(() => document.querySelectorAll('.ch-children').forEach(b => b.style.maxHeight = b.scrollHeight + 'px'), 60);
+  document.getElementById('pctNum').textContent = pct;
+  document.getElementById('pctBar').style.width = pct + '%';
+  document.getElementById('kCh').textContent = ORDER.filter(o => progress.chapters[o.ch.id]?.passed).length + ' / ' + ORDER.length;
+  document.getElementById('kExam').textContent = EXAMS.filter(e => progress.exams[e.stageId]?.passed).length + ' / ' + EXAMS.length;
+  document.getElementById('kAns').textContent = progress.answers || 0;
+  document.getElementById('kWrong').textContent = (progress.wrong || []).filter(w => !w.done).length;
+
+  observeNew(document);
+  if(location.hash){
+    const t = document.querySelector(location.hash);
+    if(t) setTimeout(() => t.scrollIntoView({ behavior:'smooth', block:'start' }), 120);
+  }
+});
 </script>
 </body>
 </html>

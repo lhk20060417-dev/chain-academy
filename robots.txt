@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://lhk20060417-dev.github.io/chain-academy/sitemap.xml
